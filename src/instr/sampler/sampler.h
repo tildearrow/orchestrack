@@ -2,4 +2,5 @@
 #include "../instr.h"
 
 class Sampler: public OTrackInstrument {
+  
 };

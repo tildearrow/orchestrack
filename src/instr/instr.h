@@ -1,4 +1,4 @@
-#include "../../includes.h"
+#include "../includes.h"
 
 // Instrument specification.
 struct OTrackInsSpec {
@@ -9,13 +9,14 @@ struct OTrackInsSpec {
   const char* license;
   int inChannels, outChannels;
   bool midiIn, midiOut;
-}
+};
 
 class OTrackInstrument {
   SDL_Renderer* r;
   float* sample;
   std::queue<void*> event;
   public:
+    virtual OTrackInsSpec* getspec();
     std::vector<float> param;
     void submitEvent(void* data);
     void* getEvent();
