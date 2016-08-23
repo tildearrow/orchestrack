@@ -1,6 +1,6 @@
 #include "sampler.h"
 
-OTrackInsSpec* OTrackInstrument::getspec() {
+OTrackInsSpec* Sampler::getspec() {
   OTrackInsSpec* aspec;
   aspec=new OTrackInsSpec;
   aspec->name="Sampler";
@@ -11,8 +11,20 @@ OTrackInsSpec* OTrackInstrument::getspec() {
   return aspec;
 }
 
-void getSample(int channels, float *sample, ...) {
-  va_list va;
-  va_start(va,sample);
-  
+float* Sampler::getSample() {
+  sample[0]=(float)(period%256)/256.0;
+  sample[1]=(float)(period%256)/256.0;
+  period++;
+  return sample;
+}
+
+bool Sampler::init(int inChannels, int outChannels) {
+  if (inChannels==0) {
+    sample=new float[outChannels];
+    outCh=outChannels;
+    period=0;
+    return true;
+  } else {
+    return false;
+  }
 }

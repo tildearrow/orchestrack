@@ -31,11 +31,22 @@ void OTrackInstrument::setRenderer(SDL_Renderer* renderer) {
   r=renderer;
 }
 
-void* OTrackInstrument::getSample() {
-  return 0;
+float* OTrackInstrument::getSample() {
+  for (int i=0; i<outCh; i++) {
+    sample[i]=0;
+  }
+  return sample;
 }
 
 void OTrackInstrument::drawUI() {
-  SDL_RenderClear(r);
-  SDL_RenderPresent(r);
+}
+
+bool OTrackInstrument::init(int inChannels, int outChannels) {
+  if (inChannels==0) {
+    sample=new float[outChannels];
+    outCh=outChannels;
+    return true;
+  } else {
+    return false;
+  }
 }

@@ -12,16 +12,18 @@ struct OTrackInsSpec {
 };
 
 class OTrackInstrument {
+  protected:
   SDL_Renderer* r;
   float* sample;
+  int inCh, outCh;
   std::queue<void*> event;
   public:
     virtual OTrackInsSpec* getspec();
     std::vector<float> param;
     void submitEvent(void* data);
     void* getEvent();
-    virtual void* getSample();
+    virtual float* getSample();
     virtual void drawUI();
     void setRenderer(SDL_Renderer* renderer);
-    void init(OTrackInsSpec* initSpec, OTrackInsSpec* resultSpec);
+    virtual bool init(int inChannels, int outChannels);
 };
