@@ -12,5 +12,6 @@ class Sampler: public OTrackInstrument {
   public:
     OTrackInsSpec* getspec();
     float* getSample();
+    void drawUI();
     bool init(int inChannels, int outChannels);
 };

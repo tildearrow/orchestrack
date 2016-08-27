@@ -37,6 +37,12 @@ float* Sampler::getSample() {
   return sample;
 }
 
+void Sampler::drawUI() {
+  for (int i=0; i<v.size(); i++) {
+    SDL_RenderDrawPoint(r,v[i].f,i);
+  }
+}
+
 bool Sampler::init(int inChannels, int outChannels) {
   if (inChannels==0) {
     sample=new float[outChannels];
