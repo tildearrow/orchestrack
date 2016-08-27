@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #define HAVE_JACK
 #include <jack/jack.h>
+#include <jack/midiport.h>
 #include <unistd.h>
 
 Sampler ins;
@@ -13,8 +14,11 @@ SDL_AudioSpec* ras;
 SDL_AudioDeviceID ai;
 
 jack_port_t* ao[2];
+jack_port_t* mo;
+jack_midi_event_t me;
 jack_client_t* ac;
 jack_status_t js;
+int ec;
 char* an;
 
 SDL_Window* win;
@@ -26,8 +30,23 @@ bool q;
 #ifdef HAVE_JACK
 int audio(jack_nframes_t len, void* arg) {
   float* s[2];
+  void* m;
+  m=jack_port_get_buffer(mo,len);
   for (int i=0; i<2; i++) {
     s[i]=(float*)jack_port_get_buffer(ao[i],len);
+  }
+  ec=jack_midi_get_event_count(m);
+  if (ec!=0) {
+    printf("have %d events:\n",ec);
+  }
+  for (int i=0; i<ec; i++) {
+    jack_midi_event_get(&me,m,i);
+    printf("- event %d time is %d. data (%d):\n  -",i,me.time,me.size);
+    for (int j=0; j<me.size; j++) {
+      printf(" %.2x",*(me.buffer+j));
+    }
+    printf("\n");
+    ins.submitEvent(me.buffer);
   }
   for (int i=0; i<len; i++) {
     float* pt;
@@ -41,6 +60,7 @@ int audio(jack_nframes_t len, void* arg) {
 static void audio(void* userdata, unsigned char* stream, int len) {
   float* s=(float*)stream;
   for (int i=0; i<len/8; i++) {
+    
     float* pt;
     pt=ins.getSample();
     s[i*2]=pt[0];
@@ -65,6 +85,7 @@ int initAudio() {
     printf("name not unique. setting to %s",an);
   }
   sr=jack_get_sample_rate(ac);
+  mo=jack_port_register(ac,"midi",JACK_DEFAULT_MIDI_TYPE,JackPortIsInput,0);
   ao[0]=jack_port_register(ac,"frontL",JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);
   ao[1]=jack_port_register(ac,"frontR",JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);
   return 0;

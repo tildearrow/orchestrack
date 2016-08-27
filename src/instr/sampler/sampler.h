@@ -2,7 +2,9 @@
 #include "../instr.h"
 
 class Sampler: public OTrackInstrument {
-  int period;
+  float period;
+  float f;
+  unsigned char* ev;
   public:
     OTrackInsSpec* getspec();
     float* getSample();

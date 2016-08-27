@@ -12,9 +12,15 @@ OTrackInsSpec* Sampler::getspec() {
 }
 
 float* Sampler::getSample() {
-  sample[0]=(float)(period%256)/256.0;
-  sample[1]=(float)(period%256)/256.0;
-  period++;
+  ev=(unsigned char*)getEvent();
+  if (ev!=NULL) {
+    if ((ev[0]>>4)==9) {
+      f=440*pow(2,((float)ev[1]-69)/12);
+    }
+  }
+  sample[0]=(float)period;
+  sample[1]=(float)period;
+  period=fmod(period+f/44100,1);
   return sample;
 }
 
