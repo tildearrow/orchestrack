@@ -2,8 +2,12 @@
 #include "../instr.h"
 
 class Sampler: public OTrackInstrument {
-  float period;
-  float f;
+  struct voice {
+    float period;
+    float f;
+    float vol;
+  };
+  std::vector<voice> v;
   unsigned char* ev;
   public:
     OTrackInsSpec* getspec();
