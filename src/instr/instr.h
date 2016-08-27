@@ -24,6 +24,6 @@ class OTrackInstrument {
     void* getEvent();
     virtual float* getSample();
     virtual void drawUI();
-    void setRenderer(SDL_Renderer* renderer);
+    virtual void setRenderer(SDL_Renderer* renderer);
     virtual bool init(int inChannels, int outChannels);
 };

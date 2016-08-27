@@ -37,9 +37,16 @@ float* Sampler::getSample() {
   return sample;
 }
 
+void Sampler::setRenderer(SDL_Renderer* renderer) {
+  r=renderer;
+  f=new font;
+  f->setrenderer(r);
+  f->load("/usr/share/fonts/TTF/Ubuntu-R.ttf",20);
+}
+
 void Sampler::drawUI() {
   for (int i=0; i<v.size(); i++) {
-    SDL_RenderDrawPoint(r,v[i].f,i);
+    f->drawf(0,i*16,{255,255,255,255},0,0,"%d: %f",i,v[i].f);
   }
 }
 
@@ -51,6 +58,7 @@ bool Sampler::init(int inChannels, int outChannels) {
     for (int i=0; i<v.size(); i++) {
       v[i].period=0;
     }
+    
     return true;
   } else {
     return false;

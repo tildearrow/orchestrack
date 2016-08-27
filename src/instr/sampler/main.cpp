@@ -111,6 +111,7 @@ int main() {
   q=false;
   e=new SDL_Event;
   SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO);
+  TTF_Init();
   printf("initializing sampler...\n");
   if (!ins.init(0,2)) {
     printf("no, sorry.\n"); return 1;
