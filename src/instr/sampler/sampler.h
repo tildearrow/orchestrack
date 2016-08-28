@@ -4,12 +4,21 @@
 
 class Sampler: public OTrackInstrument {
   struct voice {
+    int chan;
+    int note;
+    int pos;
     float period;
     float f;
     float vol;
   };
+  struct smp {
+    int len;
+    float rate;
+    float* data;
+  };
   font* f;
   std::vector<voice> v;
+  std::vector<smp> s;
   unsigned char* ev;
   public:
     OTrackInsSpec* getspec();
