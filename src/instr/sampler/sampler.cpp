@@ -12,6 +12,7 @@ OTrackInsSpec* Sampler::getspec() {
 }
 
 float* Sampler::getSample() {
+  float element0, element1, element, definitepos;
   sample[0]=0;
   sample[1]=0;
   ev=(unsigned char*)getEvent();
@@ -28,8 +29,13 @@ float* Sampler::getSample() {
     }
   }
   for (int i=0; i<v.size(); i++) {
-    sample[0]+=s[0].data[(int)(fmin(v[i].period,s[0].len))]*v[i].vol;
-    sample[1]+=s[0].data[(int)(fmin(v[i].period,s[0].len))]*v[i].vol;
+    definitepos=fmin(v[i].period,s[0].len);
+    element0=s[0].data[(int)definitepos];
+    element1=s[0].data[(int)definitepos+1];
+    element=element0+((element1-element0)*fmod(definitepos,1));
+    
+    sample[0]+=element*v[i].vol;
+    sample[1]+=element*v[i].vol;
     v[i].period+=v[i].f;
   }
   sample[0]=sample[0]/4;
@@ -41,13 +47,21 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   r=renderer;
   f=new font;
   f->setrenderer(r);
-  f->load("/usr/share/fonts/TTF/Ubuntu-R.ttf",20);
+  f->load("/usr/share/fonts/TTF/Ubuntu-R.ttf",16);
 }
 
 void Sampler::drawUI() {
+  /*
   for (int i=0; i<v.size(); i++) {
     f->drawf(0,i*16,{255,255,255,255},0,0,"%d: %f",i,v[i].f);
   }
+    f->draw(256,32,{255,255,255,255},0,0,0,"Load");
+  SDL_SetRenderDrawColor(r,255,255,255,255);
+  for (int i=0; i<400; i++) {
+    SDL_RenderDrawPoint(r,i,250+s[0].data[(int)(((float)i/400)*(float)s[0].len)]*128);
+  }
+  SDL_SetRenderDrawColor(r,0,0,0,255);
+  */
 }
 
 bool Sampler::init(int inChannels, int outChannels) {
