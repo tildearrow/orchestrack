@@ -1,6 +1,7 @@
 #include "../../includes.h"
 #include "../instr.h"
 #include "../../font/font.h"
+#include <sndfile.h>
 
 class Sampler: public OTrackInstrument {
   struct voice {
@@ -13,6 +14,7 @@ class Sampler: public OTrackInstrument {
   };
   struct smp {
     int len;
+    int chan;
     float rate;
     float* data;
   };
@@ -20,6 +22,8 @@ class Sampler: public OTrackInstrument {
   std::vector<voice> v;
   std::vector<smp> s;
   unsigned char* ev;
+  SNDFILE* sndf;
+  SF_INFO si;
   public:
     OTrackInsSpec* getspec();
     float* getSample();

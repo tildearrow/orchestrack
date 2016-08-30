@@ -58,7 +58,14 @@ bool Sampler::init(int inChannels, int outChannels) {
     for (int i=0; i<v.size(); i++) {
       v[i].period=0;
     }
-    
+    sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
+    s.resize(1);
+    s[0].len=si.frames;
+    s[0].chan=si.channels;
+    s[0].rate=si.samplerate;
+    s[0].data=new float[si.frames*si.channels];
+    sf_read_float(sndf,s[0].data,si.frames);
+    sf_close(sndf);
     return true;
   } else {
     return false;
