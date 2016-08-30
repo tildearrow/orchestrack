@@ -15,7 +15,6 @@ SDL_AudioDeviceID ai;
 
 jack_port_t* ao[2];
 jack_port_t* mo;
-jack_midi_event_t me;
 jack_client_t* ac;
 jack_status_t js;
 int ec;
@@ -30,30 +29,48 @@ bool q;
 #ifdef HAVE_JACK
 int audio(jack_nframes_t len, void* arg) {
   float* s[2];
+  int nep; // next event position
+  int cei; // current event index
+  jack_midi_event_t* me;
   void* m;
   m=jack_port_get_buffer(mo,len);
+  nep=-1;
+  cei=0;
   for (int i=0; i<2; i++) {
     s[i]=(float*)jack_port_get_buffer(ao[i],len);
   }
   ec=jack_midi_get_event_count(m);
   if (ec!=0) {
     printf("have %d events:\n",ec);
+    me=new jack_midi_event_t[ec];
   }
   for (int i=0; i<ec; i++) {
-    jack_midi_event_get(&me,m,i);
-    printf("- event %d time is %d. data (%d):\n  -",i,me.time,me.size);
-    for (int j=0; j<me.size; j++) {
-      printf(" %.2x",*(me.buffer+j));
+    jack_midi_event_get(&me[i],m,i);
+    printf("- event %d time is %d. data (%d):\n  -",i,me[i].time,me[i].size);
+    for (int j=0; j<me[i].size; j++) {
+      printf(" %.2x",*(me[i].buffer+j));
     }
     printf("\n");
-    ins.submitEvent(me.buffer);
+  }
+  if (ec!=0) {
+    nep=me[0].time;
   }
   for (int i=0; i<len; i++) {
     float* pt;
+    while (nep==i) {
+      ins.submitEvent(me[cei].buffer);
+      cei++;
+      if (cei<ec) {
+        nep=me[cei].time;
+      } else {
+	nep=-1;
+      }
+    }
     pt=ins.getSample();
     s[0][i]=pt[0];
     s[1][i]=pt[1];
   }
+  //delete[] me; // haha
   return 0;
 }
 #else
