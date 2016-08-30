@@ -23,14 +23,14 @@ float* Sampler::getSample() {
     }
     if ((ev[0]>>4)==9) {
       v[ev[0]&15].period=0;
-      v[ev[0]&15].f=440*pow(2,((float)ev[1]-69)/12);
+      v[ev[0]&15].f=pow(2,((float)ev[1]-60)/12)*s[0].rate/44100;
       v[ev[0]&15].vol=(float)ev[2]/128;
     }
   }
   for (int i=0; i<v.size(); i++) {
-    sample[0]+=(float)v[i].period*v[i].vol;
-    sample[1]+=(float)v[i].period*v[i].vol;
-    v[i].period=fmod(v[i].period+v[i].f/44100,1);
+    sample[0]+=s[0].data[(int)(fmin(v[i].period,s[0].len))]*v[i].vol;
+    sample[1]+=s[0].data[(int)(fmin(v[i].period,s[0].len))]*v[i].vol;
+    v[i].period+=v[i].f;
   }
   sample[0]=sample[0]/4;
   sample[1]=sample[1]/4;
