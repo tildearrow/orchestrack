@@ -16,7 +16,7 @@ float* Sampler::getSample() {
   sample[0]=0;
   sample[1]=0;
   ev=(unsigned char*)getEvent();
-  if (ev!=NULL) {
+  while (ev!=NULL) {
     if ((ev[0]>>4)==8) {
       v[ev[0]&15].period=0;
       v[ev[0]&15].f=0;
@@ -27,6 +27,7 @@ float* Sampler::getSample() {
       v[ev[0]&15].f=pow(2,((float)ev[1]-60)/12)*s[0].rate/44100;
       v[ev[0]&15].vol=(float)ev[2]/128;
     }
+    ev=(unsigned char*)getEvent();
   }
   for (int i=0; i<v.size(); i++) {
     definitepos=fmin(v[i].period,s[0].len);
