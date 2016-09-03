@@ -1,6 +1,7 @@
 #include "../../includes.h"
 #include "../instr.h"
 #include "../../font/font.h"
+#include "../../ui/button.h"
 #include <sndfile.h>
 
 class Sampler: public OTrackInstrument {
