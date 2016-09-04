@@ -52,7 +52,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
 }
 
 void Sampler::drawUI() {
-  drawButton(r,0,0,256,256,{128,128,128,255},15);
+  drawButton(r,0,0,256,256,{128,128,128,255},16);
   /*
   for (int i=0; i<v.size(); i++) {
     f->drawf(0,i*16,{255,255,255,255},0,0,"%d: %f",i,v[i].f);
