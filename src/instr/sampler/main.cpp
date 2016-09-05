@@ -119,6 +119,19 @@ int initAudio() {
 void letAudioRun() {
 #ifdef HAVE_JACK
   jack_activate(ac);
+  const char** p;
+  p=jack_get_ports(ac,NULL,NULL,JackPortIsInput|JackPortIsPhysical);
+  if (p) {
+    for (int i=0; i<2; i++) {
+      if (jack_connect(ac,jack_port_name(ao[i]),p[i])) {
+        fprintf(stderr,"can't connect to system output (i=%d). :(\n");
+        break;
+      }
+    }
+    delete[] p;
+  } else {
+    fprintf(stderr,"no physical outputs.\n");
+  }
 #else
   SDL_PauseAudioDevice(ai,0);
 #endif
