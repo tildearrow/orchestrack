@@ -44,6 +44,16 @@ float* Sampler::getSample() {
       v[thisv].f=pow(2,((float)v[thisv].note-60)/12)*s[0].rate/44100;
       v[thisv].vol=(float)ev[2]/128;
     }
+    if ((ev[0]>>4)==0xe) {
+      // pitch bend.
+      c[ev[0]&15].pitch=(ev[1]+(ev[2]<<7))-0x2000;
+      printf("pitch %d\n",c[ev[0]&15].pitch);
+      for (int i=0; i<v.size(); i++) {
+        if (v[i].chan==(ev[0]&15)) {
+          v[i].f=pow(2,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0))/12)*s[0].rate/44100;
+        }
+      }
+    }
     ev=(unsigned char*)getEvent();
   }
   for (int i=0; i<v.size(); i++) {

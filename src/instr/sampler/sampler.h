@@ -6,7 +6,7 @@
 
 class Sampler: public OTrackInstrument {
   struct channel {
-    float pitch;
+    int pitch;
     short ctrl[128];
     int pressure;
   };
