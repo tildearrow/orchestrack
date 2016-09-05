@@ -35,12 +35,14 @@ float* Sampler::getSample() {
     if ((ev[0]>>4)==9) {
       // allocate a voice
       v.resize(v.size()+1);
-      v[(v.size()-1)].chan=ev[0]&15;
-      v[(v.size()-1)].note=ev[1];
-      printf("allocated. %d %.2x %.2x\n",(v.size()-1),v[(v.size()-1)].chan,v[(v.size()-1)].note);
-      v[(v.size()-1)].period=0;
-      v[(v.size()-1)].f=pow(2,((float)ev[1]-60)/12)*s[0].rate/44100;
-      v[(v.size()-1)].vol=(float)ev[2]/128;
+      int thisv;
+      thisv=v.size()-1;
+      v[thisv].chan=ev[0]&15;
+      v[thisv].note=ev[1];
+      printf("allocated. %d %.2x %.2x\n",thisv,v[thisv].chan,v[thisv].note);
+      v[thisv].period=0;
+      v[thisv].f=pow(2,((float)v[thisv].note-60)/12)*s[0].rate/44100;
+      v[thisv].vol=(float)ev[2]/128;
     }
     ev=(unsigned char*)getEvent();
   }
