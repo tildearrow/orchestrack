@@ -1,51 +1,57 @@
 #include "button.h"
 
-int roundRect(unsigned char* ptr, int tw, SDL_Color c, int x, int y, int w, int h, int rr) {
+int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int y, int w, int h, int rr) {
   float res[5]; // 2x sampling
+  unsigned char* bitmap;
   int where;
+  // prepare bitmap
+  bitmap=new unsigned char[w*h*4];
+  memset(bitmap,0,w*h*4);
+  
   // fill
-  for (int i=x; i<x+w; i++) {
-    for (int j=y+rr; j<y+h-rr; j++) {
-      ptr[(i*4)+(j*tw*4)]=c.b;
-      ptr[(i*4)+(j*tw*4)+1]=c.g;
-      ptr[(i*4)+(j*tw*4)+2]=c.r;
-      ptr[(i*4)+(j*tw*4)+3]=c.a;
+  for (int i=0; i<w; i++) {
+    for (int j=rr; j<h-rr; j++) {
+      bitmap[(i*4)+(j*w*4)]=255;
+      bitmap[(i*4)+(j*w*4)+1]=255;
+      bitmap[(i*4)+(j*w*4)+2]=255;
+      bitmap[(i*4)+(j*w*4)+3]=255;
     }
   }
-  for (int i=x+rr; i<x+w-rr; i++) {
-    for (int j=y; j<y+h; j++) {
-      ptr[(i*4)+(j*tw*4)]=c.b;
-      ptr[(i*4)+(j*tw*4)+1]=c.g;
-      ptr[(i*4)+(j*tw*4)+2]=c.r;
-      ptr[(i*4)+(j*tw*4)+3]=c.a;
+  for (int i=0+rr; i<w-rr; i++) {
+    for (int j=0; j<h; j++) {
+      bitmap[(i*4)+(j*w*4)]=255;
+      bitmap[(i*4)+(j*w*4)+1]=255;
+      bitmap[(i*4)+(j*w*4)+2]=255;
+      bitmap[(i*4)+(j*w*4)+3]=255;
     }
   }
   
   // smooth sides
-  for (int i=x+rr; i<x+w-rr; i++) {
-    ptr[(i*4)+(y*tw*4)]=(unsigned char)((float)c.b*0.75);
-    ptr[(i*4)+(y*tw*4)+1]=(unsigned char)((float)c.g*0.75);
-    ptr[(i*4)+(y*tw*4)+2]=(unsigned char)((float)c.r*0.75);
-    ptr[(i*4)+(y*tw*4)+3]=c.a;
+  for (int i=rr; i<w-rr; i++) {
+    bitmap[(i*4)]=255;
+    bitmap[(i*4)+1]=255;
+    bitmap[(i*4)+2]=255;
+    bitmap[(i*4)+3]=192;
   }
-  for (int i=x+rr; i<x+w-rr; i++) {
-    ptr[((y+h-1)*tw*4)+(i*4)]=(unsigned char)((float)c.b*0.75);
-    ptr[((y+h-1)*tw*4)+(i*4)+1]=(unsigned char)((float)c.g*0.75);
-    ptr[((y+h-1)*tw*4)+(i*4)+2]=(unsigned char)((float)c.r*0.75);
-    ptr[((y+h-1)*tw*4)+(i*4)+3]=c.a;
-  }
-  for (int i=rr; i<h-rr; i++) {
-    ptr[(x*4)+((y+i)*tw*4)]=(unsigned char)((float)c.b*0.75);
-    ptr[(x*4)+((y+i)*tw*4)+1]=(unsigned char)((float)c.g*0.75);
-    ptr[(x*4)+((y+i)*tw*4)+2]=(unsigned char)((float)c.r*0.75);
-    ptr[(x*4)+((y+i)*tw*4)+3]=c.a;
+  for (int i=rr; i<w-rr; i++) {
+    bitmap[((h-1)*w*4)+(i*4)]=255;
+    bitmap[((h-1)*w*4)+(i*4)+1]=255;
+    bitmap[((h-1)*w*4)+(i*4)+2]=255;
+    bitmap[((h-1)*w*4)+(i*4)+3]=192;
   }
   for (int i=rr; i<h-rr; i++) {
-    ptr[((x+w-1)*4)+((y+i)*tw*4)]=(unsigned char)((float)c.b*0.75);
-    ptr[((x+w-1)*4)+((y+i)*tw*4)+1]=(unsigned char)((float)c.g*0.75);
-    ptr[((x+w-1)*4)+((y+i)*tw*4)+2]=(unsigned char)((float)c.r*0.75);
-    ptr[((x+w-1)*4)+((y+i)*tw*4)+3]=c.a;
+    bitmap[((i)*w*4)]=255;
+    bitmap[((i)*w*4)+1]=255;
+    bitmap[((i)*w*4)+2]=255;
+    bitmap[((i)*w*4)+3]=192;
   }
+  for (int i=rr; i<h-rr; i++) {
+    bitmap[((w-1)*4)+((i)*w*4)]=255;
+    bitmap[((w-1)*4)+((i)*w*4)+1]=255;
+    bitmap[((w-1)*4)+((i)*w*4)+2]=255;
+    bitmap[((w-1)*4)+((i)*w*4)+3]=192;
+  }
+  
   // corners
   for (int i=0; i<rr; i++) {
     for (int j=0; j<rr; j++) {
@@ -57,23 +63,44 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, int x, int y, int w, int 
       
       for (int k=0; k<4; k++) {
         switch (k) {
-          case 0: where=((i+x)*4)+((j+y)*tw*4); break;
-          case 1: where=((w-1-i+x)*4)+((j+y)*tw*4); break;
-          case 2: where=((i+x)*4)+((h-1-j+y)*tw*4); break;
-          case 3: where=((w-1-i+x)*4)+((h-1-j+y)*tw*4); break;
+          case 0: where=((i)*4)+((j)*w*4); break;
+          case 1: where=((w-1-i)*4)+((j)*w*4); break;
+          case 2: where=((i)*4)+((h-1-j)*w*4); break;
+          case 3: where=((w-1-i)*4)+((h-1-j)*w*4); break;
         }
-        ptr[where]=(int)(255.0*((((float)c.b/255.0)*res[4])
-                  +(((float)ptr[where]/255.0)*(1.0-res[4]))));
-        ptr[where+1]=(int)(255.0*((((float)c.g/255.0)*res[4])
-                    +(((float)ptr[where+1]/255.0)*(1.0-res[4]))));
-        ptr[where+2]=(int)(255.0*((((float)c.r/255.0)*res[4])
-                    +(((float)ptr[where+2]/255.0)*(1.0-res[4]))));
-        ptr[where+3]=(int)(255.0*(res[4]+(((float)ptr[where+3]/255.0)
-                    *(1.0-res[4]))));
+        bitmap[where]=255;
+        bitmap[where+1]=255;
+        bitmap[where+2]=255;
+        bitmap[where+3]=(res[4]*255.0);
       }
     }
   }
   
+  // apply color/gradient
+  for (int i=0; i<w; i++) {
+    for (int j=0; j<h; j++) {
+      where=(i*4)+(j*w*4);
+      bitmap[where]=(unsigned char)((float)c.b+(((float)c1.b-(float)c.b)*(float)j/(float)h));
+      bitmap[where+1]=(unsigned char)((float)c.g+(((float)c1.g-(float)c.g)*(float)j/(float)h));
+      bitmap[where+2]=(unsigned char)((float)c.r+(((float)c1.r-(float)c.r)*(float)j/(float)h));
+      bitmap[where+3]=(unsigned char)((float)bitmap[where+3]*(c.a/255.0));
+    }
+  }
+  
+  for (int i=x; i<x+w; i++) {
+    for (int j=y; j<y+h; j++) {
+      int src, dest;
+      src=((i-x)*4)+((j-y)*w*4);
+      dest=(i*4)+(j*tw*4);
+      ptr[dest]=(unsigned char)(255.0*(((float)bitmap[src]/255.0)*((float)bitmap[src+3]/255.0)+(((float)ptr[dest]/255.0)*(1.0-((float)bitmap[src+3]/255.0)))));
+      ptr[dest+1]=(unsigned char)(255.0*(((float)bitmap[src+1]/255.0)*((float)bitmap[src+3]/255.0)+(((float)ptr[dest+1]/255.0)*(1.0-((float)bitmap[src+3]/255.0)))));
+      ptr[dest+2]=(unsigned char)(255.0*(((float)bitmap[src+2]/255.0)*((float)bitmap[src+3]/255.0)+(((float)ptr[dest+2]/255.0)*(1.0-((float)bitmap[src+3]/255.0)))));
+      ptr[dest+3]=(unsigned char)(255.0*(((float)bitmap[src+3]/255.0)+(((float)ptr[dest+3]/255.0)*(1.0-((float)bitmap[src+3]/255.0)))));
+    }
+  }
+  
+  delete[] bitmap;
+
   return 0;
 }
 
@@ -93,8 +120,12 @@ int drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color color, int
     
     memset(pp,0,w*h*4);
     
-    roundRect(pp,w,{128,128,128,4},0,0,w,h,rr);
-    roundRect(pp,w,{255,255,255,255},20,20,w-40,h-40,rr);
+    roundRect(pp,w,{color.r,color.g,color.b,255},{color.r,color.g,color.b,255},0,0,w,h,rr);
+    roundRect(pp,w,{(unsigned char)((float)color.r*0.75),(unsigned char)((float)color.g*0.75),(unsigned char)((float)color.b*0.75),255},{(unsigned char)((float)color.r*0.65),(unsigned char)((float)color.g*0.65),(unsigned char)((float)color.b*0.65),255},1,1,w-2,h-2,rr-2);
+    
+    // glow
+    
+    
     
     // copy result
     for (int i=0; i<w*h; i++) {
