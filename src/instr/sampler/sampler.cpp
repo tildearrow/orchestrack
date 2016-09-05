@@ -18,14 +18,29 @@ float* Sampler::getSample() {
   ev=(unsigned char*)getEvent();
   while (ev!=NULL) {
     if ((ev[0]>>4)==8) {
+      // find voice with properties, then destroy it
+      for (int i=0; i<v.size(); i++) {
+        if (v[i].chan==(ev[0]&15)) {
+          if (v[i].note==ev[1]) {
+            printf("erased. %d %.2x %.2x\n",i,v[i].chan,v[i].note);
+            v.erase(v.begin()+i); i--;
+          }
+        }
+      }
+      /*
       v[ev[0]&15].period=0;
       v[ev[0]&15].f=0;
-      v[ev[0]&15].vol=(float)ev[2]/128;
+      v[ev[0]&15].vol=(float)ev[2]/128;*/
     }
     if ((ev[0]>>4)==9) {
-      v[ev[0]&15].period=0;
-      v[ev[0]&15].f=pow(2,((float)ev[1]-60)/12)*s[0].rate/44100;
-      v[ev[0]&15].vol=(float)ev[2]/128;
+      // allocate a voice
+      v.resize(v.size()+1);
+      v[(v.size()-1)].chan=ev[0]&15;
+      v[(v.size()-1)].note=ev[1];
+      printf("allocated. %d %.2x %.2x\n",(v.size()-1),v[(v.size()-1)].chan,v[(v.size()-1)].note);
+      v[(v.size()-1)].period=0;
+      v[(v.size()-1)].f=pow(2,((float)ev[1]-60)/12)*s[0].rate/44100;
+      v[(v.size()-1)].vol=(float)ev[2]/128;
     }
     ev=(unsigned char*)getEvent();
   }
@@ -38,6 +53,13 @@ float* Sampler::getSample() {
     sample[0]+=element*v[i].vol;
     sample[1]+=element*v[i].vol;
     v[i].period+=v[i].f;
+  }
+  
+  for (int i=0; i<v.size(); i++) {
+    if (v[i].period>s[0].len) {
+      printf("sample finished. %d\n",i);
+      v.erase(v.begin()+i); i--;
+    }
   }
   sample[0]=sample[0]/4;
   sample[1]=sample[1]/4;
@@ -52,7 +74,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
 }
 
 void Sampler::drawUI() {
-  drawButton(r,0,0,256,256,{128,128,128,255},16);
+  //drawButton(r,0,0,256,256,{128,128,128,255},16);
   /*
   for (int i=0; i<v.size(); i++) {
     f->drawf(0,i*16,{255,255,255,255},0,0,"%d: %f",i,v[i].f);
@@ -64,16 +86,17 @@ void Sampler::drawUI() {
   }
   SDL_SetRenderDrawColor(r,0,0,0,255);
   */
+  f->drawf(0,16,{255,255,255,255},0,0,"%d",v.size());
 }
 
 bool Sampler::init(int inChannels, int outChannels) {
   if (inChannels==0) {
     sample=new float[outChannels];
     outCh=outChannels;
-    v.resize(16);
+    /*v.resize(16);
     for (int i=0; i<v.size(); i++) {
       v[i].period=0;
-    }
+    }*/
     sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
     s.resize(1);
     s[0].len=si.frames;
