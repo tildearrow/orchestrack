@@ -82,9 +82,19 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   r=renderer;
   f=new font;
   f->setrenderer(r);
+  #ifdef __linux__
   f->load("/usr/share/fonts/TTF/Ubuntu-R.ttf",16);
+  #elif __APPLE__
+  f->load("/System/Library/Fonts/Helvetica.dfont",16);
+  #elif _WIN32
+  f->load("C:\\Windows\\Fonts\\segoeui.ttf",16);
+  #endif
   // init UI
-  but=drawButton(r,0,0,128,64,{0,128,255,255},16);
+  tempc.r=0;
+  tempc.g=128;
+  tempc.b=255;
+  tempc.a=255;
+  but=drawButton(r,0,0,128,64,tempc,16);
 }
 
 void Sampler::drawUI() {
@@ -92,6 +102,10 @@ void Sampler::drawUI() {
   tempr.y=0;
   tempr.w=128;
   tempr.h=64;
+  tempc.r=255;
+  tempc.g=255;
+  tempc.b=255;
+  tempc.a=255;
   SDL_RenderCopy(r,but,NULL,&tempr);
   /*
   for (int i=0; i<v.size(); i++) {
@@ -104,7 +118,7 @@ void Sampler::drawUI() {
   }
   SDL_SetRenderDrawColor(r,0,0,0,255);
   */
-  f->drawf(0,16,{255,255,255,255},0,0,"%d",v.size());
+  f->drawf(0,16,tempc,0,0,"%d",v.size());
 }
 
 bool Sampler::init(int inChannels, int outChannels) {

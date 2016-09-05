@@ -113,6 +113,8 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
   int pitch;
   if (!SDL_LockTexture(t,NULL,&p,&pitch)) {
     unsigned char* pp;
+    SDL_Color tempcolor;
+    SDL_Color tempcolor1;
     pp=new unsigned char[w*h*4];//(unsigned char*)p;
     
     unsigned char* ppp;
@@ -120,11 +122,36 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     
     memset(pp,0,w*h*4);
     
-    roundRect(pp,w,{(unsigned char)fmin(255,color.r+128),(unsigned char)fmin(255,color.g+128),(unsigned char)fmin(255,color.b+128),255},{color.r,color.g,color.b,255},0,0,w,h,rr);
-    roundRect(pp,w,{(unsigned char)((float)color.r*0.7),(unsigned char)((float)color.g*0.7),(unsigned char)((float)color.b*0.7),255},{(unsigned char)((float)color.r*0.6),(unsigned char)((float)color.g*0.6),(unsigned char)((float)color.b*0.6),255},1,1,w-2,h-2,rr-2);
+    tempcolor.r=(unsigned char)fmin(255,color.r+128);
+    tempcolor.g=(unsigned char)fmin(255,color.g+128);
+    tempcolor.b=(unsigned char)fmin(255,color.b+128);
+    tempcolor.a=255;
+    tempcolor1.r=color.r;
+    tempcolor1.g=color.g;
+    tempcolor1.b=color.b;
+    tempcolor1.a=255;
+    roundRect(pp,w,tempcolor,tempcolor1,0,0,w,h,rr);
+
+    tempcolor.r=(unsigned char)((float)color.r*0.7);
+    tempcolor.g=(unsigned char)((float)color.g*0.7);
+    tempcolor.b=(unsigned char)((float)color.b*0.7);
+    tempcolor.a=255;
+    tempcolor1.r=(unsigned char)((float)color.g*0.6);
+    tempcolor1.g=(unsigned char)((float)color.g*0.6);
+    tempcolor1.b=(unsigned char)((float)color.g*0.6);
+    tempcolor1.a=255;
+    roundRect(pp,w,tempcolor,tempcolor1,1,1,w-2,h-2,rr-2);
     
     // glow
-    roundRect(pp,w,{255,255,255,128},{255,255,255,0},2,2,w-4,h-12,rr-2);
+    tempcolor.r=255;
+    tempcolor.g=255;
+    tempcolor.b=255;
+    tempcolor.a=128;
+    tempcolor1.r=255;
+    tempcolor1.g=255;
+    tempcolor1.b=255;
+    tempcolor1.a=0;
+    roundRect(pp,w,tempcolor,tempcolor1,2,2,w-4,h-12,rr-2);
     
     // copy result
     for (int i=0; i<w*h; i++) {
