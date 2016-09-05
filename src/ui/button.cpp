@@ -104,7 +104,7 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int 
   return 0;
 }
 
-int drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color color, int rr) {
+SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color color, int rr) {
   SDL_Rect rect;
   rect.x=0; rect.y=0; rect.w=w; rect.h=h;
   SDL_Texture* t;
@@ -140,6 +140,6 @@ int drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color color, int
     fprintf(stderr,"can't.\n");
   }
   rect.x=x; rect.y=y;
-  SDL_RenderCopy(r,t,NULL,&rect);
-  SDL_DestroyTexture(t);
+  
+  return t;
 }

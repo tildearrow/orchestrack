@@ -32,6 +32,8 @@ class Sampler: public OTrackInstrument {
   unsigned char* ev;
   SNDFILE* sndf;
   SF_INFO si;
+  SDL_Texture* but;
+  SDL_Rect tempr;
   public:
     OTrackInsSpec* getspec();
     float* getSample();

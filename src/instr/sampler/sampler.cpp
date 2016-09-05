@@ -83,10 +83,16 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   f=new font;
   f->setrenderer(r);
   f->load("/usr/share/fonts/TTF/Ubuntu-R.ttf",16);
+  // init UI
+  but=drawButton(r,0,0,128,64,{0,128,255,255},16);
 }
 
 void Sampler::drawUI() {
-  drawButton(r,0,0,128,64,{0,128,255,255},16);
+  tempr.x=0;
+  tempr.y=0;
+  tempr.w=128;
+  tempr.h=64;
+  SDL_RenderCopy(r,but,NULL,&tempr);
   /*
   for (int i=0; i<v.size(); i++) {
     f->drawf(0,i*16,{255,255,255,255},0,0,"%d: %f",i,v[i].f);
