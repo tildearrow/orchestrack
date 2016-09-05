@@ -5,10 +5,16 @@
 #include <sndfile.h>
 
 class Sampler: public OTrackInstrument {
+  struct channel {
+    float pitch;
+    short ctrl[128];
+    int pressure;
+  };
   struct voice {
     int chan;
     int note;
     int pos;
+    int pressure;
     float period;
     float f;
     float vol;
@@ -20,6 +26,7 @@ class Sampler: public OTrackInstrument {
     float* data;
   };
   font* f;
+  channel c[16];
   std::vector<voice> v;
   std::vector<smp> s;
   unsigned char* ev;
