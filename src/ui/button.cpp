@@ -55,28 +55,26 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, int x, int y, int w, int 
       res[3]=pow(pow(rr*2-i*2,2)+pow(rr*2-j*2-1,2),0.5)<(rr*2);
       res[4]=(res[0]+res[1]+res[2]+res[3])/4;
       
-      where=((i+x)*4)+((j+y)*tw*4);
-      ptr[where]=(c.b*c.a)/255+(ptr[where]*(255-ptr[where+3]))/255;
-      ptr[where+1]=(c.g*c.a)/255+(ptr[where+1]*(255-ptr[where+3]))/255;
-      ptr[where+2]=(c.r*c.a)/255+(ptr[where+2]*(255-ptr[where+3]))/255;
-      ptr[where+3]=res[4]+(c.a*(255-ptr[where+3]))/255;
-      
-      ptr[((w-1-i+x)*4)+((j+y)*tw*4)]=c.b*res[4];
-      ptr[((w-1-i+x)*4)+((j+y)*tw*4)+1]=c.g*res[4];
-      ptr[((w-1-i+x)*4)+((j+y)*tw*4)+2]=c.r*res[4];
-      ptr[((w-1-i+x)*4)+((j+y)*tw*4)+3]=c.a;
-      
-      ptr[((i+x)*4)+((h-1-j+y)*tw*4)]=c.b*res[4];
-      ptr[((i+x)*4)+((h-1-j+y)*tw*4)+1]=c.g*res[4];
-      ptr[((i+x)*4)+((h-1-j+y)*tw*4)+2]=c.r*res[4];
-      ptr[((i+x)*4)+((h-1-j+y)*tw*4)+3]=c.a;
-      
-      ptr[((w-1-i+x)*4)+((h-1-j+y)*tw*4)]=c.b*res[4];
-      ptr[((w-1-i+x)*4)+((h-1-j+y)*tw*4)+1]=c.g*res[4];
-      ptr[((w-1-i+x)*4)+((h-1-j+y)*tw*4)+2]=c.r*res[4];
-      ptr[((w-1-i+x)*4)+((h-1-j+y)*tw*4)+3]=c.a;
+      for (int k=0; k<4; k++) {
+        switch (k) {
+          case 0: where=((i+x)*4)+((j+y)*tw*4); break;
+          case 1: where=((w-1-i+x)*4)+((j+y)*tw*4); break;
+          case 2: where=((i+x)*4)+((h-1-j+y)*tw*4); break;
+          case 3: where=((w-1-i+x)*4)+((h-1-j+y)*tw*4); break;
+        }
+        ptr[where]=(int)(255.0*((((float)c.b/255.0)*res[4])
+                  +(((float)ptr[where]/255.0)*(1.0-res[4]))));
+        ptr[where+1]=(int)(255.0*((((float)c.g/255.0)*res[4])
+                    +(((float)ptr[where+1]/255.0)*(1.0-res[4]))));
+        ptr[where+2]=(int)(255.0*((((float)c.r/255.0)*res[4])
+                    +(((float)ptr[where+2]/255.0)*(1.0-res[4]))));
+        ptr[where+3]=(int)(255.0*(res[4]+(((float)ptr[where+3]/255.0)
+                    *(1.0-res[4]))));
+      }
     }
   }
+  
+  return 0;
 }
 
 int drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color color, int rr) {
