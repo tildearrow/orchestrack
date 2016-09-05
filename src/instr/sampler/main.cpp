@@ -18,7 +18,7 @@ jack_port_t* mo;
 jack_client_t* ac;
 jack_status_t js;
 int ec;
-char* an;
+const char* an;
 
 SDL_Window* win;
 SDL_Renderer* r;
@@ -89,7 +89,6 @@ static void audio(void* userdata, unsigned char* stream, int len) {
 int initAudio() {
   printf("initializing audio...\n");
 #ifdef HAVE_JACK
-  an=new char[8];
   an="sampler";
   ac=jack_client_open(an,JackNoStartServer,&js,NULL);
   if (ac==NULL) {
