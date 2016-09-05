@@ -83,7 +83,7 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int 
       bitmap[where]=(unsigned char)((float)c.b+(((float)c1.b-(float)c.b)*(float)j/(float)h));
       bitmap[where+1]=(unsigned char)((float)c.g+(((float)c1.g-(float)c.g)*(float)j/(float)h));
       bitmap[where+2]=(unsigned char)((float)c.r+(((float)c1.r-(float)c.r)*(float)j/(float)h));
-      bitmap[where+3]=(unsigned char)((float)bitmap[where+3]*(c.a/255.0));
+      bitmap[where+3]=(unsigned char)((float)bitmap[where+3]*(((float)c.a+(((float)c1.a-(float)c.a)*(float)j/(float)h))/255.0));
     }
   }
   
@@ -120,12 +120,11 @@ int drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color color, int
     
     memset(pp,0,w*h*4);
     
-    roundRect(pp,w,{color.r,color.g,color.b,255},{color.r,color.g,color.b,255},0,0,w,h,rr);
-    roundRect(pp,w,{(unsigned char)((float)color.r*0.75),(unsigned char)((float)color.g*0.75),(unsigned char)((float)color.b*0.75),255},{(unsigned char)((float)color.r*0.65),(unsigned char)((float)color.g*0.65),(unsigned char)((float)color.b*0.65),255},1,1,w-2,h-2,rr-2);
+    roundRect(pp,w,{(unsigned char)fmin(255,color.r+128),(unsigned char)fmin(255,color.g+128),(unsigned char)fmin(255,color.b+128),255},{color.r,color.g,color.b,255},0,0,w,h,rr);
+    roundRect(pp,w,{(unsigned char)((float)color.r*0.7),(unsigned char)((float)color.g*0.7),(unsigned char)((float)color.b*0.7),255},{(unsigned char)((float)color.r*0.6),(unsigned char)((float)color.g*0.6),(unsigned char)((float)color.b*0.6),255},1,1,w-2,h-2,rr-2);
     
     // glow
-    
-    
+    roundRect(pp,w,{255,255,255,128},{255,255,255,0},2,2,w-4,h-12,rr-2);
     
     // copy result
     for (int i=0; i<w*h; i++) {
