@@ -136,9 +136,9 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     tempcolor.g=(unsigned char)((float)color.g*0.7);
     tempcolor.b=(unsigned char)((float)color.b*0.7);
     tempcolor.a=255;
-    tempcolor1.r=(unsigned char)((float)color.g*0.6);
+    tempcolor1.r=(unsigned char)((float)color.r*0.6);
     tempcolor1.g=(unsigned char)((float)color.g*0.6);
-    tempcolor1.b=(unsigned char)((float)color.g*0.6);
+    tempcolor1.b=(unsigned char)((float)color.b*0.6);
     tempcolor1.a=255;
     roundRect(pp,w,tempcolor,tempcolor1,1,1,w-2,h-2,rr-2);
     
@@ -146,7 +146,7 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     tempcolor.r=255;
     tempcolor.g=255;
     tempcolor.b=255;
-    tempcolor.a=128;
+    tempcolor.a=(unsigned char)(128.0*(((float)color.r+(float)color.g+(float)color.b)/510.0));
     tempcolor1.r=255;
     tempcolor1.g=255;
     tempcolor1.b=255;

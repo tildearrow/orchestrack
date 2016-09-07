@@ -33,6 +33,7 @@ class Sampler: public OTrackInstrument {
   SNDFILE* sndf;
   SF_INFO si;
   SDL_Texture* but;
+  SDL_Texture* grid;
   SDL_Rect tempr;
   SDL_Color tempc;
   public:

@@ -95,18 +95,18 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.b=255;
   tempc.a=255;
   but=drawButton(r,0,0,128,64,tempc,16);
+  tempc.r=34;
+  tempc.g=68;
+  tempc.b=98;
+  tempc.a=255;
+  grid=drawButton(r,0,0,620,340,tempc,4);
 }
 
 void Sampler::drawUI() {
-  tempr.x=0;
-  tempr.y=0;
-  tempr.w=128;
-  tempr.h=64;
   tempc.r=255;
   tempc.g=255;
   tempc.b=255;
   tempc.a=255;
-  SDL_RenderCopy(r,but,NULL,&tempr);
   /*
   for (int i=0; i<v.size(); i++) {
     f->drawf(0,i*16,{255,255,255,255},0,0,"%d: %f",i,v[i].f);
@@ -118,7 +118,18 @@ void Sampler::drawUI() {
   }
   SDL_SetRenderDrawColor(r,0,0,0,255);
   */
-  f->drawf(0,16,tempc,0,0,"%d",v.size());
+  f->drawf(0,16,tempc,0,0,"Load",v.size());
+  SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
+  tempr.x=10;
+  tempr.y=10;
+  tempr.w=620;
+  tempr.h=340;
+  SDL_RenderCopy(r,grid,NULL,&tempr);
+  tempr.x=0;
+  tempr.y=0;
+  tempr.w=128;
+  tempr.h=64;
+  SDL_RenderCopy(r,but,NULL,&tempr);
 }
 
 bool Sampler::init(int inChannels, int outChannels) {
