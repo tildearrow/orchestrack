@@ -130,6 +130,18 @@ void Sampler::drawUI() {
   tempr.w=128;
   tempr.h=64;
   SDL_RenderCopy(r,but,NULL,&tempr);
+  // draw currently playing notes
+  SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_ADD);
+  SDL_SetRenderDrawColor(r,255,255,255,32);
+  for (int i=0; i<v.size(); i++) {
+    tempr.x=v[i].note*4;
+    tempr.y=10;
+    tempr.w=4;
+    tempr.h=340;
+    SDL_RenderFillRect(r,&tempr);
+  }
+  SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
+  SDL_SetRenderDrawColor(r,0,0,0,255);
 }
 
 bool Sampler::init(int inChannels, int outChannels) {
