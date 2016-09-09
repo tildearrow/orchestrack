@@ -109,6 +109,7 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
   rect.x=0; rect.y=0; rect.w=w; rect.h=h;
   SDL_Texture* t;
   t=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING,w,h);
+  SDL_SetTextureBlendMode(t,SDL_BLENDMODE_BLEND);
   void* p=NULL;
   int pitch;
   if (!SDL_LockTexture(t,NULL,&p,&pitch)) {
