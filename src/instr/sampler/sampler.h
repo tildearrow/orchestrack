@@ -20,6 +20,7 @@ class Sampler: public OTrackInstrument {
     float vol;
   };
   struct smp {
+    string path;
     int len;
     int chan;
     float rate;
@@ -34,6 +35,8 @@ class Sampler: public OTrackInstrument {
   SF_INFO si;
   SDL_Texture* but;
   SDL_Texture* grid;
+  SDL_Texture* spath;
+  SDL_Texture* sload;
   SDL_Rect tempr;
   SDL_Color tempc;
   public:

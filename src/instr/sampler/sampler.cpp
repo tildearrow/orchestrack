@@ -99,7 +99,17 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.g=68;
   tempc.b=98;
   tempc.a=255;
-  grid=drawButton(r,0,0,620,340,tempc,4);
+  grid=drawButton(r,0,0,720,340,tempc,4);
+  tempc.r=16;
+  tempc.g=16;
+  tempc.b=16;
+  tempc.a=255;
+  spath=drawButton(r,0,0,620,20,tempc,4);
+  tempc.r=64;
+  tempc.g=64;
+  tempc.b=64;
+  tempc.a=255;
+  sload=drawButton(r,0,0,40,20,tempc,4);
 }
 
 void Sampler::drawUI() {
@@ -118,18 +128,17 @@ void Sampler::drawUI() {
   }
   SDL_SetRenderDrawColor(r,0,0,0,255);
   */
-  f->drawf(0,16,tempc,0,0,"Load",v.size());
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
   tempr.x=10;
   tempr.y=10;
-  tempr.w=620;
+  tempr.w=720;
   tempr.h=340;
   SDL_RenderCopy(r,grid,NULL,&tempr);
   tempr.x=0;
   tempr.y=0;
   tempr.w=128;
   tempr.h=64;
-  SDL_RenderCopy(r,but,NULL,&tempr);
+  //SDL_RenderCopy(r,but,NULL,&tempr);
   // draw currently playing notes
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_ADD);
   SDL_SetRenderDrawColor(r,255,255,255,32);
@@ -141,7 +150,23 @@ void Sampler::drawUI() {
     SDL_RenderFillRect(r,&tempr);
   }
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
+  f->draw(370,16,tempc,1,0,0,"Note");
+  f->draw(0,200,tempc,1,1,0,"NoteVol");
+  f->draw(10,360,tempc,0,0,0,"Sample");
+  tempr.x=80;
+  tempr.y=360;
+  tempr.w=600;
+  tempr.h=20;
+  SDL_RenderCopy(r,spath,NULL,&tempr);
+  tempr.x=690;
+  tempr.y=360;
+  tempr.w=40;
+  tempr.h=20;
+  SDL_RenderCopy(r,sload,NULL,&tempr);
+  f->draw(83,360,tempc,0,0,0,s[0].path);
+  f->draw(710,360,tempc,1,0,0,"Load");
   SDL_SetRenderDrawColor(r,0,0,0,255);
+  
 }
 
 bool Sampler::init(int inChannels, int outChannels) {
@@ -152,8 +177,10 @@ bool Sampler::init(int inChannels, int outChannels) {
     for (int i=0; i<v.size(); i++) {
       v[i].period=0;
     }*/
-    sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
+    
     s.resize(1);
+    s[0].path="../share/orchestrack/testsmp.wav";
+    sndf=sf_open(s[0].path.c_str(),SFM_READ,&si);
     s[0].len=si.frames;
     s[0].chan=si.channels;
     s[0].rate=si.samplerate;
