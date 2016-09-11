@@ -148,7 +148,7 @@ int main() {
   printf("initializing audio...\n");
   initAudio();
   printf("initializing UI...\n");
-  win=SDL_CreateWindow("Sampler",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,640,400,0);
+  win=SDL_CreateWindow("Sampler",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,740,512,0);
   r=SDL_CreateRenderer(win,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
   ins.setRenderer(r);
 
@@ -157,8 +157,18 @@ int main() {
   while (1) {
     while (SDL_PollEvent(e)) {
       switch (e->type) {
+        case SDL_MOUSEBUTTONUP:
+          printf("up, %d %d %d\n",e->button.button,e->button.x,e->button.y);
+          break;
+        case SDL_MOUSEBUTTONDOWN:
+          printf("down, %d %d %d\n",e->button.button,e->button.x,e->button.y);
+          break;
+        case SDL_MOUSEMOTION:
+          printf("move, %d %d %d\n",e->button.state,e->button.x,e->button.y);
+          break;
         case SDL_QUIT:
           q=true;
+          break;
       }
     }
     SDL_RenderClear(r);
