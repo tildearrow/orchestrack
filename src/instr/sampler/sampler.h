@@ -26,6 +26,11 @@ class Sampler: public OTrackInstrument {
     float rate;
     float* data;
   };
+  struct {
+    int x;
+    int y;
+    bool b[4];
+  } mouse;
   font* f;
   channel c[16];
   std::vector<voice> v;

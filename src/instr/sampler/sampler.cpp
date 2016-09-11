@@ -79,7 +79,14 @@ float* Sampler::getSample() {
 }
 
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
-  
+  switch (type) {
+    case 0:
+      mouse.x=x; mouse.y=y; break;
+    case 2:
+      mouse.b[button]=1; break;
+    case 1:
+      mouse.b[button]=0; break;
+  }
 }
 
 void Sampler::setRenderer(SDL_Renderer* renderer) {
@@ -169,6 +176,8 @@ void Sampler::drawUI() {
   SDL_RenderCopy(r,sload,NULL,&tempr);
   f->draw(83,360,tempc,0,0,0,s[0].path);
   f->draw(710,360,tempc,1,0,0,"Load");
+  SDL_SetRenderDrawColor(r,(mouse.b[0])?(0):(255),(mouse.b[1])?(0):(255),(mouse.b[2])?(0):(255),255);
+  SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);
   SDL_SetRenderDrawColor(r,0,0,0,255);
   
 }
