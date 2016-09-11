@@ -41,6 +41,9 @@ float* OTrackInstrument::getSample() {
 void OTrackInstrument::drawUI() {
 }
 
+void OTrackInstrument::mouseEvent(int type, int button, int x, int y, int finger) {
+}
+
 bool OTrackInstrument::init(int inChannels, int outChannels) {
   if (inChannels==0) {
     sample=new float[outChannels];

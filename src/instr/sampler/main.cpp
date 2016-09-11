@@ -159,12 +159,15 @@ int main() {
       switch (e->type) {
         case SDL_MOUSEBUTTONUP:
           printf("up, %d %d %d\n",e->button.button,e->button.x,e->button.y);
+          ins.mouseEvent(1,e->button.button,e->button.x,e->button.y,0);
           break;
         case SDL_MOUSEBUTTONDOWN:
           printf("down, %d %d %d\n",e->button.button,e->button.x,e->button.y);
+          ins.mouseEvent(2,e->button.button,e->button.x,e->button.y,0);
           break;
         case SDL_MOUSEMOTION:
           printf("move, %d %d %d\n",e->button.state,e->button.x,e->button.y);
+          ins.mouseEvent(0,0,e->button.x,e->button.y,0);
           break;
         case SDL_QUIT:
           q=true;

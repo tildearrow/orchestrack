@@ -78,6 +78,10 @@ float* Sampler::getSample() {
   return sample;
 }
 
+void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
+  
+}
+
 void Sampler::setRenderer(SDL_Renderer* renderer) {
   r=renderer;
   f=new font;

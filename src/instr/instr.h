@@ -25,5 +25,6 @@ class OTrackInstrument {
     virtual float* getSample();
     virtual void drawUI();
     virtual void setRenderer(SDL_Renderer* renderer);
+    virtual void mouseEvent(int type, int button, int x, int y, int finger);
     virtual bool init(int inChannels, int outChannels);
 };

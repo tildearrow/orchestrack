@@ -43,6 +43,7 @@ class Sampler: public OTrackInstrument {
     OTrackInsSpec* getspec();
     float* getSample();
     void setRenderer(SDL_Renderer* renderer);
+    void mouseEvent(int type, int button, int x, int y, int finger);
     void drawUI();
     bool init(int inChannels, int outChannels);
 };
