@@ -104,6 +104,8 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         sloadS=PointInRect(mouse.x,mouse.y,690,360,690+40,360+20);
         if (sloadS) {
           printf("load?\n");
+          showLoad=true;
+          /***
           string path;
           char c;
           while (1) {
@@ -133,6 +135,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           } else {
             sf_perror(sndf);
           }
+          ***/
         }
       }
       break;
@@ -172,6 +175,27 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.b=64;
   tempc.a=255;
   sload=drawButton(r,0,0,40,20,tempc,4);
+  tempc.r=32;
+  tempc.g=32;
+  tempc.b=32;
+  tempc.a=255;
+  sloadform=drawButton(r,0,0,700,472,tempc,10);
+  showLoad=false;
+}
+
+void Sampler::drawLoadUI() {
+  tempr.x=0;
+  tempr.y=0;
+  tempr.w=740;
+  tempr.h=512;
+  SDL_SetRenderDrawColor(r,0,0,0,192);
+  SDL_RenderFillRect(r,&tempr);
+  
+  tempr.x=20; tempr1.x=0;
+  tempr.y=20; tempr1.y=0;
+  tempr.w=700;  tempr1.w=700;
+  tempr.h=472;  tempr1.h=472;
+  SDL_RenderCopy(r,sloadform,&tempr1,&tempr);
 }
 
 void Sampler::drawUI() {
@@ -229,8 +253,12 @@ void Sampler::drawUI() {
   f->draw(710,360,tempc,1,0,0,"Load");
   /*SDL_SetRenderDrawColor(r,(mouse.b[0])?(0):(255),(mouse.b[1])?(0):(255),(mouse.b[2])?(0):(255),255);
   SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);*/
-  SDL_SetRenderDrawColor(r,0,0,0,255);
   
+  if (showLoad) {
+    drawLoadUI();
+  }
+  
+  SDL_SetRenderDrawColor(r,0,0,0,255);
 }
 
 bool Sampler::init(int inChannels, int outChannels) {

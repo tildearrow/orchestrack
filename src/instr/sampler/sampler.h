@@ -42,8 +42,11 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* grid;
   SDL_Texture* spath;
   SDL_Texture* sload; int sloadS;
+  SDL_Texture* sloadform;
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;
+  bool showLoad;
+  void drawLoadUI();
   public:
     OTrackInsSpec* getspec();
     float* getSample();
