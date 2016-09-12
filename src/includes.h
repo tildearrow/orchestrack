@@ -12,5 +12,7 @@
 #include <string>
 #include <queue>
 #define pi 3.141592653589
+#define PointInRect(x, y, x1, y1, x2, y2)\
+  (x>x1 && x<x2 && y>y1 && y<y2)?(1):(0)
 typedef std::string string;
 #endif
