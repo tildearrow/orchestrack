@@ -126,6 +126,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             s[0].rate=si.samplerate;
             delete[] s[0].data;
             s[0].data=new float[si.frames*si.channels];
+            sf_read_float(sndf,s[0].data,si.frames);
             s[0].path=path;
             printf("finished.\n");
             sf_close(sndf);
