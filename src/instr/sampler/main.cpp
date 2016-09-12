@@ -150,6 +150,8 @@ int main() {
   printf("initializing UI...\n");
   win=SDL_CreateWindow("Sampler",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,740,512,0);
   r=SDL_CreateRenderer(win,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
+  SDL_RenderClear(r);
+  SDL_RenderPresent(r);
   ins.setRenderer(r);
 
   printf("success.\n");
