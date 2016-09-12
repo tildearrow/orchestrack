@@ -81,12 +81,31 @@ float* Sampler::getSample() {
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
-      mouse.x=x; mouse.y=y; break;
+      mouse.x=x; mouse.y=y;
+      if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
+        if (sloadS!=2) {
+          sloadS=1;
+        }
+      } else {
+        if (sloadS!=2) {
+          sloadS=0;
+        }
+      }
+      break;
     case 2:
-      mouse.b[button]=1; break;
+      mouse.b[button]=1;
+      if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
+        sloadS=2;
+      }
+      break;
     case 1:
-      mouse.b[button]=0; break;
+      mouse.b[button]=0;
+      if (sloadS!=1) {
+        sloadS=PointInRect(mouse.x,mouse.y,690,360,690+40,360+20);
+      }
+      break;
   }
+  
 }
 
 void Sampler::setRenderer(SDL_Renderer* renderer) {
@@ -169,7 +188,7 @@ void Sampler::drawUI() {
   tempr.w=600; tempr1.w=600;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,spath,&tempr1,&tempr);
-  tempr.x=690; tempr1.x=0;
+  tempr.x=690; tempr1.x=40*sloadS;
   tempr.y=360; tempr1.y=0;
   tempr.w=40;  tempr1.w=40;
   tempr.h=20;  tempr1.h=20;
