@@ -108,7 +108,7 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
   SDL_Rect rect;
   rect.x=0; rect.y=0; rect.w=w; rect.h=h;
   SDL_Texture* t;
-  t=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING,w,h);
+  t=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING,w*3,h);
   SDL_SetTextureBlendMode(t,SDL_BLENDMODE_BLEND);
   void* p=NULL;
   int pitch;
@@ -116,12 +116,14 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     unsigned char* pp;
     SDL_Color tempcolor;
     SDL_Color tempcolor1;
-    pp=new unsigned char[w*h*4];//(unsigned char*)p;
+    pp=new unsigned char[w*3*h*4];//(unsigned char*)p;
     
     unsigned char* ppp;
     ppp=(unsigned char*)p;
     
-    memset(pp,0,w*h*4);
+    memset(pp,0,w*3*h*4);
+    
+    // --- first --- //
     
     tempcolor.r=(unsigned char)fmin(255,color.r+128);
     tempcolor.g=(unsigned char)fmin(255,color.g+128);
@@ -131,7 +133,7 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     tempcolor1.g=color.g;
     tempcolor1.b=color.b;
     tempcolor1.a=255;
-    roundRect(pp,w,tempcolor,tempcolor1,0,0,w,h,rr);
+    roundRect(pp,w*3,tempcolor,tempcolor1,0,0,w,h,rr);
 
     tempcolor.r=(unsigned char)((float)color.r*0.7);
     tempcolor.g=(unsigned char)((float)color.g*0.7);
@@ -141,7 +143,7 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     tempcolor1.g=(unsigned char)((float)color.g*0.6);
     tempcolor1.b=(unsigned char)((float)color.b*0.6);
     tempcolor1.a=255;
-    roundRect(pp,w,tempcolor,tempcolor1,1,1,w-2,h-2,rr-2);
+    roundRect(pp,w*3,tempcolor,tempcolor1,1,1,w-2,h-2,rr-2);
     
     // glow
     tempcolor.r=255;
@@ -152,14 +154,82 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     tempcolor1.g=255;
     tempcolor1.b=255;
     tempcolor1.a=0;
-    roundRect(pp,w,tempcolor,tempcolor1,2,2,w-4,h-12,rr-2);
+    roundRect(pp,w*3,tempcolor,tempcolor1,2,2,w-4,h-12,rr-2);
+    
+    // --- second --- //
+    
+    tempcolor.r=(unsigned char)fmin(255,color.r+128);
+    tempcolor.g=(unsigned char)fmin(255,color.g+128);
+    tempcolor.b=(unsigned char)fmin(255,color.b+128);
+    tempcolor.a=255;
+    tempcolor1.r=color.r;
+    tempcolor1.g=color.g;
+    tempcolor1.b=color.b;
+    tempcolor1.a=255;
+    roundRect(pp,w*3,tempcolor,tempcolor1,w,0,w,h,rr);
+
+    tempcolor.r=(unsigned char)((float)color.r*0.7);
+    tempcolor.g=(unsigned char)((float)color.g*0.7);
+    tempcolor.b=(unsigned char)((float)color.b*0.7);
+    tempcolor.a=255;
+    tempcolor1.r=(unsigned char)((float)color.r*0.6);
+    tempcolor1.g=(unsigned char)((float)color.g*0.6);
+    tempcolor1.b=(unsigned char)((float)color.b*0.6);
+    tempcolor1.a=255;
+    roundRect(pp,w*3,tempcolor,tempcolor1,w+1,1,w-2,h-2,rr-2);
+    
+    // glow
+    tempcolor.r=255;
+    tempcolor.g=255;
+    tempcolor.b=255;
+    tempcolor.a=(unsigned char)(128.0*(((float)color.r+(float)color.g+(float)color.b)/400.0));
+    tempcolor1.r=255;
+    tempcolor1.g=255;
+    tempcolor1.b=255;
+    tempcolor1.a=0;
+    roundRect(pp,w*3,tempcolor,tempcolor1,w+2,2,w-4,h-12,rr-2);
+    
+    // --- third --- //
+    
+    tempcolor.r=(unsigned char)fmin(255,color.r+128);
+    tempcolor.g=(unsigned char)fmin(255,color.g+128);
+    tempcolor.b=(unsigned char)fmin(255,color.b+128);
+    tempcolor.a=255;
+    tempcolor1.r=color.r;
+    tempcolor1.g=color.g;
+    tempcolor1.b=color.b;
+    tempcolor1.a=255;
+    roundRect(pp,w*3,tempcolor,tempcolor1,w*2,0,w,h,rr);
+
+    tempcolor.r=(unsigned char)((float)color.r*0.7);
+    tempcolor.g=(unsigned char)((float)color.g*0.7);
+    tempcolor.b=(unsigned char)((float)color.b*0.7);
+    tempcolor.a=255;
+    tempcolor1.r=(unsigned char)((float)color.r*0.6);
+    tempcolor1.g=(unsigned char)((float)color.g*0.6);
+    tempcolor1.b=(unsigned char)((float)color.b*0.6);
+    tempcolor1.a=255;
+    roundRect(pp,w*3,tempcolor,tempcolor1,(w*2)+1,1,w-2,h-2,rr-2);
+    
+    // glow
+    tempcolor.r=255;
+    tempcolor.g=255;
+    tempcolor.b=255;
+    tempcolor.a=(unsigned char)(128.0*(((float)color.r+(float)color.g+(float)color.b)/510.0));
+    tempcolor1.r=255;
+    tempcolor1.g=255;
+    tempcolor1.b=255;
+    tempcolor1.a=0;
+    roundRect(pp,w*3,tempcolor,tempcolor1,(w*2)+3,3,w-6,h-10,rr-2);
     
     // copy result
-    for (int i=0; i<w*h; i++) {
-      ppp[i*4]=pp[i*4];//color.b*pp[i*4]/255;
-      ppp[i*4+1]=pp[i*4+1];//color.g*pp[i*4+1]/255;
-      ppp[i*4+2]=pp[i*4+2];//color.r*pp[i*4+2]/255;
-      ppp[i*4+3]=pp[i*4+3];//color.a;
+    for (int i=0; i<w*3; i++) {
+      for (int j=0; j<h; j++) {
+        ppp[(i*4)+(j*pitch)]=pp[(i*4)+(j*pitch)];//color.b*pp[i*4]/255;
+        ppp[(i*4)+(j*pitch)+1]=pp[(i*4)+(j*pitch)+1];//color.g*pp[i*4+1]/255;
+        ppp[(i*4)+(j*pitch)+2]=pp[(i*4)+(j*pitch)+2];//color.r*pp[i*4+2]/255;
+        ppp[(i*4)+(j*pitch)+3]=pp[(i*4)+(j*pitch)+3];//color.a;
+      }
     }
     delete[] pp;
     
