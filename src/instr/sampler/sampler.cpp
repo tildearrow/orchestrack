@@ -102,6 +102,37 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       mouse.b[button]=0;
       if (sloadS!=1) {
         sloadS=PointInRect(mouse.x,mouse.y,690,360,690+40,360+20);
+        if (sloadS) {
+          printf("load?\n");
+          string path;
+          char c;
+          while (1) {
+            c=getchar();
+            if (c=='\b' || c==127) {
+              path.erase(path.size()-1,1);
+            }
+            if (c!='\n') {
+              path+=c;
+            } else {
+              break;
+            }
+          }
+          printf("opening %s\n",path.c_str());
+          sndf=sf_open(path.c_str(),SFM_READ,&si);
+          if (sf_error(sndf)==SF_ERR_NO_ERROR) {
+            printf("loading sample...\n");
+            s[0].len=si.frames;
+            s[0].chan=si.channels;
+            s[0].rate=si.samplerate;
+            delete[] s[0].data;
+            s[0].data=new float[si.frames*si.channels];
+            s[0].path=path;
+            printf("finished.\n");
+            sf_close(sndf);
+          } else {
+            sf_perror(sndf);
+          }
+        }
       }
       break;
   }
