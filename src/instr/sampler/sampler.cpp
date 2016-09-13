@@ -110,9 +110,13 @@ int Sampler::readDir(const char* path) {
       if (FindNextFile(od,de)==0) {
         break;
       } else {
-        dede.name=de->cFileName;
-        dede.type=8;
-        listings.push_back(dede);
+        if (strcmp(".",de->cFileName)!=0 && strcmp("..",de->cFileName)!=0) {
+          if (showHidden || (!(de->dwFileAttributes&FILE_ATTRIBUTE_HIDDEN))) {
+            dede.name=de->cFileName;
+            dede.type=8;
+            listings.push_back(dede);
+          }
+        }
       }
     }
     FindClose(od);
