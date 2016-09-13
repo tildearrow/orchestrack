@@ -115,7 +115,7 @@ int Sampler::readDir(const char* path) {
         listings.push_back(dede);
       }
     }
-    FindClose(de);
+    FindClose(od);
     delete de;
     return 1;
   }
