@@ -46,7 +46,7 @@ int audio(jack_nframes_t len, void* arg) {
   }
   for (int i=0; i<ec; i++) {
     jack_midi_event_get(&me[i],m,i);
-    printf("- event %d time is %d. data (%d):\n  -",i,me[i].time,me[i].size);
+    printf("- event %d time is %d. data (%lu):\n  -",i,me[i].time,me[i].size);
     for (int j=0; j<me[i].size; j++) {
       printf(" %.2x",*(me[i].buffer+j));
     }
@@ -123,7 +123,7 @@ void letAudioRun() {
   if (p) {
     for (int i=0; i<2; i++) {
       if (jack_connect(ac,jack_port_name(ao[i]),p[i])) {
-        fprintf(stderr,"can't connect to system output (i=%d). :(\n");
+        fprintf(stderr,"can't connect to system output (i=%d). :(\n",i);
         break;
       }
     }
