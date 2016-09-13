@@ -56,6 +56,7 @@ class Sampler: public OTrackInstrument {
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;
   bool showLoad;
+  bool showHidden;
   void drawLoadUI();
   string topLevel(string path);
   int readDir(const char* path);

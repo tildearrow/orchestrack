@@ -102,9 +102,11 @@ int Sampler::readDir(const char* path) {
         break;
       } else {
         if (strcmp(".",de->d_name)!=0 && strcmp("..",de->d_name)!=0) {
-          dede.name=de->d_name;
-          dede.type=de->d_type;
-          listings.push_back(dede);
+          if (showHidden || (de->d_name[0]!='.')) {
+            dede.name=de->d_name;
+            dede.type=de->d_type;
+            listings.push_back(dede);
+          }
         }
       }
     }
@@ -414,6 +416,7 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].data=new float[si.frames*si.channels];
     sf_read_float(sndf,s[0].data,si.frames);
     sf_close(sndf);
+    showHidden=false;
     return true;
   } else {
     return false;
