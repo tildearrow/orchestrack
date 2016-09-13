@@ -78,6 +78,40 @@ float* Sampler::getSample() {
   return sample;
 }
 
+int Sampler::readDir(const char* path) {
+  DIR* od;
+  ////// king
+  dirent* de;
+  dentry dede;
+  od=opendir(path);
+  dentry tempelem;
+  if (od!=NULL) {
+    listings.clear();
+    while (1) {
+      de=readdir(od);
+      if (!de) {
+        break;
+      } else {
+        if (strcmp(".",de->d_name)!=0 && strcmp("..",de->d_name)!=0) {
+          dede.name=de->d_name;
+          dede.type=de->d_type;
+          listings.push_back(dede);
+        }
+      }
+    }
+    closedir(od);
+    for (int i=0; i<listings.size(); i++) {
+      for (int j=0; j<listings.size()-1; j++) {
+        if (strcmp(listings[j].name.c_str(),listings[j+1].name.c_str())>0) {
+          tempelem=listings[j];
+          listings[j]=listings[j+1];
+          listings[j+1]=tempelem;
+        }
+      }
+    }
+  }
+}
+
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
@@ -104,6 +138,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         sloadS=PointInRect(mouse.x,mouse.y,690,360,690+40,360+20);
         if (sloadS) {
           printf("load?\n");
+          readDir(wd.c_str());
           showLoad=true;
           /***
           string path;
@@ -247,8 +282,12 @@ void Sampler::drawLoadUI() {
   f->draw(630,462,tempc,1,0,0,"Load");
   f->draw(685,462,tempc,1,0,0,"Cancel");
   
-  f->draw(83,30,tempc,0,0,0,"~/projects/orchestrack/build/");
-  f->draw(33,462,tempc,0,0,0,"filename.wav");
+  f->draw(83,30,tempc,0,0,0,wd);
+  //f->draw(33,462,tempc,0,0,0,"filename.wav");
+  
+  for (int i=0; i<listings.size(); i++) {
+    f->draw(33,63+20*i,tempc,0,0,0,listings[i].name);
+  }
 }
 
 void Sampler::drawUI() {
@@ -322,7 +361,14 @@ bool Sampler::init(int inChannels, int outChannels) {
     for (int i=0; i<v.size(); i++) {
       v[i].period=0;
     }*/
-    
+    char* twd;
+#ifndef _WIN32
+    twd=getcwd(twd,PATH_MAX);
+#else
+    twd=_getcwd(twd,261);
+#endif
+    wd=twd;
+    delete[] twd;
     s.resize(1);
     s[0].path="../share/orchestrack/testsmp.wav";
     sndf=sf_open(s[0].path.c_str(),SFM_READ,&si);

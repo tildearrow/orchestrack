@@ -4,6 +4,13 @@
 #include <stdarg.h>
 #include <math.h>
 #include <string.h>
+#include <dirent.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <direct.h>
+#else
+#include <unistd.h>
+#endif
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>

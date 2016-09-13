@@ -31,10 +31,16 @@ class Sampler: public OTrackInstrument {
     int y;
     bool b[4];
   } mouse;
+  struct dentry {
+    string name;
+    int type;
+  };
   font* f;
   channel c[16];
   std::vector<voice> v;
   std::vector<smp> s;
+  std::vector<dentry> listings;
+  string wd;
   unsigned char* ev;
   SNDFILE* sndf;
   SF_INFO si;
@@ -51,6 +57,7 @@ class Sampler: public OTrackInstrument {
   SDL_Color tempc;
   bool showLoad;
   void drawLoadUI();
+  int readDir(const char* path);
   public:
     OTrackInsSpec* getspec();
     float* getSample();
