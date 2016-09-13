@@ -363,7 +363,7 @@ bool Sampler::init(int inChannels, int outChannels) {
     }*/
     char* twd;
 #ifndef _WIN32
-    twd=getcwd(twd,PATH_MAX);
+    twd=getcwd(NULL,PATH_MAX);
 #else
     twd=_getcwd(twd,261);
 #endif
