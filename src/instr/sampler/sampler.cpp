@@ -170,16 +170,24 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.b=16;
   tempc.a=255;
   spath=drawButton(r,0,0,600,20,tempc,4);
+  slfdir=drawButton(r,0,0,580,20,tempc,4);
+  slfpath=drawButton(r,0,0,570,20,tempc,4);
   tempc.r=64;
   tempc.g=64;
   tempc.b=64;
   tempc.a=255;
   sload=drawButton(r,0,0,40,20,tempc,4);
+  scancel=drawButton(r,0,0,50,20,tempc,4);
   tempc.r=32;
   tempc.g=32;
   tempc.b=32;
   tempc.a=255;
   sloadform=drawButton(r,0,0,700,472,tempc,10);
+  tempc.r=48;
+  tempc.g=48;
+  tempc.b=48;
+  tempc.a=255;
+  slflist=drawButton(r,0,0,680,392,tempc,10);
   showLoad=false;
 }
 
@@ -196,6 +204,51 @@ void Sampler::drawLoadUI() {
   tempr.w=700;  tempr1.w=700;
   tempr.h=472;  tempr1.h=472;
   SDL_RenderCopy(r,sloadform,&tempr1,&tempr);
+  
+  tempr.x=30; tempr1.x=0;
+  tempr.y=60; tempr1.y=0;
+  tempr.w=680;  tempr1.w=680;
+  tempr.h=392;  tempr1.h=392;
+  SDL_RenderCopy(r,slflist,&tempr1,&tempr);
+  
+  tempr.x=80; tempr1.x=0;
+  tempr.y=30; tempr1.y=0;
+  tempr.w=580;  tempr1.w=580;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,slfdir,&tempr1,&tempr);
+  
+  tempr.x=670; tempr1.x=0;
+  tempr.y=30; tempr1.y=0;
+  tempr.w=40;  tempr1.w=40;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,sload,&tempr1,&tempr);
+  
+  tempr.x=30; tempr1.x=0;
+  SDL_RenderCopy(r,sload,&tempr1,&tempr);
+  
+  tempr.y=462; tempr1.y=0;
+  
+  tempr.x=610; tempr1.x=0;
+  SDL_RenderCopy(r,sload,&tempr1,&tempr);
+  
+  tempr.x=660; tempr1.x=0;
+  tempr.w=50;  tempr1.w=50;
+  SDL_RenderCopy(r,scancel,&tempr1,&tempr);
+  
+  tempr.x=30; tempr1.x=0;
+  tempr.y=462; tempr1.y=0;
+  tempr.w=570;  tempr1.w=570;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,slfpath,&tempr1,&tempr);
+  
+  f->draw(50,30,tempc,1,0,0,"Up");
+  f->draw(690,30,tempc,1,0,0,"MD");
+  
+  f->draw(630,462,tempc,1,0,0,"Load");
+  f->draw(685,462,tempc,1,0,0,"Cancel");
+  
+  f->draw(83,30,tempc,0,0,0,"~/projects/orchestrack/build/");
+  f->draw(33,462,tempc,0,0,0,"filename.wav");
 }
 
 void Sampler::drawUI() {
