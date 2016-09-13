@@ -78,6 +78,15 @@ float* Sampler::getSample() {
   return sample;
 }
 
+string Sampler::topLevel(string path) {
+  string res;
+  res=path.erase(path.find_last_of('/'),path.size()-path.find_last_of('/'));
+  if (strcmp(res.c_str(),"")==0) {
+    res="/";
+  }
+  return res;
+}
+
 int Sampler::readDir(const char* path) {
   DIR* od;
   ////// king
@@ -109,6 +118,9 @@ int Sampler::readDir(const char* path) {
         }
       }
     }
+    return 1;
+  } else {
+    return 0;
   }
 }
 
@@ -125,11 +137,27 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           sloadS=0;
         }
       }
+      if (showLoad) {
+        if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
+          if (supS!=2) {
+            supS=1;
+          }
+        } else {
+          if (supS!=2) {
+            supS=0;
+          }
+        }
+      }
       break;
     case 2:
       mouse.b[button]=1;
       if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
         sloadS=2;
+      }
+      if (showLoad) {
+        if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
+          supS=2;
+        }
       }
       break;
     case 1:
@@ -171,6 +199,14 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             sf_perror(sndf);
           }
           ***/
+        }
+      }
+      if (supS!=1) {
+        supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
+        if (supS) {
+          printf("goes up\n");
+          wd=topLevel(wd);
+          readDir(wd.c_str());
         }
       }
       break;
@@ -258,7 +294,7 @@ void Sampler::drawLoadUI() {
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,sload,&tempr1,&tempr);
   
-  tempr.x=30; tempr1.x=0;
+  tempr.x=30; tempr1.x=40*supS;
   SDL_RenderCopy(r,sload,&tempr1,&tempr);
   
   tempr.y=462; tempr1.y=0;

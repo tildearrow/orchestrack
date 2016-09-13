@@ -47,7 +47,7 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* but;
   SDL_Texture* grid;
   SDL_Texture* spath;
-  SDL_Texture* sload; int sloadS;
+  SDL_Texture* sload; int sloadS; int supS;
   SDL_Texture* scancel;
   SDL_Texture* sloadform;
   SDL_Texture* slflist;
@@ -57,6 +57,7 @@ class Sampler: public OTrackInstrument {
   SDL_Color tempc;
   bool showLoad;
   void drawLoadUI();
+  string topLevel(string path);
   int readDir(const char* path);
   public:
     OTrackInsSpec* getspec();
