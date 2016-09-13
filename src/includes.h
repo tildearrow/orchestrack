@@ -4,12 +4,14 @@
 #include <stdarg.h>
 #include <math.h>
 #include <string.h>
-#include <dirent.h>
 #ifdef _WIN32
 #include <windows.h>
 #include <direct.h>
+#define DIR_SEP '\\'
 #else
 #include <unistd.h>
+#include <dirent.h>
+#define DIR_SEP '/'
 #endif
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>

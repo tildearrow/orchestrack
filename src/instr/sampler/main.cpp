@@ -1,9 +1,9 @@
 #include "sampler.h"
 #include <SDL2/SDL.h>
-#define HAVE_JACK
+#ifdef HAVE_JACK
 #include <jack/jack.h>
 #include <jack/midiport.h>
-#include <unistd.h>
+#endif
 
 Sampler ins;
 
@@ -13,10 +13,12 @@ SDL_AudioSpec* as;
 SDL_AudioSpec* ras;
 SDL_AudioDeviceID ai;
 
+#ifdef HAVE_JACK
 jack_port_t* ao[2];
 jack_port_t* mo;
 jack_client_t* ac;
 jack_status_t js;
+#endif
 int ec;
 const char* an;
 

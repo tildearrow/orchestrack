@@ -80,13 +80,48 @@ float* Sampler::getSample() {
 
 string Sampler::topLevel(string path) {
   string res;
-  res=path.erase(path.find_last_of('/'),path.size()-path.find_last_of('/'));
+  res=path.erase(path.find_last_of(DIR_SEP),path.size()-path.find_last_of(DIR_SEP));
+#ifdef _WIN32
+  if (res.size()==2 && res.at(0)>='A' && res.at(0)<='Z' && res.at(1)==':') {
+    res+="\\";
+  }
+#else
   if (strcmp(res.c_str(),"")==0) {
     res="/";
   }
+#endif
   return res;
 }
 
+#ifdef _WIN32
+int Sampler::readDir(const char* path) {
+  HANDLE od;
+  WIN32_FIND_DATA* de;
+  dentry dede;
+  de=new WIN32_FIND_DATA;
+  string apath;
+  apath=path;
+  apath+="\\*";
+  od=FindFirstFile(apath.c_str(),de);
+  dentry tempelem;
+  if (od!=NULL) {
+    listings.resize(0);
+    while (1) {
+      if (FindNextFile(od,de)==0) {
+        break;
+      } else {
+        dede.name=de->cFileName;
+        dede.type=8;
+        listings.push_back(dede);
+      }
+    }
+    FindClose(de);
+    delete de;
+    return 1;
+  }
+  return 0;
+}
+#else
 int Sampler::readDir(const char* path) {
   DIR* od;
   ////// king
@@ -125,6 +160,7 @@ int Sampler::readDir(const char* path) {
     return 0;
   }
 }
+#endif
 
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
@@ -403,7 +439,7 @@ bool Sampler::init(int inChannels, int outChannels) {
 #ifndef _WIN32
     twd=getcwd(NULL,PATH_MAX);
 #else
-    twd=_getcwd(twd,261);
+    twd=_getcwd(NULL,MAX_PATH);
 #endif
     wd=twd;
     delete[] twd;
