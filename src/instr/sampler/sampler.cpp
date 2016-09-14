@@ -203,7 +203,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         }
         if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+listings.size()*20)) {
           if (listings[loadHIndex].type==4) {
-            wd+=DIR_SEP;
+            if (wd.size()!=1) {
+              wd+=DIR_SEP;
+            }
             wd+=listings[loadHIndex].name;
             readDir(wd.c_str());
           }
