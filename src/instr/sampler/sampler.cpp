@@ -12,6 +12,7 @@ OTrackInsSpec* Sampler::getspec() {
 }
 
 float* Sampler::getSample() {
+  if (busy) {v.resize(0); printf("busy!\n"); return sample;}
   float element0, element1, element, definitepos;
   sample[0]=0;
   sample[1]=0;
@@ -218,6 +219,8 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             sndf=sf_open(path.c_str(),SFM_READ,&si);
             if (sf_error(sndf)==SF_ERR_NO_ERROR) {
               printf("loading sample...\n");
+              busy=true;
+              v.resize(0);
               s[0].len=si.frames;
               s[0].chan=si.channels;
               s[0].rate=si.samplerate;
@@ -228,6 +231,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
               printf("finished.\n");
               sf_close(sndf);
               showLoad=false;
+              busy=false;
             } else {
               sf_perror(sndf);
             }
@@ -509,6 +513,7 @@ bool Sampler::init(int inChannels, int outChannels) {
     sf_read_float(sndf,s[0].data,si.frames);
     sf_close(sndf);
     showHidden=false;
+    busy=false;
     return true;
   } else {
     return false;

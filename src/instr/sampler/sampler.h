@@ -57,6 +57,7 @@ class Sampler: public OTrackInstrument {
   SDL_Color tempc;
   bool showLoad;
   bool showHidden;
+  bool busy;
   int loadHIndex, loadSIndex;
   void drawLoadUI();
   string topLevel(string path);
