@@ -203,11 +203,34 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         }
         if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+listings.size()*20)) {
           if (listings[loadHIndex].type==4) {
-            if (wd.size()!=1) {
+            if (wd.at(wd.size()-1)!=DIR_SEP) {
               wd+=DIR_SEP;
             }
             wd+=listings[loadHIndex].name;
             readDir(wd.c_str());
+          } else if (listings[loadHIndex].type==8) {
+            // try to load sample
+            string path;
+            path=wd;
+            path+=DIR_SEP;
+            path+=listings[loadHIndex].name;
+            printf("opening %s\n",path.c_str());
+            sndf=sf_open(path.c_str(),SFM_READ,&si);
+            if (sf_error(sndf)==SF_ERR_NO_ERROR) {
+              printf("loading sample...\n");
+              s[0].len=si.frames;
+              s[0].chan=si.channels;
+              s[0].rate=si.samplerate;
+              delete[] s[0].data;
+              s[0].data=new float[si.frames*si.channels];
+              sf_read_float(sndf,s[0].data,si.frames);
+              s[0].path=listings[loadHIndex].name;
+              printf("finished.\n");
+              sf_close(sndf);
+              showLoad=false;
+            } else {
+              sf_perror(sndf);
+            }
           }
         }
       }
@@ -255,7 +278,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (supS!=1) {
         supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
-        if (supS) {
+        if (supS && showLoad) {
           printf("goes up\n");
           wd=topLevel(wd);
           readDir(wd.c_str());
