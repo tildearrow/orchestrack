@@ -201,6 +201,13 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
           supS=2;
         }
+        if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+listings.size()*20)) {
+          if (listings[loadHIndex].type==4) {
+            wd+=DIR_SEP;
+            wd+=listings[loadHIndex].name;
+            readDir(wd.c_str());
+          }
+        }
       }
       break;
     case 1:
