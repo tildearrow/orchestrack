@@ -113,7 +113,7 @@ int Sampler::readDir(const char* path) {
         if (strcmp(".",de->cFileName)!=0 && strcmp("..",de->cFileName)!=0) {
           if (showHidden || (!(de->dwFileAttributes&FILE_ATTRIBUTE_HIDDEN))) {
             dede.name=de->cFileName;
-            dede.type=8;
+            dede.type=(de->dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)?(4):(8);
             listings.push_back(dede);
           }
         }
@@ -180,6 +180,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         }
       }
       if (showLoad) {
+        loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63)/20);
         if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
           if (supS!=2) {
             supS=1;
@@ -363,7 +364,17 @@ void Sampler::drawLoadUI() {
   f->draw(83,30,tempc,0,0,0,wd);
   //f->draw(33,462,tempc,0,0,0,"filename.wav");
   
+  if (loadHIndex!=-1 && loadHIndex<listings.size()) {
+    SDL_SetRenderDrawColor(r,255,255,255,64);
+    tempr.x=33;
+    tempr.y=66+20*loadHIndex;
+    tempr.w=674;
+    tempr.h=20;
+    SDL_RenderFillRect(r,&tempr);
+  }
+
   for (int i=0; i<listings.size(); i++) {
+    tempc.r=(listings[i].type==4)?(160):(255); tempc.g=(listings[i].type==4)?(192):(255); tempc.b=255; tempc.a=255;
     f->draw(33,63+20*i,tempc,0,0,0,listings[i].name);
   }
 }
