@@ -176,6 +176,8 @@ int main() {
         case SDL_QUIT:
           q=true;
           break;
+        default:
+          printf("got event %d\n",e->type);
       }
     }
     SDL_RenderClear(r);
