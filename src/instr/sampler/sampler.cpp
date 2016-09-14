@@ -383,7 +383,16 @@ void Sampler::drawLoadUI() {
   }
 
   for (int i=0; i<listings.size(); i++) {
-    tempc.r=(listings[i].type==4)?(160):(255); tempc.g=(listings[i].type==4)?(192):(255); tempc.b=255; tempc.a=255;
+    switch (listings[i].type) {
+      case 1: tempc.r=255; tempc.g=192; tempc.b=160; break; // fifo
+      case 2: tempc.r=255; tempc.g=255; tempc.b=160; break; // character
+      case 4: tempc.r=160; tempc.g=192; tempc.b=255; break; // directory
+      case 6: tempc.r=255; tempc.g=220; tempc.b=160; break; // block
+      case 8: tempc.r=255; tempc.g=255; tempc.b=255; break; // file
+      case 10: tempc.r=160; tempc.g=220; tempc.b=255; break; // link
+      case 12: tempc.r=255; tempc.g=128; tempc.b=255; break; // socket
+      default: tempc.r=64; tempc.g=64; tempc.b=64; break; // unknown
+    }
     f->draw(33,63+20*i,tempc,0,0,0,listings[i].name);
   }
 }
