@@ -190,8 +190,8 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
       mouse.x=x; mouse.y=y;
-      if (curView==1) {
-        if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
+      if (curView==2) {
+        if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
           if (sloadS!=2) {
             sloadS=1;
           }
@@ -232,8 +232,8 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (PointInRect(mouse.x,mouse.y,557,482,557+175,482+20)) {
         curView=3;
       }
-      if (curView==1) {
-        if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
+      if (curView==2) {
+        if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
           sloadS=2;
         }
       }
@@ -306,9 +306,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           }
         }
       }
-      if (curView==1) {
+      if (curView==2) {
         if (sloadS!=1) {
-          sloadS=PointInRect(mouse.x,mouse.y,690,360,690+40,360+20);
+          sloadS=PointInRect(mouse.x,mouse.y,690,10,690+40,10+20);
           if (sloadS) {
             printf("load?\n");
             readDir(wd.c_str());
@@ -562,20 +562,23 @@ void Sampler::drawGrid() {
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
   f->draw(370,16,tempc,1,0,0,"Note");
   f->draw(0,200,tempc,1,1,0,"NoteVol");
-  f->draw(10,360,tempc,0,0,0,"Sample");
+  f->drawf(83,400,tempc,0,0,"%d %d %d %d",tick/96,(tick/24)%4,(tick/6)%4,tick%6);
+}
+
+void Sampler::drawSampleEdit() {
+  f->draw(10,10,tempc,0,0,0,"Sample");
   tempr.x=80;  tempr1.x=0;
-  tempr.y=360; tempr1.y=0;
+  tempr.y=10; tempr1.y=0;
   tempr.w=600; tempr1.w=600;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,spath,&tempr1,&tempr);
   tempr.x=690; tempr1.x=40*sloadS;
-  tempr.y=360; tempr1.y=0;
+  tempr.y=10; tempr1.y=0;
   tempr.w=40;  tempr1.w=40;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,sload,&tempr1,&tempr);
-  f->draw(83,360,tempc,0,0,0,s[0].path);
-  f->draw(710,360,tempc,1,0,0,"Load");
-  f->drawf(83,400,tempc,0,0,"%d %d %d %d",tick/96,(tick/24)%4,(tick/6)%4,tick%6);
+  f->draw(83,10,tempc,0,0,0,s[0].path);
+  f->draw(710,10,tempc,1,0,0,"Load");
 }
 
 void Sampler::drawUI() {
@@ -609,6 +612,7 @@ void Sampler::drawUI() {
   switch (curView) {
     case 0: drawSummary(); break;
     case 1: drawGrid(); break;
+    case 2: drawSampleEdit(); break;
   }
   
   if (showLoad) {
