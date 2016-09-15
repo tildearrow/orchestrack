@@ -27,6 +27,7 @@ SDL_Renderer* r;
 
 SDL_Event* e;
 bool q;
+bool touch;
 
 #ifdef HAVE_JACK
 int audio(jack_nframes_t len, void* arg) {
@@ -141,6 +142,7 @@ void letAudioRun() {
 
 int main() {
   q=false;
+  touch=false;
   e=new SDL_Event;
   SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO);
   TTF_Init();
@@ -163,16 +165,34 @@ int main() {
     while (SDL_PollEvent(e)) {
       switch (e->type) {
         case SDL_MOUSEBUTTONUP:
-          //printf("up, %d %d %d\n",e->button.button,e->button.x,e->button.y);
-          ins.mouseEvent(1,e->button.button-1,e->button.x,e->button.y,0);
+	  if (!touch) {
+            ins.mouseEvent(1,e->button.button-1,e->button.x,e->button.y,0);
+	  }
           break;
         case SDL_MOUSEBUTTONDOWN:
-          //printf("down, %d %d %d\n",e->button.button,e->button.x,e->button.y);
-          ins.mouseEvent(2,e->button.button-1,e->button.x,e->button.y,0);
+          if (!touch) {
+	    ins.mouseEvent(2,e->button.button-1,e->button.x,e->button.y,0);
+	  }
           break;
         case SDL_MOUSEMOTION:
-          //printf("move, %d %d %d\n",e->button.state,e->button.x,e->button.y);
-          ins.mouseEvent(0,0,e->button.x,e->button.y,0);
+          if (!touch) {
+	    ins.mouseEvent(0,0,e->button.x,e->button.y,0);
+	  }
+          break;
+        case SDL_FINGERUP:
+	  touch=true;
+	  printf("up %d %d %d\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
+          ins.mouseEvent(1,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
+          break;
+        case SDL_FINGERDOWN:
+	  touch=true;
+	  printf("down %d %d %d\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
+          ins.mouseEvent(2,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
+          break;
+        case SDL_FINGERMOTION:
+	  touch=true;
+	  //printf("move %d %d %d\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
+          ins.mouseEvent(0,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
           break;
         case SDL_QUIT:
           q=true;

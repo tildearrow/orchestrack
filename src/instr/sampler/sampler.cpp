@@ -218,6 +218,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       break;
     case 2:
+      mouse.x=x; mouse.y=y;
       mouse.b[button]=1;
       if (PointInRect(mouse.x,mouse.y,8,482,8+175,482+20)) {
         curView=0;
@@ -601,6 +602,8 @@ void Sampler::drawUI() {
     drawLoadUI();
   }
   
+  SDL_SetRenderDrawColor(r,(mouse.b[0])?(0):(255),(mouse.b[1])?(0):(255),(mouse.b[2])?(0):(255),255);
+  SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }
 
