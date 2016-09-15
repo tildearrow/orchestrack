@@ -692,8 +692,10 @@ void Sampler::drawUI() {
     drawLoadUI();
   }
   
+  /***
   SDL_SetRenderDrawColor(r,(mouse.b[0])?(0):(255),(mouse.b[1])?(0):(255),(mouse.b[2])?(0):(255),255);
   SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);
+  ***/
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }
 
