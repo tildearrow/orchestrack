@@ -11,6 +11,10 @@ OTrackInsSpec* Sampler::getspec() {
   return aspec;
 }
 
+void Sampler::reset() {
+  v.resize(0);
+}
+
 float* Sampler::getSample() {
   if (busy) {v.resize(0); printf("busy!\n"); return sample;}
   float element0, element1, element, definitepos;
@@ -53,6 +57,21 @@ float* Sampler::getSample() {
         if (v[i].chan==(ev[0]&15)) {
           v[i].f=pow(2,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0))/12)*s[0].rate/44100;
         }
+      }
+    }
+    if ((ev[0]>>3)==0x1e) {
+      // SC messages
+      switch (ev[0]&15) {
+        case 2: tick=ev[1]+(ev[1]<<7); printf("pos\n"); break;
+      }
+    }
+    if ((ev[0]>>3)==0x1f) {
+      // real-time messages.
+      switch (ev[0]&15) {
+        case 8: tick++; break;
+        case 0xa: tick=0; break;
+        //case 0xc: tick=0; break;
+        case 0xf: reset(); break;
       }
     }
     ev=(unsigned char*)getEvent();
@@ -477,6 +496,7 @@ void Sampler::drawUI() {
   SDL_RenderCopy(r,sload,&tempr1,&tempr);
   f->draw(83,360,tempc,0,0,0,s[0].path);
   f->draw(710,360,tempc,1,0,0,"Load");
+  f->drawf(83,400,tempc,0,0,"%d %d %d %d",tick/96,(tick/24)%4,(tick/6)%4,tick%6);
   /*SDL_SetRenderDrawColor(r,(mouse.b[0])?(0):(255),(mouse.b[1])?(0):(255),(mouse.b[2])?(0):(255),255);
   SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);*/
   

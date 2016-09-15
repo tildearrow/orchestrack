@@ -58,6 +58,7 @@ class Sampler: public OTrackInstrument {
   bool showLoad;
   bool showHidden;
   bool busy;
+  long tick;
   int loadHIndex, loadSIndex;
   void drawLoadUI();
   string topLevel(string path);
@@ -68,5 +69,6 @@ class Sampler: public OTrackInstrument {
     void setRenderer(SDL_Renderer* renderer);
     void mouseEvent(int type, int button, int x, int y, int finger);
     void drawUI();
+    void reset();
     bool init(int inChannels, int outChannels);
 };
