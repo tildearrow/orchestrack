@@ -253,6 +253,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
                 }
                 wd+=listings[loadHIndex].name;
                 readDir(wd.c_str());
+                listPos=0;
               } else if (listings[loadHIndex].type==8) {
                 // try to load sample
                 string path;
@@ -333,6 +334,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           printf("goes up\n");
           wd=topLevel(wd);
           readDir(wd.c_str());
+          listPos=0;
         }
       }
       break;
@@ -451,7 +453,7 @@ void Sampler::drawLoadUI() {
   clipr.x=32; clipr.y=62; clipr.w=676; clipr.h=388;
   SDL_RenderSetClipRect(r,&clipr);
   if (loadHIndex!=-1 && loadHIndex<listings.size()) {
-    SDL_SetRenderDrawColor(r,255,255,255,64);
+    SDL_SetRenderDrawColor(r,255,255,255,(!scrolling && touching && loadHIndex==(int)((mouse.y-63+listPos)/20))?(128):(64));
     tempr.x=33;
     tempr.y=66+20*loadHIndex-listPos;
     tempr.w=674;
