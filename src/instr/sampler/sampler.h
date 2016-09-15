@@ -53,6 +53,8 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* slflist;
   SDL_Texture* slfdir;
   SDL_Texture* slfpath;
+  SDL_Texture* smode;
+  SDL_Texture* smodeactive;
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;
   bool showLoad;
@@ -68,7 +70,16 @@ class Sampler: public OTrackInstrument {
   bool touching;
   long tick;
   int loadHIndex, loadSIndex;
+  // 0: drawSummary
+  // 1: drawGrid
+  // 2: drawSampleEdit
+  // 3: drawEnvEdit
+  int curView;
   void drawLoadUI();
+  void drawSummary();
+  void drawGrid();
+  void drawEnvEdit();
+  void drawSampleEdit();
   string topLevel(string path);
   int readDir(const char* path);
   public:

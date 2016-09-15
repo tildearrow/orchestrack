@@ -190,13 +190,15 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
       mouse.x=x; mouse.y=y;
-      if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
-        if (sloadS!=2) {
-          sloadS=1;
-        }
-      } else {
-        if (sloadS!=2) {
-          sloadS=0;
+      if (curView==1) {
+        if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
+          if (sloadS!=2) {
+            sloadS=1;
+          }
+        } else {
+          if (sloadS!=2) {
+            sloadS=0;
+          }
         }
       }
       if (showLoad) {
@@ -217,8 +219,22 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       break;
     case 2:
       mouse.b[button]=1;
-      if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
-        sloadS=2;
+      if (PointInRect(mouse.x,mouse.y,8,482,8+175,482+20)) {
+        curView=0;
+      }
+      if (PointInRect(mouse.x,mouse.y,191,482,191+175,482+20)) {
+        curView=1;
+      }
+      if (PointInRect(mouse.x,mouse.y,374,482,374+175,482+20)) {
+        curView=2;
+      }
+      if (PointInRect(mouse.x,mouse.y,557,482,557+175,482+20)) {
+        curView=3;
+      }
+      if (curView==1) {
+        if (PointInRect(mouse.x,mouse.y,690,360,690+40,360+20)) {
+          sloadS=2;
+        }
       }
       if (showLoad) {
         if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
@@ -289,43 +305,14 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           }
         }
       }
-      if (sloadS!=1) {
-        sloadS=PointInRect(mouse.x,mouse.y,690,360,690+40,360+20);
-        if (sloadS) {
-          printf("load?\n");
-          readDir(wd.c_str());
-          showLoad=true;
-          /***
-          string path;
-          char c;
-          while (1) {
-            c=getchar();
-            if (c=='\b' || c==127) {
-              path.erase(path.size()-1,1);
-            }
-            if (c!='\n') {
-              path+=c;
-            } else {
-              break;
-            }
+      if (curView==1) {
+        if (sloadS!=1) {
+          sloadS=PointInRect(mouse.x,mouse.y,690,360,690+40,360+20);
+          if (sloadS) {
+            printf("load?\n");
+            readDir(wd.c_str());
+            showLoad=true;
           }
-          printf("opening %s\n",path.c_str());
-          sndf=sf_open(path.c_str(),SFM_READ,&si);
-          if (sf_error(sndf)==SF_ERR_NO_ERROR) {
-            printf("loading sample...\n");
-            s[0].len=si.frames;
-            s[0].chan=si.channels;
-            s[0].rate=si.samplerate;
-            delete[] s[0].data;
-            s[0].data=new float[si.frames*si.channels];
-            sf_read_float(sndf,s[0].data,si.frames);
-            s[0].path=path;
-            printf("finished.\n");
-            sf_close(sndf);
-          } else {
-            sf_perror(sndf);
-          }
-          ***/
         }
       }
       if (supS!=1) {
@@ -387,6 +374,16 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.b=48;
   tempc.a=255;
   slflist=drawButton(r,0,0,680,392,tempc,2);
+  tempc.r=48;
+  tempc.g=48;
+  tempc.b=48;
+  tempc.a=255;
+  smode=drawButton(r,0,0,175,20,tempc,2);
+  tempc.r=128;
+  tempc.g=128;
+  tempc.b=128;
+  tempc.a=255;
+  smodeactive=drawButton(r,0,0,175,20,tempc,4);
   showLoad=false;
 }
 
@@ -523,23 +520,11 @@ void Sampler::drawLoadUI() {
 
 }
 
-void Sampler::drawUI() {
-  tempc.r=255;
-  tempc.g=255;
-  tempc.b=255;
-  tempc.a=255;
-  /*
-  for (int i=0; i<v.size(); i++) {
-    f->drawf(0,i*16,{255,255,255,255},0,0,"%d: %f",i,v[i].f);
-  }
-    f->draw(256,32,{255,255,255,255},0,0,0,"Load");
-  SDL_SetRenderDrawColor(r,255,255,255,255);
-  for (int i=0; i<400; i++) {
-    SDL_RenderDrawPoint(r,i,250+s[0].data[(int)(((float)i/400)*(float)s[0].len)]*128);
-  }
-  SDL_SetRenderDrawColor(r,0,0,0,255);
-  */
-  SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
+void Sampler::drawSummary() {
+  
+}
+
+void Sampler::drawGrid() {
   tempr.x=10;  tempr1.x=0;
   tempr.y=10;  tempr1.y=0;
   tempr.w=720; tempr1.w=720;
@@ -577,8 +562,40 @@ void Sampler::drawUI() {
   f->draw(83,360,tempc,0,0,0,s[0].path);
   f->draw(710,360,tempc,1,0,0,"Load");
   f->drawf(83,400,tempc,0,0,"%d %d %d %d",tick/96,(tick/24)%4,(tick/6)%4,tick%6);
-  /*SDL_SetRenderDrawColor(r,(mouse.b[0])?(0):(255),(mouse.b[1])?(0):(255),(mouse.b[2])?(0):(255),255);
-  SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);*/
+}
+
+void Sampler::drawUI() {
+  tempc.r=255;
+  tempc.g=255;
+  tempc.b=255;
+  tempc.a=255;
+  
+  SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
+  
+  tempr.x=8;  tempr1.x=0;
+  tempr.y=482; tempr1.y=0;
+  tempr.w=175; tempr1.w=175;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,(curView==0)?(smodeactive):(smode),&tempr1,&tempr);
+  
+  tempr.x=191;  tempr1.x=0;
+  SDL_RenderCopy(r,(curView==1)?(smodeactive):(smode),&tempr1,&tempr);
+  
+  tempr.x=374;  tempr1.x=0;
+  SDL_RenderCopy(r,(curView==2)?(smodeactive):(smode),&tempr1,&tempr);
+  
+  tempr.x=557;  tempr1.x=0;
+  SDL_RenderCopy(r,(curView==3)?(smodeactive):(smode),&tempr1,&tempr);
+  
+  f->draw(95,482,tempc,1,0,0,"Summary");
+  f->draw(278,482,tempc,1,0,0,"Grid");
+  f->draw(462,482,tempc,1,0,0,"Editor");
+  f->draw(644,482,tempc,1,0,0,"Envelope");
+  
+  switch (curView) {
+    case 0: drawSummary(); break;
+    case 1: drawGrid(); break;
+  }
   
   if (showLoad) {
     drawLoadUI();
