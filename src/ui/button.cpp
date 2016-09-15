@@ -38,8 +38,6 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int 
     bitmap[(i*4)+1]=255;
     bitmap[(i*4)+2]=255;
     bitmap[(i*4)+3]=192;
-  }
-  for (int i=rr; i<w-rr; i++) {
     bitmap[((h-1)*w*4)+(i*4)]=255;
     bitmap[((h-1)*w*4)+(i*4)+1]=255;
     bitmap[((h-1)*w*4)+(i*4)+2]=255;
@@ -50,8 +48,6 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int 
     bitmap[((i)*w*4)+1]=255;
     bitmap[((i)*w*4)+2]=255;
     bitmap[((i)*w*4)+3]=192;
-  }
-  for (int i=rr; i<h-rr; i++) {
     bitmap[((w-1)*4)+((i)*w*4)]=255;
     bitmap[((w-1)*4)+((i)*w*4)+1]=255;
     bitmap[((w-1)*4)+((i)*w*4)+2]=255;
