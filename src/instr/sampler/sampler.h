@@ -47,7 +47,7 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* but;
   SDL_Texture* grid;
   SDL_Texture* spath;
-  SDL_Texture* sload; int sloadS; int supS;
+  SDL_Texture* sload; int sloadS; int supS; int seupS; int sedownS;
   SDL_Texture* scancel;
   SDL_Texture* sloadform;
   SDL_Texture* slflist;
@@ -70,6 +70,7 @@ class Sampler: public OTrackInstrument {
   bool touching;
   long tick;
   int loadHIndex, loadSIndex;
+  bool doUp, doDown;
   // 0: drawSummary
   // 1: drawGrid
   // 2: drawSampleEdit

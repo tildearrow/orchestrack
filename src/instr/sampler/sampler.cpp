@@ -200,6 +200,24 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             sloadS=0;
           }
         }
+        if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
+          if (seupS!=2) {
+            seupS=1;
+          }
+        } else {
+          if (seupS!=2) {
+            seupS=0;
+          }
+        }
+        if (PointInRect(mouse.x,mouse.y,580,40,580+40,40+20)) {
+          if (sedownS!=2) {
+            sedownS=1;
+          }
+        } else {
+          if (sedownS!=2) {
+            sedownS=0;
+          }
+        }
       }
       if (showLoad) {
         if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
@@ -217,7 +235,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         scrolling=true;
       }
       break;
-    case 2:
+    case 2: // down
       mouse.x=x; mouse.y=y;
       mouse.b[button]=1;
       if (PointInRect(mouse.x,mouse.y,8,482,8+175,482+20)) {
@@ -235,6 +253,22 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (curView==2) {
         if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
           sloadS=2;
+        }
+        if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
+          seupS=2;
+          if (button!=1) {
+            doUp=true;
+          } else {
+            s[0].rate*=2;
+          }
+        }
+        if (PointInRect(mouse.x,mouse.y,580,40,580+40,40+20)) {
+          sedownS=2;
+          if (button!=1) {
+            doDown=true;
+          } else {
+            s[0].rate/=2;
+          }
         }
       }
       if (showLoad) {
@@ -314,6 +348,14 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             readDir(wd.c_str());
             showLoad=true;
           }
+        }
+        if (seupS!=1) {
+          seupS=PointInRect(mouse.x,mouse.y,630,40,630+40,40+20);
+          doUp=false;
+        }
+        if (sedownS!=1) {
+          sedownS=PointInRect(mouse.x,mouse.y,580,40,580+40,40+20);
+          doDown=false;
         }
       }
       if (supS!=1) {
@@ -567,6 +609,7 @@ void Sampler::drawGrid() {
 
 void Sampler::drawSampleEdit() {
   f->draw(10,10,tempc,0,0,0,"Sample");
+  f->draw(10,40,tempc,0,0,0,"Rate");
   tempr.x=80;  tempr1.x=0;
   tempr.y=10; tempr1.y=0;
   tempr.w=600; tempr1.w=600;
@@ -577,8 +620,28 @@ void Sampler::drawSampleEdit() {
   tempr.w=40;  tempr1.w=40;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,sload,&tempr1,&tempr);
+  tempr.x=630; tempr1.x=40*seupS;
+  tempr.y=40; tempr1.y=0;
+  SDL_RenderCopy(r,sload,&tempr1,&tempr);
+  tempr.x=580; tempr1.x=40*sedownS;
+  SDL_RenderCopy(r,sload,&tempr1,&tempr);
+  tempr.x=680; tempr1.x=50;
+  tempr.y=40; tempr1.y=0;
+  tempr.w=50;  tempr1.w=50;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,scancel,&tempr1,&tempr);
   f->draw(83,10,tempc,0,0,0,s[0].path);
+  f->drawf(83,40,tempc,0,0,"%f",s[0].rate);
   f->draw(710,10,tempc,1,0,0,"Load");
+  f->draw(705,40,tempc,1,0,0,"Keypad");
+  f->draw(650,40,tempc,1,0,0,"Up");
+  f->draw(600,40,tempc,1,0,0,"Down");
+  if (doUp) {
+    s[0].rate++;
+  }
+  if (doDown) {
+    s[0].rate--;
+  }
 }
 
 void Sampler::drawUI() {
