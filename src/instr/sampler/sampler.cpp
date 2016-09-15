@@ -230,9 +230,6 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           scrolling=false;
           touchSPos=listPos+mouse.y;
           listSpeed=0;
-          /***************
-          
-          ***************/
         }
       }
       break;
