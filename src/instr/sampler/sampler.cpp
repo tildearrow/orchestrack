@@ -331,7 +331,11 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         if (y==0) {
           break;
         }
+#ifdef __APPLE__
         listSpeed+=fabs((float)y)*2;
+#else
+        listSpeed+=fabs((float)y)*8;
+#endif
         listDir=(y>0)?(1):(0);
       }
       break;
