@@ -24,7 +24,7 @@ class Sampler: public OTrackInstrument {
     int len;
     int chan;
     float rate;
-    float* data;
+    float** data;
   };
   struct {
     int x;
@@ -42,6 +42,7 @@ class Sampler: public OTrackInstrument {
   std::vector<dentry> listings;
   string wd;
   unsigned char* ev;
+  float* tbuf;
   SNDFILE* sndf;
   SF_INFO si;
   SDL_Texture* but;

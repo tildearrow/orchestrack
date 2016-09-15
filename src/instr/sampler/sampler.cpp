@@ -77,13 +77,22 @@ float* Sampler::getSample() {
     ev=(unsigned char*)getEvent();
   }
   for (int i=0; i<v.size(); i++) {
-    definitepos=fmin(v[i].period,s[0].len);
-    element0=s[0].data[(int)definitepos];
-    element1=s[0].data[(int)definitepos+1];
-    element=element0+((element1-element0)*fmod(definitepos,1));
-    
-    sample[0]+=element*v[i].vol;
-    sample[1]+=element*v[i].vol;
+    if (s[0].chan==1) {
+      definitepos=fmin(v[i].period,s[0].len);
+      element0=s[0].data[0][(int)definitepos];
+      element1=s[0].data[0][(int)definitepos+1];
+      element=element0+((element1-element0)*fmod(definitepos,1));
+      
+      sample[0]+=element*v[i].vol;
+      sample[1]+=element*v[i].vol;
+    } else for (int j=0; j<s[0].chan; j++) {
+      definitepos=fmin(v[i].period,s[0].len);
+      element0=s[0].data[j][(int)definitepos];
+      element1=s[0].data[j][(int)definitepos+1];
+      element=element0+((element1-element0)*fmod(definitepos,1));
+      
+      sample[j]+=element*v[i].vol;
+    }
     v[i].period+=v[i].f;
   }
   
@@ -318,14 +327,25 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
                   busy=true;
                   v.resize(0);
                   s[0].len=si.frames;
+                  for (int i=0; i<s[0].chan; i++) {
+                    delete[] s[0].data[i];
+                  }
+                  delete[] s[0].data;
                   s[0].chan=si.channels;
                   s[0].rate=si.samplerate;
-                  delete[] s[0].data;
-                  s[0].data=new float[si.frames*si.channels];
-                  sf_read_float(sndf,s[0].data,si.frames);
-                  s[0].path=listings[loadHIndex].name;
-                  printf("finished.\n");
+                  s[0].data=new float*[si.channels];
+                  tbuf=new float[si.channels];
+                  for (int i=0; i<si.channels; i++) {
+                    s[0].data[i]=new float[si.frames];
+                  }
+                  for (int i=0; i<si.frames; i++) {
+                    sf_readf_float(sndf,tbuf,1);
+                    for (int j=0; j<si.channels; j++) {
+                      s[0].data[j][i]=tbuf[j];
+                    }
+                  }
                   sf_close(sndf);
+                  delete[] tbuf;
                   showLoad=false;
                   busy=false;
                 } else {
@@ -721,9 +741,19 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].len=si.frames;
     s[0].chan=si.channels;
     s[0].rate=si.samplerate;
-    s[0].data=new float[si.frames*si.channels];
-    sf_read_float(sndf,s[0].data,si.frames);
+    s[0].data=new float*[si.channels];
+    tbuf=new float[si.channels];
+    for (int i=0; i<si.channels; i++) {
+      s[0].data[i]=new float[si.frames];
+    }
+    for (int i=0; i<si.frames; i++) {
+      sf_readf_float(sndf,tbuf,1);
+      for (int j=0; j<si.channels; j++) {
+        s[0].data[j][i]=tbuf[j];
+      }
+    }
     sf_close(sndf);
+    delete[] tbuf;
     showHidden=false;
     busy=false;
     return true;
