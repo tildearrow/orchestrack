@@ -58,6 +58,13 @@ class Sampler: public OTrackInstrument {
   bool showLoad;
   bool showHidden;
   bool busy;
+  float listPos;
+  float fingerS;
+  float listSpeed;
+  bool listDir;
+  float touchSPos;
+  float polledMY, oldPolledMY;
+  bool touching;
   long tick;
   int loadHIndex, loadSIndex;
   void drawLoadUI();

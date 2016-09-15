@@ -211,6 +211,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           }
         }
       }
+      if (touching) {
+        listPos=-mouse.y+touchSPos;
+      }
       break;
     case 2:
       mouse.b[button]=1;
@@ -221,7 +224,12 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
           supS=2;
         }
-        if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+listings.size()*20)) {
+        if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392/*listings.size()*20*/)) {
+          // swipe code
+          touching=true;
+          touchSPos=listPos+mouse.y;
+          listSpeed=0;
+          /***************
           if (listings[loadHIndex].type==4) {
             if (wd.at(wd.size()-1)!=DIR_SEP) {
               wd+=DIR_SEP;
@@ -255,6 +263,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
               sf_perror(sndf);
             }
           }
+          ***************/
         }
       }
       break;
@@ -305,6 +314,14 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           printf("goes up\n");
           wd=topLevel(wd);
           readDir(wd.c_str());
+        }
+      }
+      if (touching) {
+        touching=false;
+        listSpeed=fabs(polledMY-oldPolledMY);
+        listDir=(polledMY-oldPolledMY)>0;
+        if (listPos<0 || (listPos+392)>20*(listings.size())) {
+          listSpeed=0;
         }
       }
       break;
@@ -439,8 +456,53 @@ void Sampler::drawLoadUI() {
       case 12: tempc.r=255; tempc.g=128; tempc.b=255; break; // socket
       default: tempc.r=64; tempc.g=64; tempc.b=64; break; // unknown
     }
-    f->draw(33,63+20*i,tempc,0,0,0,listings[i].name);
+    f->draw(33,63+(20*i)-listPos,tempc,0,0,0,listings[i].name);
   }
+  
+  oldPolledMY=polledMY;
+  polledMY=mouse.y;
+  
+  if (touching) {
+    //printf("fSpeed: %f\n",polledMY-oldPolledMY);
+  } else {
+    if (listDir) {
+      listPos-=listSpeed;
+    } else {
+      listPos+=listSpeed;
+    }
+    if ((listPos+392)>20*(listings.size()) || listPos<0) {
+      listSpeed*=0.6;
+    } else {
+      listSpeed*=0.9;
+    }
+    if (listSpeed<0.1) {
+      listSpeed=0;
+    }
+  }
+  
+  if (listPos<0 && !touching) {
+    listPos+=-listPos/8;
+    if (listPos>-0.5) {
+      listPos=0;
+    }
+    //printf("listPos: %f\n",listPos);
+  }
+  
+  if (listPos>0 && (listPos+392)>20*(listings.size()) && !touching) {
+    if (392>20*listings.size()) {
+      listPos+=-listPos/8;
+      if (listPos<0.5) {
+        listPos=0;
+      }
+    } else {
+      listPos-=((listPos+392)-20*listings.size())/8;
+      if (listPos<((20*(float)listings.size())+0.5-392)) {
+        listPos=(20*(float)listings.size()-392);
+      }
+    }
+    //printf("listPos: %f. target %f\n",listPos,((20*(float)listings.size()-392)+0.5));
+  }
+
 }
 
 void Sampler::drawUI() {
