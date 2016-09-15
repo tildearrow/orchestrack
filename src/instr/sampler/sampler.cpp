@@ -646,6 +646,7 @@ void Sampler::drawSampleEdit() {
     if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
       s[0].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
     }
+    s[0].rate=fmax(0,s[0].rate);
     timeOnButton++;
   }
   if (!(doUp || doDown)) {
