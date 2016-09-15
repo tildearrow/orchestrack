@@ -384,7 +384,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.g=48;
   tempc.b=48;
   tempc.a=255;
-  slflist=drawButton(r,0,0,680,392,tempc,10);
+  slflist=drawButton(r,0,0,680,392,tempc,2);
   showLoad=false;
 }
 
@@ -447,6 +447,9 @@ void Sampler::drawLoadUI() {
   f->draw(83,30,tempc,0,0,0,wd);
   //f->draw(33,462,tempc,0,0,0,"filename.wav");
   
+  SDL_Rect clipr;
+  clipr.x=32; clipr.y=62; clipr.w=676; clipr.h=388;
+  SDL_RenderSetClipRect(r,&clipr);
   if (loadHIndex!=-1 && loadHIndex<listings.size()) {
     SDL_SetRenderDrawColor(r,255,255,255,64);
     tempr.x=33;
@@ -456,7 +459,7 @@ void Sampler::drawLoadUI() {
     SDL_RenderFillRect(r,&tempr);
   }
 
-  for (int i=0; i<listings.size(); i++) {
+  for (int i=fmax(0,listPos/20); i<fmin(listings.size(),20+listPos/20); i++) {
     switch (listings[i].type) {
       case 1: tempc.r=255; tempc.g=192; tempc.b=160; break; // fifo
       case 2: tempc.r=255; tempc.g=255; tempc.b=160; break; // character
@@ -467,8 +470,10 @@ void Sampler::drawLoadUI() {
       case 12: tempc.r=255; tempc.g=128; tempc.b=255; break; // socket
       default: tempc.r=64; tempc.g=64; tempc.b=64; break; // unknown
     }
-    f->draw(33,63+(20*i)-listPos,tempc,0,0,0,listings[i].name);
+    f->draw(33,66+(20*i)-listPos,tempc,0,0,0,listings[i].name);
   }
+  
+  SDL_RenderSetClipRect(r,NULL);
   
   oldPolledMY=polledMY;
   polledMY=mouse.y;
