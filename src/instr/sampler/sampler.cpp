@@ -212,6 +212,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (touching) {
         listPos=-mouse.y+touchSPos;
+        scrolling=true;
       }
       break;
     case 2:
@@ -226,42 +227,11 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392/*listings.size()*20*/)) {
           // swipe code
           touching=true;
+          scrolling=false;
           touchSPos=listPos+mouse.y;
           listSpeed=0;
           /***************
-          if (listings[loadHIndex].type==4) {
-            if (wd.at(wd.size()-1)!=DIR_SEP) {
-              wd+=DIR_SEP;
-            }
-            wd+=listings[loadHIndex].name;
-            readDir(wd.c_str());
-          } else if (listings[loadHIndex].type==8) {
-            // try to load sample
-            string path;
-            path=wd;
-            path+=DIR_SEP;
-            path+=listings[loadHIndex].name;
-            printf("opening %s\n",path.c_str());
-            sndf=sf_open(path.c_str(),SFM_READ,&si);
-            if (sf_error(sndf)==SF_ERR_NO_ERROR) {
-              printf("loading sample...\n");
-              busy=true;
-              v.resize(0);
-              s[0].len=si.frames;
-              s[0].chan=si.channels;
-              s[0].rate=si.samplerate;
-              delete[] s[0].data;
-              s[0].data=new float[si.frames*si.channels];
-              sf_read_float(sndf,s[0].data,si.frames);
-              s[0].path=listings[loadHIndex].name;
-              printf("finished.\n");
-              sf_close(sndf);
-              showLoad=false;
-              busy=false;
-            } else {
-              sf_perror(sndf);
-            }
-          }
+          
           ***************/
         }
       }
@@ -278,8 +248,46 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           }
         }
         if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
-          if (listSpeed==0 && !(listPos<0 || (listPos+392)>20*(listings.size()))) {
-            loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+listPos)/20);
+          if (!scrolling) {
+            if (loadHIndex==(int)((mouse.y-63+listPos)/20) && loadHIndex<listings.size()) {
+              if (listings[loadHIndex].type==4) {
+                if (wd.at(wd.size()-1)!=DIR_SEP) {
+                  wd+=DIR_SEP;
+                }
+                wd+=listings[loadHIndex].name;
+                readDir(wd.c_str());
+              } else if (listings[loadHIndex].type==8) {
+                // try to load sample
+                string path;
+                path=wd;
+                path+=DIR_SEP;
+                path+=listings[loadHIndex].name;
+                printf("opening %s\n",path.c_str());
+                sndf=sf_open(path.c_str(),SFM_READ,&si);
+                if (sf_error(sndf)==SF_ERR_NO_ERROR) {
+                  printf("loading sample...\n");
+                  busy=true;
+                  v.resize(0);
+                  s[0].len=si.frames;
+                  s[0].chan=si.channels;
+                  s[0].rate=si.samplerate;
+                  delete[] s[0].data;
+                  s[0].data=new float[si.frames*si.channels];
+                  sf_read_float(sndf,s[0].data,si.frames);
+                  s[0].path=listings[loadHIndex].name;
+                  printf("finished.\n");
+                  sf_close(sndf);
+                  showLoad=false;
+                  busy=false;
+                } else {
+                  sf_perror(sndf);
+                }
+              }
+            } else {
+              loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+listPos)/20);
+            }
+          } else {
+            scrolling=false;
           }
         }
       }

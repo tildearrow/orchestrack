@@ -62,6 +62,7 @@ class Sampler: public OTrackInstrument {
   float fingerS;
   float listSpeed;
   bool listDir;
+  bool scrolling;
   float touchSPos;
   float polledMY, oldPolledMY;
   bool touching;
