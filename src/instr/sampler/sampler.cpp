@@ -331,7 +331,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         if (y==0) {
           break;
         }
-        listSpeed+=fabs(y)*2;
+        listSpeed+=fabs((float)y)*2;
         listDir=(y>0)?(1):(0);
       }
       break;
