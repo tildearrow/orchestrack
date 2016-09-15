@@ -200,7 +200,6 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         }
       }
       if (showLoad) {
-        loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63)/20);
         if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
           if (supS!=2) {
             supS=1;
@@ -269,6 +268,21 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       break;
     case 1:
       mouse.b[button]=0;
+      if (showLoad) {
+        if (touching) {
+          touching=false;
+          listSpeed=fabs(polledMY-oldPolledMY);
+          listDir=(polledMY-oldPolledMY)>0;
+          if (listPos<0 || (listPos+392)>20*(listings.size())) {
+            listSpeed=0;
+          }
+        }
+        if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
+          if (listSpeed==0 && !(listPos<0 || (listPos+392)>20*(listings.size()))) {
+            loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+listPos)/20);
+          }
+        }
+      }
       if (sloadS!=1) {
         sloadS=PointInRect(mouse.x,mouse.y,690,360,690+40,360+20);
         if (sloadS) {
@@ -314,14 +328,6 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           printf("goes up\n");
           wd=topLevel(wd);
           readDir(wd.c_str());
-        }
-      }
-      if (touching) {
-        touching=false;
-        listSpeed=fabs(polledMY-oldPolledMY);
-        listDir=(polledMY-oldPolledMY)>0;
-        if (listPos<0 || (listPos+392)>20*(listings.size())) {
-          listSpeed=0;
         }
       }
       break;
@@ -439,7 +445,7 @@ void Sampler::drawLoadUI() {
   if (loadHIndex!=-1 && loadHIndex<listings.size()) {
     SDL_SetRenderDrawColor(r,255,255,255,64);
     tempr.x=33;
-    tempr.y=66+20*loadHIndex;
+    tempr.y=66+20*loadHIndex-listPos;
     tempr.w=674;
     tempr.h=20;
     SDL_RenderFillRect(r,&tempr);
