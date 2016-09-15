@@ -637,10 +637,19 @@ void Sampler::drawSampleEdit() {
   f->draw(650,40,tempc,1,0,0,"Up");
   f->draw(600,40,tempc,1,0,0,"Down");
   if (doUp) {
-    s[0].rate++;
+    if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
+      s[0].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+    }
+    timeOnButton++;
   }
   if (doDown) {
-    s[0].rate--;
+    if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
+      s[0].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+    }
+    timeOnButton++;
+  }
+  if (!(doUp || doDown)) {
+    timeOnButton=0;
   }
 }
 

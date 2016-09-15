@@ -71,6 +71,7 @@ class Sampler: public OTrackInstrument {
   long tick;
   int loadHIndex, loadSIndex;
   bool doUp, doDown;
+  int timeOnButton;
   // 0: drawSummary
   // 1: drawGrid
   // 2: drawSampleEdit
