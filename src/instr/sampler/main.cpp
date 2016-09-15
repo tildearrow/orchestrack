@@ -164,6 +164,10 @@ int main() {
   while (1) {
     while (SDL_PollEvent(e)) {
       switch (e->type) {
+        case SDL_MOUSEWHEEL:
+          printf("wheel %d %d\n",e->wheel.x,e->wheel.y);
+          ins.mouseEvent(3,0,e->wheel.x,e->wheel.y,0);
+          break;
         case SDL_MOUSEBUTTONUP:
 	  if (!touch) {
             ins.mouseEvent(1,e->button.button-1,e->button.x,e->button.y,0);
@@ -171,7 +175,7 @@ int main() {
           break;
         case SDL_MOUSEBUTTONDOWN:
           if (!touch) {
-	    ins.mouseEvent(2,e->button.button-1,e->button.x,e->button.y,0);
+	     ins.mouseEvent(2,e->button.button-1,e->button.x,e->button.y,0);
 	  }
           break;
         case SDL_MOUSEMOTION:
@@ -179,6 +183,7 @@ int main() {
 	    ins.mouseEvent(0,0,e->button.x,e->button.y,0);
 	  }
           break;
+#ifndef __APPLE__
         case SDL_FINGERUP:
 	  touch=true;
 	  printf("up %d %d %d\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
@@ -194,6 +199,7 @@ int main() {
 	  //printf("move %d %d %d\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
           ins.mouseEvent(0,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
           break;
+#endif
         case SDL_QUIT:
           q=true;
           break;
