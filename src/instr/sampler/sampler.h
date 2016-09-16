@@ -81,6 +81,7 @@ class Sampler: public OTrackInstrument {
   int curView;
   string kpCurVal;
   float* kpVar;
+  void hover(int x, int y, int x2, int y2, int* result);
   void drawKeypad();
   void kpMouseDown(int button);
   void kpMouseUp(int button);

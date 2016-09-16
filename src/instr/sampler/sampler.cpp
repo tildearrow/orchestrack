@@ -195,16 +195,20 @@ int Sampler::readDir(const char* path) {
 }
 #endif
 
-void Sampler::loadMouseMove(int button) {
-  if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
-    if (supS!=2) {
-      supS=1;
+void Sampler::hover(int x, int y, int x2, int y2, int* result) {
+  if (PointInRect(mouse.x,mouse.y,x,y,x2,y2)) {
+    if ((*result)!=2) {
+      (*result)=1;
     }
   } else {
-    if (supS!=2) {
-      supS=0;
+    if ((*result)!=2) {
+      (*result)=0;
     }
   }
+}
+
+void Sampler::loadMouseMove(int button) {
+  hover(30,30,30+40,30+20,&supS);
 }
 
 void Sampler::loadMouseDown(int button) {
@@ -295,33 +299,9 @@ void Sampler::loadMouseUp(int button) {
 }
 
 void Sampler::seMouseMove(int button) {
-  if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
-    if (sloadS!=2) {
-      sloadS=1;
-    }
-  } else {
-    if (sloadS!=2) {
-      sloadS=0;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
-    if (seupS!=2) {
-      seupS=1;
-    }
-  } else {
-    if (seupS!=2) {
-      seupS=0;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,580,40,580+40,40+20)) {
-    if (sedownS!=2) {
-      sedownS=1;
-    }
-  } else {
-    if (sedownS!=2) {
-      sedownS=0;
-    }
-  }
+  hover(690,10,690+40,10+20,&sloadS);
+  hover(630,40,630+40,40+20,&seupS);
+  hover(580,40,580+40,40+20,&sedownS);
 }
 
 void Sampler::seMouseDown(int button) {
