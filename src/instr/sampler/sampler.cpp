@@ -16,7 +16,7 @@ void Sampler::reset() {
 }
 
 float* Sampler::getSample() {
-  if (busy) {v.resize(0); printf("busy!\n"); return sample;}
+  if (busy) {v.resize(0); return sample;}
   float element0, element1, element, definitepos;
   sample[0]=0;
   sample[1]=0;
