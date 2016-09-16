@@ -209,11 +209,15 @@ void Sampler::hover(int x, int y, int x2, int y2, int* result) {
 
 void Sampler::loadMouseMove(int button) {
   hover(30,30,30+40,30+20,&supS);
+  hover(660,462,660+50,462+20,&scancelS);
 }
 
 void Sampler::loadMouseDown(int button) {
   if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
     supS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,660,462,660+50,462+20)) {
+    scancelS=2;
   }
   if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
     // swipe code
@@ -400,6 +404,13 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           listPos=0;
         }
       }
+      if (scancelS!=1) {
+        scancelS=PointInRect(mouse.x,mouse.y,660,462,660+50,462+20);
+        if (scancelS) {
+          printf("cancel\n");
+          showLoad=false;
+        }
+      }
       break;
     case 3:
       if (showLoad) {
@@ -516,7 +527,7 @@ void Sampler::drawLoadUI() {
   tempr.x=610; tempr1.x=0;
   SDL_RenderCopy(r,sload,&tempr1,&tempr);
   
-  tempr.x=660; tempr1.x=0;
+  tempr.x=660; tempr1.x=50*scancelS;
   tempr.w=50;  tempr1.w=50;
   SDL_RenderCopy(r,scancel,&tempr1,&tempr);
   
