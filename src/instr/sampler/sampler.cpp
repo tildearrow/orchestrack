@@ -225,7 +225,7 @@ void Sampler::loadMouseUp(int button) {
     touching=false;
     listSpeed=fabs(polledMY-oldPolledMY);
     listDir=(polledMY-oldPolledMY)>0;
-    if (listPos<0 || (listPos+392)>20*(listings.size())) {
+    if (listPos<0 || (listPos+382)>20*(listings.size())) {
       listSpeed=0;
     }
   }
@@ -586,7 +586,7 @@ void Sampler::drawLoadUI() {
     } else {
       listPos+=listSpeed;
     }
-    if ((listPos+392)>20*(listings.size()) || listPos<0) {
+    if ((listPos+382)>20*(listings.size()) || listPos<0) {
       listSpeed*=0.6;
     } else {
       listSpeed*=0.9;
@@ -604,14 +604,14 @@ void Sampler::drawLoadUI() {
     //printf("listPos: %f\n",listPos);
   }
   
-  if (listPos>0 && (listPos+392)>20*(listings.size()) && !touching) {
+  if (listPos>0 && (listPos+382)>20*(listings.size()) && !touching) {
     if (392>20*listings.size()) {
       listPos+=-listPos/8;
       if (listPos<0.5) {
         listPos=0;
       }
     } else {
-      listPos-=((listPos+392)-20*listings.size())/8;
+      listPos-=((listPos+382)-20*listings.size())/8;
       if (listPos<((20*(float)listings.size())+0.5-392)) {
         listPos=(20*(float)listings.size()-392);
       }
