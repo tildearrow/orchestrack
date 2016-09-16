@@ -12,6 +12,7 @@ void font::setrenderer(SDL_Renderer* r) {
 }
 
 void font::drawf(int x, int y, SDL_Color col, int align, int valign, const char* format, ...) {
+  if (strcmp(format,"")==0) {return;}
   int chars;
   chars=0;
   va_list va;
@@ -32,6 +33,7 @@ void font::drawf(int x, int y, SDL_Color col, int align, int valign, const char*
 }
 
 void font::draw(int x, int y, SDL_Color col, int align, int valign, bool nocache, string text) {
+  if (text=="") {return;}
   temps=TTF_RenderUTF8_Blended(f, text.c_str(), col);
   if (temps==NULL) {printf("aaaa\n");return;}
   tempt=SDL_CreateTextureFromSurface(renderer, temps);
