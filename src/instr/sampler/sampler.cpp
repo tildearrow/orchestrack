@@ -239,6 +239,8 @@ void Sampler::loadMouseUp(int button) {
           wd+=listings[loadHIndex].name;
           readDir(wd.c_str());
           listPos=0;
+          loadHIndex=-1;
+          sfname="";
         } else if (listings[loadHIndex].type==8) {
           // try to load sample
           string path;
@@ -280,6 +282,11 @@ void Sampler::loadMouseUp(int button) {
         }
       } else {
         loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+listPos)/20);
+        if (loadHIndex<listings.size() && loadHIndex>-1) {
+          sfname=listings[loadHIndex].name;
+        } else {
+          sfname="";
+        }
       }
     } else {
       scrolling=false;
@@ -346,6 +353,7 @@ void Sampler::seMouseUp(int button) {
       printf("load?\n");
       readDir(wd.c_str());
       showLoad=true;
+      loadHIndex=-1;
     }
   }
   if (seupS!=1) {
@@ -545,6 +553,7 @@ void Sampler::drawLoadUI() {
   f->draw(685,462,tempc,1,0,0,"Cancel");
   
   f->draw(83,30,tempc,0,0,0,wd);
+  f->draw(33,462,tempc,0,0,0,sfname);
   //f->draw(33,462,tempc,0,0,0,"filename.wav");
   
   SDL_Rect clipr;

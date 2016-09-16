@@ -41,6 +41,7 @@ class Sampler: public OTrackInstrument {
   std::vector<smp> s;
   std::vector<dentry> listings;
   string wd;
+  string sfname;
   unsigned char* ev;
   float* tbuf;
   SNDFILE* sndf;
