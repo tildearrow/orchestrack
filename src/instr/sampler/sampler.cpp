@@ -195,49 +195,178 @@ int Sampler::readDir(const char* path) {
 }
 #endif
 
+void Sampler::loadMouseMove(int button) {
+  if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
+    if (supS!=2) {
+      supS=1;
+    }
+  } else {
+    if (supS!=2) {
+      supS=0;
+    }
+  }
+}
+
+void Sampler::loadMouseDown(int button) {
+  if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
+    supS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
+    // swipe code
+    touching=true;
+    scrolling=false;
+    touchSPos=listPos+mouse.y;
+    listSpeed=0;
+  }
+}
+
+void Sampler::loadMouseUp(int button) {
+  if (touching) {
+    touching=false;
+    listSpeed=fabs(polledMY-oldPolledMY);
+    listDir=(polledMY-oldPolledMY)>0;
+    if (listPos<0 || (listPos+392)>20*(listings.size())) {
+      listSpeed=0;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
+    if (!scrolling) {
+      if (loadHIndex==(int)((mouse.y-63+listPos)/20) && loadHIndex<listings.size()) {
+        if (listings[loadHIndex].type==4) {
+          if (wd.at(wd.size()-1)!=DIR_SEP) {
+            wd+=DIR_SEP;
+          }
+          wd+=listings[loadHIndex].name;
+          readDir(wd.c_str());
+          listPos=0;
+        } else if (listings[loadHIndex].type==8) {
+          // try to load sample
+          string path;
+          path=wd;
+          path+=DIR_SEP;
+          path+=listings[loadHIndex].name;
+          printf("opening %s\n",path.c_str());
+          sndf=sf_open(path.c_str(),SFM_READ,&si);
+          if (sf_error(sndf)==SF_ERR_NO_ERROR) {
+            printf("loading sample...\n");
+            busy=true;
+            v.resize(0);
+            s[0].len=si.frames;
+            for (int i=0; i<s[0].chan; i++) {
+              delete[] s[0].data[i];
+            }
+            delete[] s[0].data;
+            s[0].chan=si.channels;
+            s[0].rate=si.samplerate;
+            s[0].data=new float*[si.channels];
+            tbuf=new float[si.channels];
+            for (int i=0; i<si.channels; i++) {
+              s[0].data[i]=new float[si.frames];
+            }
+            for (int i=0; i<si.frames; i++) {
+              sf_readf_float(sndf,tbuf,1);
+              for (int j=0; j<si.channels; j++) {
+                s[0].data[j][i]=tbuf[j];
+              }
+            }
+            sf_close(sndf);
+            s[0].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
+            delete[] tbuf;
+            showLoad=false;
+            busy=false;
+          } else {
+            sf_perror(sndf);
+          }
+        }
+      } else {
+        loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+listPos)/20);
+      }
+    } else {
+      scrolling=false;
+    }
+  }
+}
+
+void Sampler::seMouseMove(int button) {
+  if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
+    if (sloadS!=2) {
+      sloadS=1;
+    }
+  } else {
+    if (sloadS!=2) {
+      sloadS=0;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
+    if (seupS!=2) {
+      seupS=1;
+    }
+  } else {
+    if (seupS!=2) {
+      seupS=0;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,580,40,580+40,40+20)) {
+    if (sedownS!=2) {
+      sedownS=1;
+    }
+  } else {
+    if (sedownS!=2) {
+      sedownS=0;
+    }
+  }
+}
+
+void Sampler::seMouseDown(int button) {
+  if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
+    sloadS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
+    seupS=2;
+    if (button!=1) {
+      doUp=true;
+    } else {
+      s[0].rate*=2;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,580,40,580+40,40+20)) {
+    sedownS=2;
+    if (button!=1) {
+      doDown=true;
+    } else {
+      s[0].rate/=2;
+    }
+  }
+}
+
+void Sampler::seMouseUp(int button) {
+  if (sloadS!=1) {
+    sloadS=PointInRect(mouse.x,mouse.y,690,10,690+40,10+20);
+    if (sloadS) {
+      printf("load?\n");
+      readDir(wd.c_str());
+      showLoad=true;
+    }
+  }
+  if (seupS!=1) {
+    seupS=PointInRect(mouse.x,mouse.y,630,40,630+40,40+20);
+    doUp=false;
+  }
+  if (sedownS!=1) {
+    sedownS=PointInRect(mouse.x,mouse.y,580,40,580+40,40+20);
+    doDown=false;
+  }
+}
+
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
       mouse.x=x; mouse.y=y;
       if (curView==2) {
-        if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
-          if (sloadS!=2) {
-            sloadS=1;
-          }
-        } else {
-          if (sloadS!=2) {
-            sloadS=0;
-          }
-        }
-        if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
-          if (seupS!=2) {
-            seupS=1;
-          }
-        } else {
-          if (seupS!=2) {
-            seupS=0;
-          }
-        }
-        if (PointInRect(mouse.x,mouse.y,580,40,580+40,40+20)) {
-          if (sedownS!=2) {
-            sedownS=1;
-          }
-        } else {
-          if (sedownS!=2) {
-            sedownS=0;
-          }
-        }
+        seMouseMove(button);
       }
       if (showLoad) {
-        if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
-          if (supS!=2) {
-            supS=1;
-          }
-        } else {
-          if (supS!=2) {
-            supS=0;
-          }
-        }
+        loadMouseMove(button);
       }
       if (touching) {
         listPos=-mouse.y+touchSPos;
@@ -260,124 +389,19 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         curView=3;
       }
       if (curView==2) {
-        if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
-          sloadS=2;
-        }
-        if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
-          seupS=2;
-          if (button!=1) {
-            doUp=true;
-          } else {
-            s[0].rate*=2;
-          }
-        }
-        if (PointInRect(mouse.x,mouse.y,580,40,580+40,40+20)) {
-          sedownS=2;
-          if (button!=1) {
-            doDown=true;
-          } else {
-            s[0].rate/=2;
-          }
-        }
+        seMouseDown(button);
       }
       if (showLoad) {
-        if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
-          supS=2;
-        }
-        if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392/*listings.size()*20*/)) {
-          // swipe code
-          touching=true;
-          scrolling=false;
-          touchSPos=listPos+mouse.y;
-          listSpeed=0;
-        }
+        loadMouseDown(button);
       }
       break;
-    case 1:
+    case 1: // up
       mouse.b[button]=0;
       if (showLoad) {
-        if (touching) {
-          touching=false;
-          listSpeed=fabs(polledMY-oldPolledMY);
-          listDir=(polledMY-oldPolledMY)>0;
-          if (listPos<0 || (listPos+392)>20*(listings.size())) {
-            listSpeed=0;
-          }
-        }
-        if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
-          if (!scrolling) {
-            if (loadHIndex==(int)((mouse.y-63+listPos)/20) && loadHIndex<listings.size()) {
-              if (listings[loadHIndex].type==4) {
-                if (wd.at(wd.size()-1)!=DIR_SEP) {
-                  wd+=DIR_SEP;
-                }
-                wd+=listings[loadHIndex].name;
-                readDir(wd.c_str());
-                listPos=0;
-              } else if (listings[loadHIndex].type==8) {
-                // try to load sample
-                string path;
-                path=wd;
-                path+=DIR_SEP;
-                path+=listings[loadHIndex].name;
-                printf("opening %s\n",path.c_str());
-                sndf=sf_open(path.c_str(),SFM_READ,&si);
-                if (sf_error(sndf)==SF_ERR_NO_ERROR) {
-                  printf("loading sample...\n");
-                  busy=true;
-                  v.resize(0);
-                  s[0].len=si.frames;
-                  for (int i=0; i<s[0].chan; i++) {
-                    delete[] s[0].data[i];
-                  }
-                  delete[] s[0].data;
-                  s[0].chan=si.channels;
-                  s[0].rate=si.samplerate;
-                  s[0].data=new float*[si.channels];
-                  tbuf=new float[si.channels];
-                  for (int i=0; i<si.channels; i++) {
-                    s[0].data[i]=new float[si.frames];
-                  }
-                  for (int i=0; i<si.frames; i++) {
-                    sf_readf_float(sndf,tbuf,1);
-                    for (int j=0; j<si.channels; j++) {
-                      s[0].data[j][i]=tbuf[j];
-                    }
-                  }
-                  sf_close(sndf);
-                  s[0].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
-                  delete[] tbuf;
-                  showLoad=false;
-                  busy=false;
-                } else {
-                  sf_perror(sndf);
-                }
-              }
-            } else {
-              loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+listPos)/20);
-            }
-          } else {
-            scrolling=false;
-          }
-        }
+        loadMouseUp(button);
       }
       if (curView==2) {
-        if (sloadS!=1) {
-          sloadS=PointInRect(mouse.x,mouse.y,690,10,690+40,10+20);
-          if (sloadS) {
-            printf("load?\n");
-            readDir(wd.c_str());
-            showLoad=true;
-          }
-        }
-        if (seupS!=1) {
-          seupS=PointInRect(mouse.x,mouse.y,630,40,630+40,40+20);
-          doUp=false;
-        }
-        if (sedownS!=1) {
-          sedownS=PointInRect(mouse.x,mouse.y,580,40,580+40,40+20);
-          doDown=false;
-        }
+        seMouseUp(button);
       }
       if (supS!=1) {
         supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
