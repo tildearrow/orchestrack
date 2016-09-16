@@ -78,6 +78,12 @@ class Sampler: public OTrackInstrument {
   // 2: drawSampleEdit
   // 3: drawEnvEdit
   int curView;
+  string kpCurVal;
+  float* kpVar;
+  void drawKeypad();
+  void kpMouseDown();
+  void kpMouseUp();
+  void kpMouseMove();
   void drawLoadUI();
   void drawSummary();
   void drawGrid();
