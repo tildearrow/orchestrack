@@ -345,6 +345,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
                     }
                   }
                   sf_close(sndf);
+                  s[0].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
                   delete[] tbuf;
                   showLoad=false;
                   busy=false;
