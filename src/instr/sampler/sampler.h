@@ -65,6 +65,8 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* slfpath;
   SDL_Texture* smode;
   SDL_Texture* smodeactive;
+  SDL_Texture* srange;
+  SDL_Texture* srangebutton;
   SDL_Texture* sselect; int sselectS;
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;

@@ -504,6 +504,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   spath=drawButton(r,0,0,600,20,tempc,4);
   slfdir=drawButton(r,0,0,580,20,tempc,4);
   slfpath=drawButton(r,0,0,570,20,tempc,4);
+  srange=drawButton(r,0,0,60,36,tempc,4);
   tempc.r=64;
   tempc.g=64;
   tempc.b=64;
@@ -511,6 +512,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   sload=drawButton(r,0,0,40,20,tempc,4);
   scancel=drawButton(r,0,0,50,20,tempc,4);
   sselect=drawButton(r,0,0,60,20,tempc,4);
+  srangebutton=drawButton(r,0,0,40,24,tempc,4);
   tempc.r=32;
   tempc.g=32;
   tempc.b=32;
@@ -848,19 +850,61 @@ void Sampler::drawSampleEdit() {
   f->draw(705,40,tempc,1,0,0,"Keypad");
   f->draw(650,40,tempc,1,0,0,"Up");
   f->draw(600,40,tempc,1,0,0,"Down");
-  f->draw(10,70,tempc,0,0,0,"Range");
-  f->draw(83,70,tempc,0,0,0,"Note");
-  f->drawf(123,70,tempc,0,0,
-           "%c%c%d to %c%c%d",sChromaNote[s[curSample].noteMin%12]
-                             ,sChromaSemitone[s[curSample].noteMin%12]
-                             ,s[curSample].noteMin/12
-                             ,sChromaNote[s[curSample].noteMax%12]
-                             ,sChromaSemitone[s[curSample].noteMax%12]
-                             ,s[curSample].noteMax/12);
-  f->draw(373,70,tempc,0,0,0,"NoteVol");
-  f->drawf(443,70,tempc,0,0,
+  f->draw(370,70,tempc,1,0,0,"Range");
+  f->draw(92,100,tempc,1,0,0,"Note");
+  f->draw(277,100,tempc,1,0,0,"NoteVol");
+  f->draw(462,100,tempc,1,0,0,"Param1");
+  f->draw(647,100,tempc,1,0,0,"Param2");
+  f->draw(92,170,tempc,1,1,0,"to");
+  f->draw(277,170,tempc,1,1,0,"to");
+  f->draw(462,170,tempc,1,1,0,"to");
+  f->draw(647,170,tempc,1,1,0,"to");
+  
+  tempr.x=62-52; tempr1.x=0;
+  tempr.y=152; tempr1.y=0;
+  tempr.w=60;  tempr1.w=60;
+  tempr.h=36;  tempr1.h=36;
+  SDL_RenderCopy(r,srange,&tempr1,&tempr);
+  tempr.x=72-52; tempr1.x=0;
+  tempr.y=124; tempr1.y=0;
+  tempr.w=40;  tempr1.w=40;
+  tempr.h=24;  tempr1.h=24;
+  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
+  tempr.x=72-52; tempr1.x=0;
+  tempr.y=192; tempr1.y=0;
+  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
+  f->draw(92-52,126,tempc,1,0,0,"Up");
+  f->draw(92-52,194,tempc,1,0,0,"Down");
+  f->drawf(92-52,170,tempc,1,1,
+           "%c%c%d",sChromaNote[s[curSample].noteMin%12]
+                   ,sChromaSemitone[s[curSample].noteMin%12]
+                   ,s[curSample].noteMin/12);
+  
+  tempr.x=62+52; tempr1.x=0;
+  tempr.y=152; tempr1.y=0;
+  tempr.w=60;  tempr1.w=60;
+  tempr.h=36;  tempr1.h=36;
+  SDL_RenderCopy(r,srange,&tempr1,&tempr);
+  tempr.x=72+52; tempr1.x=0;
+  tempr.y=124; tempr1.y=0;
+  tempr.w=40;  tempr1.w=40;
+  tempr.h=24;  tempr1.h=24;
+  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
+  tempr.x=72+52; tempr1.x=0;
+  tempr.y=192; tempr1.y=0;
+  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
+  f->draw(92+52,126,tempc,1,0,0,"Up");
+  f->draw(92+52,194,tempc,1,0,0,"Down");
+  f->drawf(92+52,170,tempc,1,1,
+           "%c%c%d",sChromaNote[s[curSample].noteMax%12]
+                   ,sChromaSemitone[s[curSample].noteMax%12]
+                   ,s[curSample].noteMax/12);
+  
+  
+  /*f->drawf(443,70,tempc,0,0,
            "%d to %d",s[curSample].velMin
-                     ,s[curSample].velMax);
+                     ,s[curSample].velMax);*/
+  
   if (doUp) {
     if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
       s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
