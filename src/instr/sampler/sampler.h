@@ -15,6 +15,7 @@ class Sampler: public OTrackInstrument {
     int note;
     int pos;
     int pressure;
+    int sample;
     float period;
     float f;
     float vol;
@@ -23,6 +24,8 @@ class Sampler: public OTrackInstrument {
     string path;
     int len;
     int chan;
+    char noteMin, noteMax;
+    char velMin, velMax;
     float rate;
     float** data;
   };

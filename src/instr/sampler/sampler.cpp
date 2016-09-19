@@ -48,6 +48,12 @@ float* Sampler::getSample() {
       v[thisv].period=0;
       v[thisv].f=pow(2,((float)v[thisv].note-60)/12)*s[0].rate/44100;
       v[thisv].vol=(float)ev[2]/128;
+      for (int i=0; i<s.size(); i++) {
+        if (s[i].noteMin<=v[thisv].note && s[i].noteMax>=v[thisv].note &&
+            s[i].velMin<=ev[2] && s[i].velMax>=ev[2]) {
+          v[thisv].sample=i; break;
+        }
+      }
     }
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
@@ -422,6 +428,10 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             sprintf(sl,"%zu",s.size());
             s[ssize].path+=sl;
             delete[] sl;
+            s[ssize].noteMin=0;
+            s[ssize].noteMax=127;
+            s[ssize].velMin=0;
+            s[ssize].velMax=127;
             sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
             s[ssize].len=si.frames;
             s[ssize].chan=si.channels;
@@ -838,6 +848,19 @@ void Sampler::drawSampleEdit() {
   f->draw(705,40,tempc,1,0,0,"Keypad");
   f->draw(650,40,tempc,1,0,0,"Up");
   f->draw(600,40,tempc,1,0,0,"Down");
+  f->draw(10,70,tempc,0,0,0,"Range");
+  f->draw(83,70,tempc,0,0,0,"Note");
+  f->drawf(123,70,tempc,0,0,
+           "%c%c%d to %c%c%d",sChromaNote[s[curSample].noteMin%12]
+                             ,sChromaSemitone[s[curSample].noteMin%12]
+                             ,s[curSample].noteMin/12
+                             ,sChromaNote[s[curSample].noteMax%12]
+                             ,sChromaSemitone[s[curSample].noteMax%12]
+                             ,s[curSample].noteMax/12);
+  f->draw(373,70,tempc,0,0,0,"NoteVol");
+  f->drawf(443,70,tempc,0,0,
+           "%d to %d",s[curSample].velMin
+                     ,s[curSample].velMax);
   if (doUp) {
     if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
       s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
@@ -923,6 +946,10 @@ bool Sampler::init(int inChannels, int outChannels) {
     delete[] twd;
     s.resize(1);
     s[0].path="Sample1";
+    s[0].noteMin=0;
+    s[0].noteMax=127;
+    s[0].velMin=0;
+    s[0].velMax=127;
     sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
     s[0].len=si.frames;
     s[0].chan=si.channels;
