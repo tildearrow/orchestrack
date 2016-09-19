@@ -107,6 +107,13 @@ float* Sampler::getSample() {
   return sample;
 }
 
+void Sampler::prepareSampleSel() {
+  clearList();
+  for (int i=0; i<s.size(); i++) {
+    feedList(s[i].path,255,255,255,255);
+  }
+}
+
 string Sampler::topLevel(string path) {
   string res;
   res=path.erase(path.find_last_of(DIR_SEP),path.size()-path.find_last_of(DIR_SEP));
@@ -188,6 +195,19 @@ int Sampler::readDir(const char* path) {
         }
       }
     }
+    clearList();
+    for (int i=0; i<listings.size(); i++) {
+      switch (listings[i].type) {
+        case 1: feedList(listings[i].name,255,192,160,255); break; // fifo
+        case 2: feedList(listings[i].name,255,255,160,255); break; // character
+        case 4: feedList(listings[i].name,160,192,255,255); break; // directory
+        case 6: feedList(listings[i].name,255,220,160,255); break; // block
+        case 8: feedList(listings[i].name,255,255,255,255); break; // file
+        case 10: feedList(listings[i].name,160,220,255,255); break; // link
+        case 12: feedList(listings[i].name,255,128,255,255); break; // socket
+        default: feedList(listings[i].name,128,128,128,255); break; // unknown
+      }
+    }
     return 1;
   } else {
     return 0;
@@ -207,18 +227,14 @@ void Sampler::hover(int x, int y, int x2, int y2, int* result) {
   }
 }
 
-void Sampler::loadMouseMove(int button) {
-  hover(30,30,30+40,30+20,&supS);
-  hover(660,462,660+50,462+20,&scancelS);
+void Sampler::listMouseMove(int button) {
+  if (touching) {
+    listPos=-mouse.y+touchSPos;
+    scrolling=true;
+  }
 }
 
-void Sampler::loadMouseDown(int button) {
-  if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
-    supS=2;
-  }
-  if (PointInRect(mouse.x,mouse.y,660,462,660+50,462+20)) {
-    scancelS=2;
-  }
+void Sampler::listMouseDown(int button) {
   if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
     // swipe code
     touching=true;
@@ -228,70 +244,28 @@ void Sampler::loadMouseDown(int button) {
   }
 }
 
-void Sampler::loadMouseUp(int button) {
+void Sampler::listMouseUp(int button) {
   if (touching) {
     touching=false;
     listSpeed=fabs(polledMY-oldPolledMY);
     listDir=(polledMY-oldPolledMY)>0;
-    if (listPos<0 || (listPos+382)>20*(listings.size())) {
+    if (listPos<0 || (listPos+382)>20*(listelem.size())) {
       listSpeed=0;
     }
   }
   if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
     if (!scrolling) {
-      if (loadHIndex==(int)((mouse.y-63+listPos)/20) && loadHIndex<listings.size()) {
-        if (listings[loadHIndex].type==4) {
-          if (wd.at(wd.size()-1)!=DIR_SEP) {
-            wd+=DIR_SEP;
-          }
-          wd+=listings[loadHIndex].name;
-          readDir(wd.c_str());
-          listPos=0;
-          loadHIndex=-1;
-          sfname="";
-        } else if (listings[loadHIndex].type==8) {
-          // try to load sample
-          string path;
-          path=wd;
-          path+=DIR_SEP;
-          path+=listings[loadHIndex].name;
-          printf("opening %s\n",path.c_str());
-          sndf=sf_open(path.c_str(),SFM_READ,&si);
-          if (sf_error(sndf)==SF_ERR_NO_ERROR) {
-            printf("loading sample...\n");
-            busy=true;
-            v.resize(0);
-            s[0].len=si.frames;
-            for (int i=0; i<s[0].chan; i++) {
-              delete[] s[0].data[i];
-            }
-            delete[] s[0].data;
-            s[0].chan=si.channels;
-            s[0].rate=si.samplerate;
-            s[0].data=new float*[si.channels];
-            tbuf=new float[si.channels];
-            for (int i=0; i<si.channels; i++) {
-              s[0].data[i]=new float[si.frames];
-            }
-            for (int i=0; i<si.frames; i++) {
-              sf_readf_float(sndf,tbuf,1);
-              for (int j=0; j<si.channels; j++) {
-                s[0].data[j][i]=tbuf[j];
-              }
-            }
-            sf_close(sndf);
-            s[0].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
-            delete[] tbuf;
-            showLoad=false;
-            busy=false;
-          } else {
-            sf_perror(sndf);
-          }
+      if (loadHIndex==(int)((mouse.y-63+listPos)/20) && loadHIndex<listelem.size()) {
+        if (showSampleSel) {
+          curSample=loadHIndex;
+          showSampleSel=false;
+        } else {
+          loadSample();
         }
       } else {
         loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+listPos)/20);
-        if (loadHIndex<listings.size() && loadHIndex>-1) {
-          sfname=listings[loadHIndex].name;
+        if (loadHIndex<listelem.size() && loadHIndex>-1) {
+          sfname=listelem[loadHIndex].name;
         } else {
           sfname="";
         }
@@ -302,15 +276,51 @@ void Sampler::loadMouseUp(int button) {
   }
 }
 
+void Sampler::listMouseWheel(int x, int y) {
+  if (y==0) {
+    return;
+  }
+#ifdef __APPLE__
+  listSpeed+=fabs((float)y)*2;
+#else
+  listSpeed+=fabs((float)y)*8;
+#endif
+  listDir=(y>0)?(1):(0); 
+}
+
+void Sampler::loadMouseMove(int button) {
+  hover(30,30,30+40,30+20,&supS);
+  hover(660,462,660+50,462+20,&scancelS);
+  listMouseMove(button);
+}
+
+void Sampler::loadMouseDown(int button) {
+  if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
+    supS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,660,462,660+50,462+20)) {
+    scancelS=2;
+  }
+  listMouseDown(button);
+}
+
+void Sampler::loadMouseUp(int button) {
+  listMouseUp(button);
+}
+
 void Sampler::seMouseMove(int button) {
   hover(690,10,690+40,10+20,&sloadS);
   hover(630,40,630+40,40+20,&seupS);
   hover(580,40,580+40,40+20,&sedownS);
+  hover(10,10,10+60,10+20,&sselectS);
 }
 
 void Sampler::seMouseDown(int button) {
   if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
     sloadS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,10,10,10+60,10+20)) {
+    sselectS=2;
   }
   if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
     seupS=2;
@@ -340,6 +350,15 @@ void Sampler::seMouseUp(int button) {
       loadHIndex=-1;
     }
   }
+  if (sselectS!=1) {
+    sselectS=PointInRect(mouse.x,mouse.y,10,10,10+60,10+20);
+    if (sselectS) {
+      printf("select?\n");
+      prepareSampleSel();
+      showSampleSel=true;
+      loadHIndex=-1;
+    }
+  }
   if (seupS!=1) {
     seupS=PointInRect(mouse.x,mouse.y,630,40,630+40,40+20);
     doUp=false;
@@ -357,12 +376,8 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (curView==2) {
         seMouseMove(button);
       }
-      if (showLoad) {
+      if (showLoad || showSampleSel) {
         loadMouseMove(button);
-      }
-      if (touching) {
-        listPos=-mouse.y+touchSPos;
-        scrolling=true;
       }
       break;
     case 2: // down
@@ -383,13 +398,13 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (curView==2) {
         seMouseDown(button);
       }
-      if (showLoad) {
+      if (showLoad || showSampleSel) {
         loadMouseDown(button);
       }
       break;
     case 1: // up
       mouse.b[button]=0;
-      if (showLoad) {
+      if (showLoad || showSampleSel) {
         loadMouseUp(button);
       }
       if (curView==2) {
@@ -397,11 +412,22 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (supS!=1) {
         supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
-        if (supS && showLoad) {
-          printf("goes up\n");
-          wd=topLevel(wd);
-          readDir(wd.c_str());
-          listPos=0;
+        if (supS && (showLoad || showSampleSel)) {
+          if (showSampleSel) {
+            s.resize(s.size()+1);
+            s[s.size()-1].path="Sample";
+            char* sl;
+            sl=new char[21];
+            sprintf(sl,"%zu",s.size());
+            s[s.size()-1].path+=sl;
+            delete[] sl;
+            prepareSampleSel();
+          } else {
+            printf("goes up\n");
+            wd=topLevel(wd);
+            readDir(wd.c_str());
+            listPos=0;
+          }
         }
       }
       if (scancelS!=1) {
@@ -409,20 +435,13 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         if (scancelS) {
           printf("cancel\n");
           showLoad=false;
+          showSampleSel=false;
         }
       }
       break;
     case 3:
-      if (showLoad) {
-        if (y==0) {
-          break;
-        }
-#ifdef __APPLE__
-        listSpeed+=fabs((float)y)*2;
-#else
-        listSpeed+=fabs((float)y)*8;
-#endif
-        listDir=(y>0)?(1):(0);
+      if (showLoad || showSampleSel) {
+        listMouseWheel(x,y);
       }
       break;
   }
@@ -464,6 +483,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.a=255;
   sload=drawButton(r,0,0,40,20,tempc,4);
   scancel=drawButton(r,0,0,50,20,tempc,4);
+  sselect=drawButton(r,0,0,60,20,tempc,4);
   tempc.r=32;
   tempc.g=32;
   tempc.b=32;
@@ -487,6 +507,141 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   showLoad=false;
 }
 
+void Sampler::loadSample() {
+  if (listings[loadHIndex].type==4) {
+    if (wd.at(wd.size()-1)!=DIR_SEP) {
+      wd+=DIR_SEP;
+    }
+    wd+=listings[loadHIndex].name;
+    readDir(wd.c_str());
+    listPos=0;
+    loadHIndex=-1;
+    sfname="";
+  } else if (listings[loadHIndex].type==8) {
+    // try to load sample
+    string path;
+    path=wd;
+    path+=DIR_SEP;
+    path+=listings[loadHIndex].name;
+    printf("opening %s\n",path.c_str());
+    sndf=sf_open(path.c_str(),SFM_READ,&si);
+    if (sf_error(sndf)==SF_ERR_NO_ERROR) {
+      printf("loading sample...\n");
+      busy=true;
+      v.resize(0);
+      s[0].len=si.frames;
+      for (int i=0; i<s[0].chan; i++) {
+        delete[] s[0].data[i];
+      }
+      delete[] s[0].data;
+      s[0].chan=si.channels;
+      s[0].rate=si.samplerate;
+      s[0].data=new float*[si.channels];
+      tbuf=new float[si.channels];
+      for (int i=0; i<si.channels; i++) {
+        s[0].data[i]=new float[si.frames];
+      }
+      for (int i=0; i<si.frames; i++) {
+        sf_readf_float(sndf,tbuf,1);
+        for (int j=0; j<si.channels; j++) {
+          s[0].data[j][i]=tbuf[j];
+        }
+      }
+      sf_close(sndf);
+      s[0].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
+      delete[] tbuf;
+      showLoad=false;
+      busy=false;
+    } else {
+      sf_perror(sndf);
+    }
+  }
+}
+
+void Sampler::clearList() {
+  listelem.resize(0);
+}
+
+void Sampler::feedList(string name, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+  listentry tle;
+  tle.name=name;
+  tle.color.r=r;
+  tle.color.g=g;
+  tle.color.b=b;
+  tle.color.a=a;
+  listelem.push_back(tle);
+}
+
+void Sampler::drawList() {
+  tempr.x=30; tempr1.x=0;
+  tempr.y=60; tempr1.y=0;
+  tempr.w=680;  tempr1.w=680;
+  tempr.h=392;  tempr1.h=392;
+  SDL_RenderCopy(r,slflist,&tempr1,&tempr);
+  
+  SDL_Rect clipr;
+  clipr.x=32; clipr.y=62; clipr.w=676; clipr.h=388;
+  SDL_RenderSetClipRect(r,&clipr);
+  if (loadHIndex!=-1 && loadHIndex<listelem.size()) {
+    SDL_SetRenderDrawColor(r,255,255,255,(!scrolling && touching && loadHIndex==(int)((mouse.y-63+listPos)/20))?(128):(64));
+    tempr.x=33;
+    tempr.y=66+20*loadHIndex-listPos;
+    tempr.w=674;
+    tempr.h=20;
+    SDL_RenderFillRect(r,&tempr);
+  }
+
+  for (int i=fmax(0,listPos/20); i<fmin(listelem.size(),20+listPos/20); i++) {
+    f->draw(33,66+(20*i)-listPos,listelem[i].color,0,0,0,listelem[i].name);
+  }
+  
+  SDL_RenderSetClipRect(r,NULL);
+  
+  oldPolledMY=polledMY;
+  polledMY=mouse.y;
+  
+  if (touching) {
+    //printf("fSpeed: %f\n",polledMY-oldPolledMY);
+  } else {
+    if (listDir) {
+      listPos-=listSpeed;
+    } else {
+      listPos+=listSpeed;
+    }
+    if ((listPos+382)>20*(listelem.size()) || listPos<0) {
+      listSpeed*=0.6;
+    } else {
+      listSpeed*=0.9;
+    }
+    if (listSpeed<0.1) {
+      listSpeed=0;
+    }
+  }
+  
+  if (listPos<0 && !touching) {
+    listPos+=-listPos/8;
+    if (listPos>-0.5) {
+      listPos=0;
+    }
+    //printf("listPos: %f\n",listPos);
+  }
+  
+  if (listPos>0 && (listPos+382)>20*(listings.size()) && !touching) {
+    if (392>20*listelem.size()) {
+      listPos+=-listPos/8;
+      if (listPos<0.5) {
+        listPos=0;
+      }
+    } else {
+      listPos-=((listPos+382)-20*listelem.size())/8;
+      if (listPos<((20*(float)listelem.size())+0.5-392)) {
+        listPos=(20*(float)listelem.size()-392);
+      }
+    }
+    //printf("listPos: %f. target %f\n",listPos,((20*(float)listings.size()-392)+0.5));
+  }
+}
+
 void Sampler::drawLoadUI() {
   tempr.x=0;
   tempr.y=0;
@@ -500,12 +655,6 @@ void Sampler::drawLoadUI() {
   tempr.w=700;  tempr1.w=700;
   tempr.h=472;  tempr1.h=472;
   SDL_RenderCopy(r,sloadform,&tempr1,&tempr);
-  
-  tempr.x=30; tempr1.x=0;
-  tempr.y=60; tempr1.y=0;
-  tempr.w=680;  tempr1.w=680;
-  tempr.h=392;  tempr1.h=392;
-  SDL_RenderCopy(r,slflist,&tempr1,&tempr);
   
   tempr.x=80; tempr1.x=0;
   tempr.y=30; tempr1.y=0;
@@ -546,79 +695,63 @@ void Sampler::drawLoadUI() {
   f->draw(83,30,tempc,0,0,0,wd);
   f->draw(33,462,tempc,0,0,0,sfname);
   //f->draw(33,462,tempc,0,0,0,"filename.wav");
-  
-  SDL_Rect clipr;
-  clipr.x=32; clipr.y=62; clipr.w=676; clipr.h=388;
-  SDL_RenderSetClipRect(r,&clipr);
-  if (loadHIndex!=-1 && loadHIndex<listings.size()) {
-    SDL_SetRenderDrawColor(r,255,255,255,(!scrolling && touching && loadHIndex==(int)((mouse.y-63+listPos)/20))?(128):(64));
-    tempr.x=33;
-    tempr.y=66+20*loadHIndex-listPos;
-    tempr.w=674;
-    tempr.h=20;
-    SDL_RenderFillRect(r,&tempr);
-  }
+  drawList();
+}
 
-  for (int i=fmax(0,listPos/20); i<fmin(listings.size(),20+listPos/20); i++) {
-    switch (listings[i].type) {
-      case 1: tempc.r=255; tempc.g=192; tempc.b=160; break; // fifo
-      case 2: tempc.r=255; tempc.g=255; tempc.b=160; break; // character
-      case 4: tempc.r=160; tempc.g=192; tempc.b=255; break; // directory
-      case 6: tempc.r=255; tempc.g=220; tempc.b=160; break; // block
-      case 8: tempc.r=255; tempc.g=255; tempc.b=255; break; // file
-      case 10: tempc.r=160; tempc.g=220; tempc.b=255; break; // link
-      case 12: tempc.r=255; tempc.g=128; tempc.b=255; break; // socket
-      default: tempc.r=64; tempc.g=64; tempc.b=64; break; // unknown
-    }
-    f->draw(33,66+(20*i)-listPos,tempc,0,0,0,listings[i].name);
-  }
+void Sampler::drawSampleSel() {
+  tempr.x=0;
+  tempr.y=0;
+  tempr.w=740;
+  tempr.h=512;
+  SDL_SetRenderDrawColor(r,0,0,0,192);
+  SDL_RenderFillRect(r,&tempr);
   
-  SDL_RenderSetClipRect(r,NULL);
+  tempr.x=20; tempr1.x=0;
+  tempr.y=20; tempr1.y=0;
+  tempr.w=700;  tempr1.w=700;
+  tempr.h=472;  tempr1.h=472;
+  SDL_RenderCopy(r,sloadform,&tempr1,&tempr);
   
-  oldPolledMY=polledMY;
-  polledMY=mouse.y;
+  tempr.x=80; tempr1.x=0;
+  tempr.y=30; tempr1.y=0;
+  tempr.w=580;  tempr1.w=580;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,slfdir,&tempr1,&tempr);
   
-  if (touching) {
-    //printf("fSpeed: %f\n",polledMY-oldPolledMY);
-  } else {
-    if (listDir) {
-      listPos-=listSpeed;
-    } else {
-      listPos+=listSpeed;
-    }
-    if ((listPos+382)>20*(listings.size()) || listPos<0) {
-      listSpeed*=0.6;
-    } else {
-      listSpeed*=0.9;
-    }
-    if (listSpeed<0.1) {
-      listSpeed=0;
-    }
-  }
+  tempr.x=670; tempr1.x=0;
+  tempr.y=30; tempr1.y=0;
+  tempr.w=40;  tempr1.w=40;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,sload,&tempr1,&tempr);
   
-  if (listPos<0 && !touching) {
-    listPos+=-listPos/8;
-    if (listPos>-0.5) {
-      listPos=0;
-    }
-    //printf("listPos: %f\n",listPos);
-  }
+  tempr.x=30; tempr1.x=40*supS;
+  SDL_RenderCopy(r,sload,&tempr1,&tempr);
   
-  if (listPos>0 && (listPos+382)>20*(listings.size()) && !touching) {
-    if (392>20*listings.size()) {
-      listPos+=-listPos/8;
-      if (listPos<0.5) {
-        listPos=0;
-      }
-    } else {
-      listPos-=((listPos+382)-20*listings.size())/8;
-      if (listPos<((20*(float)listings.size())+0.5-392)) {
-        listPos=(20*(float)listings.size()-392);
-      }
-    }
-    //printf("listPos: %f. target %f\n",listPos,((20*(float)listings.size()-392)+0.5));
-  }
-
+  tempr.y=462; tempr1.y=0;
+  
+  tempr.x=610; tempr1.x=0;
+  SDL_RenderCopy(r,sload,&tempr1,&tempr);
+  
+  tempr.x=660; tempr1.x=50*scancelS;
+  tempr.w=50;  tempr1.w=50;
+  SDL_RenderCopy(r,scancel,&tempr1,&tempr);
+  
+  tempr.x=30; tempr1.x=0;
+  tempr.y=462; tempr1.y=0;
+  tempr.w=570;  tempr1.w=570;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,slfpath,&tempr1,&tempr);
+  
+  f->draw(50,30,tempc,1,0,0,"New");
+  f->draw(690,30,tempc,1,0,0,"Del");
+  
+  f->draw(630,462,tempc,1,0,0,"Select");
+  f->draw(685,462,tempc,1,0,0,"Cancel");
+  
+  f->draw(370,30,tempc,1,0,0,"Select Sample");
+  f->draw(33,462,tempc,0,0,0,sfname);
+  //f->draw(33,462,tempc,0,0,0,"filename.wav");
+  drawList();
 }
 
 void Sampler::drawSummary() {
@@ -653,7 +786,6 @@ void Sampler::drawGrid() {
 }
 
 void Sampler::drawSampleEdit() {
-  f->draw(10,10,tempc,0,0,0,"Sample");
   f->draw(10,40,tempc,0,0,0,"Rate");
   tempr.x=80;  tempr1.x=0;
   tempr.y=10; tempr1.y=0;
@@ -675,23 +807,31 @@ void Sampler::drawSampleEdit() {
   tempr.w=50;  tempr1.w=50;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,scancel,&tempr1,&tempr);
-  f->draw(83,10,tempc,0,0,0,s[0].path);
-  f->drawf(83,40,tempc,0,0,"%f",s[0].rate);
+  
+  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.y=10; tempr1.y=0;
+  tempr.w=60;  tempr1.w=60;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,sselect,&tempr1,&tempr);
+  f->draw(40,10,tempc,1,0,0,"Sample");
+  
+  f->draw(83,10,tempc,0,0,0,s[curSample].path);
+  f->drawf(83,40,tempc,0,0,"%f",s[curSample].rate);
   f->draw(710,10,tempc,1,0,0,"Load");
   f->draw(705,40,tempc,1,0,0,"Keypad");
   f->draw(650,40,tempc,1,0,0,"Up");
   f->draw(600,40,tempc,1,0,0,"Down");
   if (doUp) {
     if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
-      s[0].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+      s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
     }
     timeOnButton++;
   }
   if (doDown) {
     if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
-      s[0].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+      s[curSample].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
     }
-    s[0].rate=fmax(0,s[0].rate);
+    s[curSample].rate=fmax(0,s[curSample].rate);
     timeOnButton++;
   }
   if (!(doUp || doDown)) {
@@ -735,6 +875,10 @@ void Sampler::drawUI() {
   
   if (showLoad) {
     drawLoadUI();
+  }
+  
+  if (showSampleSel) {
+    drawSampleSel();
   }
   
   /***

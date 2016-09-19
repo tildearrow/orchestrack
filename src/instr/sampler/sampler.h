@@ -35,11 +35,16 @@ class Sampler: public OTrackInstrument {
     string name;
     int type;
   };
+  struct listentry {
+    string name;
+    SDL_Color color;
+  };
   font* f;
   channel c[16];
   std::vector<voice> v;
   std::vector<smp> s;
   std::vector<dentry> listings;
+  std::vector<listentry> listelem;
   string wd;
   string sfname;
   unsigned char* ev;
@@ -57,9 +62,11 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* slfpath;
   SDL_Texture* smode;
   SDL_Texture* smodeactive;
+  SDL_Texture* sselect; int sselectS;
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;
   bool showLoad;
+  bool showSampleSel;
   bool showHidden;
   bool busy;
   float listPos;
@@ -79,6 +86,7 @@ class Sampler: public OTrackInstrument {
   // 2: drawSampleEdit
   // 3: drawEnvEdit
   int curView;
+  int curSample;
   string kpCurVal;
   float* kpVar;
   void hover(int x, int y, int x2, int y2, int* result);
@@ -86,13 +94,23 @@ class Sampler: public OTrackInstrument {
   void kpMouseDown(int button);
   void kpMouseUp(int button);
   void kpMouseMove(int button);
+  void listMouseDown(int button);
+  void listMouseUp(int button);
+  void listMouseMove(int button);
+  void listMouseWheel(int x, int y);
   void loadMouseDown(int button);
   void loadMouseUp(int button);
   void loadMouseMove(int button);
   void seMouseDown(int button);
   void seMouseUp(int button);
   void seMouseMove(int button);
+  void loadSample();
+  void clearList();
+  void feedList(string name, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+  void drawList();
   void drawLoadUI();
+  void prepareSampleSel();
+  void drawSampleSel();
   void drawSummary();
   void drawGrid();
   void drawEnvEdit();
