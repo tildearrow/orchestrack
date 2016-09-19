@@ -415,12 +415,29 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         if (supS && (showLoad || showSampleSel)) {
           if (showSampleSel) {
             s.resize(s.size()+1);
-            s[s.size()-1].path="Sample";
+            int ssize=s.size()-1;
+            s[ssize].path="Sample";
             char* sl;
             sl=new char[21];
             sprintf(sl,"%zu",s.size());
-            s[s.size()-1].path+=sl;
+            s[ssize].path+=sl;
             delete[] sl;
+            sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
+            s[ssize].len=si.frames;
+            s[ssize].chan=si.channels;
+            s[ssize].rate=si.samplerate;
+            s[ssize].data=new float*[si.channels];
+            tbuf=new float[si.channels];
+            for (int i=0; i<si.channels; i++) {
+              s[ssize].data[i]=new float[si.frames];
+            }
+            for (int i=0; i<si.frames; i++) {
+              sf_readf_float(sndf,tbuf,1);
+              for (int j=0; j<si.channels; j++) {
+                s[ssize].data[j][i]=tbuf[j];
+              }
+            }
+            sf_close(sndf);
             prepareSampleSel();
           } else {
             printf("goes up\n");
@@ -529,26 +546,26 @@ void Sampler::loadSample() {
       printf("loading sample...\n");
       busy=true;
       v.resize(0);
-      s[0].len=si.frames;
-      for (int i=0; i<s[0].chan; i++) {
-        delete[] s[0].data[i];
+      s[curSample].len=si.frames;
+      for (int i=0; i<s[curSample].chan; i++) {
+        delete[] s[curSample].data[i];
       }
-      delete[] s[0].data;
-      s[0].chan=si.channels;
-      s[0].rate=si.samplerate;
-      s[0].data=new float*[si.channels];
+      delete[] s[curSample].data;
+      s[curSample].chan=si.channels;
+      s[curSample].rate=si.samplerate;
+      s[curSample].data=new float*[si.channels];
       tbuf=new float[si.channels];
       for (int i=0; i<si.channels; i++) {
-        s[0].data[i]=new float[si.frames];
+        s[curSample].data[i]=new float[si.frames];
       }
       for (int i=0; i<si.frames; i++) {
         sf_readf_float(sndf,tbuf,1);
         for (int j=0; j<si.channels; j++) {
-          s[0].data[j][i]=tbuf[j];
+          s[curSample].data[j][i]=tbuf[j];
         }
       }
       sf_close(sndf);
-      s[0].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
+      s[curSample].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
       delete[] tbuf;
       showLoad=false;
       busy=false;
@@ -905,8 +922,8 @@ bool Sampler::init(int inChannels, int outChannels) {
     wd=twd;
     delete[] twd;
     s.resize(1);
-    s[0].path="../share/orchestrack/testsmp.wav";
-    sndf=sf_open(s[0].path.c_str(),SFM_READ,&si);
+    s[0].path="Sample1";
+    sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
     s[0].len=si.frames;
     s[0].chan=si.channels;
     s[0].rate=si.samplerate;
