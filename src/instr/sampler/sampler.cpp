@@ -318,6 +318,16 @@ void Sampler::seMouseMove(int button) {
   hover(690,10,690+40,10+20,&sloadS);
   hover(630,40,630+40,40+20,&seupS);
   hover(580,40,580+40,40+20,&sedownS);
+  
+  hover(72-52,124,72-52+40,124+24,&smupS[0]);
+  hover(72-52,192,72-52+40,192+24,&smdownS[0]);
+  hover(72+52,124,72+52+40,124+24,&smupS[1]);
+  hover(72+52,192,72+52+40,192+24,&smdownS[1]);
+  hover(257-52,124,257-52+40,124+24,&smupS[2]);
+  hover(257-52,192,257-52+40,192+24,&smdownS[2]);
+  hover(257+52,124,257+52+40,124+24,&smupS[3]);
+  hover(257+52,192,257+52+40,192+24,&smdownS[3]);
+  
   hover(10,10,10+60,10+20,&sselectS);
 }
 
@@ -328,10 +338,12 @@ void Sampler::seMouseDown(int button) {
   if (PointInRect(mouse.x,mouse.y,10,10,10+60,10+20)) {
     sselectS=2;
   }
+  // rate
   if (PointInRect(mouse.x,mouse.y,630,40,630+40,40+20)) {
     seupS=2;
     if (button!=1) {
       doUp=true;
+      doXTarget=0;
     } else {
       s[0].rate*=2;
     }
@@ -340,8 +352,90 @@ void Sampler::seMouseDown(int button) {
     sedownS=2;
     if (button!=1) {
       doDown=true;
+      doXTarget=0;
     } else {
       s[0].rate/=2;
+    }
+  }
+  /// target ///
+  
+  // note min
+  if (PointInRect(mouse.x,mouse.y,72-52,124,72-52+40,124+24)) {
+    smupS[0]=2;
+    if (button!=1) {
+      doUp=true;
+      doXTarget=1;
+    } else {
+      s[0].noteMin+=12;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,72-52,192,72-52+40,192+24)) {
+    smdownS[0]=2;
+    if (button!=1) {
+      doDown=true;
+      doXTarget=1;
+    } else {
+      s[0].noteMin-=12;
+    }
+  }
+  
+  // note max
+  if (PointInRect(mouse.x,mouse.y,72+52,124,72+52+40,124+24)) {
+    smupS[1]=2;
+    if (button!=1) {
+      doUp=true;
+      doXTarget=2;
+    } else {
+      s[0].noteMax+=12;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,72+52,192,72+52+40,192+24)) {
+    smdownS[1]=2;
+    if (button!=1) {
+      doDown=true;
+      doXTarget=2;
+    } else {
+      s[0].noteMax-=12;
+    }
+  }
+  
+  // vol min
+  if (PointInRect(mouse.x,mouse.y,257-52,124,257-52+40,124+24)) {
+    smupS[2]=2;
+    if (button!=1) {
+      doUp=true;
+      doXTarget=3;
+    } else {
+      s[0].velMin*=2;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,257-52,192,257-52+40,192+24)) {
+    smdownS[2]=2;
+    if (button!=1) {
+      doDown=true;
+      doXTarget=3;
+    } else {
+      s[0].velMin/=2;
+    }
+  }
+  
+  // vol ax
+  if (PointInRect(mouse.x,mouse.y,257+52,124,257+52+40,124+24)) {
+    smupS[3]=2;
+    if (button!=1) {
+      doUp=true;
+      doXTarget=4;
+    } else {
+      s[0].velMax*=2;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,257+52,192,257+52+40,192+24)) {
+    smdownS[3]=2;
+    if (button!=1) {
+      doDown=true;
+      doXTarget=4;
+    } else {
+      s[0].velMax/=2;
     }
   }
 }
@@ -371,6 +465,44 @@ void Sampler::seMouseUp(int button) {
   }
   if (sedownS!=1) {
     sedownS=PointInRect(mouse.x,mouse.y,580,40,580+40,40+20);
+    doDown=false;
+  }
+  
+  /// range ///
+  
+  if (smupS[0]!=1) {
+    smupS[0]=PointInRect(mouse.x,mouse.y,72-52,124,72-52+40,124+24);
+    doUp=false;
+  }
+  if (smdownS[0]!=1) {
+    smdownS[0]=PointInRect(mouse.x,mouse.y,72-52,192,72-52+40,192+24);
+    doDown=false;
+  }
+  
+  if (smupS[1]!=1) {
+    smupS[1]=PointInRect(mouse.x,mouse.y,72+52,124,72+52+40,124+24);
+    doUp=false;
+  }
+  if (smdownS[1]!=1) {
+    smdownS[1]=PointInRect(mouse.x,mouse.y,72+52,192,72+52+40,192+24);
+    doDown=false;
+  }
+  
+  if (smupS[2]!=1) {
+    smupS[2]=PointInRect(mouse.x,mouse.y,257-52,124,257-52+40,124+24);
+    doUp=false;
+  }
+  if (smdownS[2]!=1) {
+    smdownS[2]=PointInRect(mouse.x,mouse.y,257-52,192,257-52+40,192+24);
+    doDown=false;
+  }
+  
+  if (smupS[3]!=1) {
+    smupS[3]=PointInRect(mouse.x,mouse.y,257+52,124,257+52+40,124+24);
+    doUp=false;
+  }
+  if (smdownS[3]!=1) {
+    smdownS[3]=PointInRect(mouse.x,mouse.y,257+52,192,257+52+40,192+24);
     doDown=false;
   }
 }
@@ -860,17 +992,20 @@ void Sampler::drawSampleEdit() {
   f->draw(462,170,tempc,1,1,0,"to");
   f->draw(647,170,tempc,1,1,0,"to");
   
+  /// note
+  
+  // left
   tempr.x=62-52; tempr1.x=0;
   tempr.y=152; tempr1.y=0;
   tempr.w=60;  tempr1.w=60;
   tempr.h=36;  tempr1.h=36;
   SDL_RenderCopy(r,srange,&tempr1,&tempr);
-  tempr.x=72-52; tempr1.x=0;
+  tempr.x=72-52; tempr1.x=40*smupS[0];
   tempr.y=124; tempr1.y=0;
   tempr.w=40;  tempr1.w=40;
   tempr.h=24;  tempr1.h=24;
   SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  tempr.x=72-52; tempr1.x=0;
+  tempr.x=72-52; tempr1.x=40*smdownS[0];
   tempr.y=192; tempr1.y=0;
   SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
   f->draw(92-52,126,tempc,1,0,0,"Up");
@@ -880,17 +1015,18 @@ void Sampler::drawSampleEdit() {
                    ,sChromaSemitone[s[curSample].noteMin%12]
                    ,s[curSample].noteMin/12);
   
+  // right
   tempr.x=62+52; tempr1.x=0;
   tempr.y=152; tempr1.y=0;
   tempr.w=60;  tempr1.w=60;
   tempr.h=36;  tempr1.h=36;
   SDL_RenderCopy(r,srange,&tempr1,&tempr);
-  tempr.x=72+52; tempr1.x=0;
+  tempr.x=72+52; tempr1.x=40*smupS[1];
   tempr.y=124; tempr1.y=0;
   tempr.w=40;  tempr1.w=40;
   tempr.h=24;  tempr1.h=24;
   SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  tempr.x=72+52; tempr1.x=0;
+  tempr.x=72+52; tempr1.x=40*smdownS[1];
   tempr.y=192; tempr1.y=0;
   SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
   f->draw(92+52,126,tempc,1,0,0,"Up");
@@ -900,22 +1036,93 @@ void Sampler::drawSampleEdit() {
                    ,sChromaSemitone[s[curSample].noteMax%12]
                    ,s[curSample].noteMax/12);
   
+  /// notevol
   
-  /*f->drawf(443,70,tempc,0,0,
-           "%d to %d",s[curSample].velMin
-                     ,s[curSample].velMax);*/
+  // left
+  tempr.x=247-52; tempr1.x=0;
+  tempr.y=152; tempr1.y=0;
+  tempr.w=60;  tempr1.w=60;
+  tempr.h=36;  tempr1.h=36;
+  SDL_RenderCopy(r,srange,&tempr1,&tempr);
+  tempr.x=257-52; tempr1.x=40*smupS[2];
+  tempr.y=124; tempr1.y=0;
+  tempr.w=40;  tempr1.w=40;
+  tempr.h=24;  tempr1.h=24;
+  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
+  tempr.x=257-52; tempr1.x=40*smdownS[2];
+  tempr.y=192; tempr1.y=0;
+  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
+  f->draw(277-52,126,tempc,1,0,0,"Up");
+  f->draw(277-52,194,tempc,1,0,0,"Down");
+  f->drawf(277-52,170,tempc,1,1,
+           "%d",s[curSample].velMin);
+  
+  // right
+  tempr.x=247+52; tempr1.x=0;
+  tempr.y=152; tempr1.y=0;
+  tempr.w=60;  tempr1.w=60;
+  tempr.h=36;  tempr1.h=36;
+  SDL_RenderCopy(r,srange,&tempr1,&tempr);
+  tempr.x=257+52; tempr1.x=40*smupS[3];
+  tempr.y=124; tempr1.y=0;
+  tempr.w=40;  tempr1.w=40;
+  tempr.h=24;  tempr1.h=24;
+  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
+  tempr.x=257+52; tempr1.x=40*smdownS[3];
+  tempr.y=192; tempr1.y=0;
+  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
+  f->draw(277+52,126,tempc,1,0,0,"Up");
+  f->draw(277+52,194,tempc,1,0,0,"Down");
+  f->drawf(277+52,170,tempc,1,1,
+           "%d",s[curSample].velMax);
   
   if (doUp) {
     if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
-      s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+      switch (doXTarget) {
+        case 0:
+          s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 1:
+          s[curSample].noteMin+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 2:
+          s[curSample].noteMax+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 3:
+          s[curSample].velMin+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 4:
+          s[curSample].velMax+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+      }
     }
     timeOnButton++;
   }
   if (doDown) {
     if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
-      s[curSample].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+      switch (doXTarget) {
+        case 0:
+          s[curSample].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 1:
+          s[curSample].noteMin-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 2:
+          s[curSample].noteMax-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 3:
+          s[curSample].velMin-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 4:
+          s[curSample].velMax-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+      }
     }
     s[curSample].rate=fmax(0,s[curSample].rate);
+    s[curSample].noteMin=fmax(0,s[curSample].noteMin);
+    s[curSample].noteMax=fmax(0,s[curSample].noteMax);
+    s[curSample].velMin=fmax(0,s[curSample].velMin);
+    s[curSample].velMax=fmax(0,s[curSample].velMax);
     timeOnButton++;
   }
   if (!(doUp || doDown)) {

@@ -63,7 +63,7 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* slflist;
   SDL_Texture* slfdir;
   SDL_Texture* slfpath;
-  SDL_Texture* smode;
+  SDL_Texture* smode; int smupS[8]; int smdownS[8];
   SDL_Texture* smodeactive;
   SDL_Texture* srange;
   SDL_Texture* srangebutton;
@@ -84,7 +84,17 @@ class Sampler: public OTrackInstrument {
   bool touching;
   long tick;
   int loadHIndex, loadSIndex;
-  bool doUp, doDown;
+  // doXtarget:
+  // 0: rate
+  // 1: note min
+  // 2: note max
+  // 3: volume min
+  // 4: volume max
+  // 5: param1 min
+  // 6: param1 max
+  // 7: param2 min
+  // 8: param2 max
+  bool doUp, doDown; int doXTarget;
   int timeOnButton;
   // 0: drawSummary
   // 1: drawGrid
