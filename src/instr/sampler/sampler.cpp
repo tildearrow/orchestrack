@@ -316,6 +316,9 @@ void Sampler::loadMouseUp(int button) {
 }
 
 void Sampler::seMouseMove(int button) {
+  if (showLoad || showSampleSel) {
+    return;
+  }
   hover(690,10,690+40,10+20,&sloadS);
   hover(630,40,630+40,40+20,&seupS);
   hover(580,40,580+40,40+20,&sedownS);
@@ -333,6 +336,9 @@ void Sampler::seMouseMove(int button) {
 }
 
 void Sampler::seMouseDown(int button) {
+  if (showLoad || showSampleSel) {
+    return;
+  }
   if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
     sloadS=2;
   }
@@ -442,6 +448,9 @@ void Sampler::seMouseDown(int button) {
 }
 
 void Sampler::seMouseUp(int button) {
+  if (showLoad || showSampleSel) {
+    return;
+  }
   if (sloadS!=1) {
     sloadS=PointInRect(mouse.x,mouse.y,690,10,690+40,10+20);
     if (sloadS) {
