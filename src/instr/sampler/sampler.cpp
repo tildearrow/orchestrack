@@ -164,6 +164,19 @@ int Sampler::readDir(const char* path) {
     }
     FindClose(od);
     delete de;
+    clearList();
+    for (int i=0; i<listings.size(); i++) {
+      switch (listings[i].type) {
+        case 1: feedList(listings[i].name,255,192,160,255); break; // fifo
+        case 2: feedList(listings[i].name,255,255,160,255); break; // character
+        case 4: feedList(listings[i].name,160,192,255,255); break; // directory
+        case 6: feedList(listings[i].name,255,220,160,255); break; // block
+        case 8: feedList(listings[i].name,255,255,255,255); break; // file
+        case 10: feedList(listings[i].name,160,220,255,255); break; // link
+        case 12: feedList(listings[i].name,255,128,255,255); break; // socket
+        default: feedList(listings[i].name,128,128,128,255); break; // unknown
+      }
+    }
     return 1;
   }
   return 0;
