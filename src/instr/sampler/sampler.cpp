@@ -788,7 +788,7 @@ void Sampler::drawList() {
     //printf("listPos: %f\n",listPos);
   }
   
-  if (listPos>0 && (listPos+382)>20*(listings.size()) && !touching) {
+  if (listPos>0 && (listPos+382)>20*(listelem.size()) && !touching) {
     if (392>20*listelem.size()) {
       listPos+=-listPos/8;
       if (listPos<0.5) {
