@@ -46,8 +46,6 @@ float* Sampler::getSample() {
       v[thisv].note=ev[1];
       printf("allocated. %d %.2x %.2x\n",thisv,v[thisv].chan,v[thisv].note);
       v[thisv].period=0;
-      v[thisv].f=pow(2,((float)v[thisv].note-60)/12)*s[0].rate/44100;
-      v[thisv].vol=(float)ev[2]/128;
       v[thisv].sample=0;
       for (int i=0; i<s.size(); i++) {
         if (s[i].noteMin<=v[thisv].note && s[i].noteMax>=v[thisv].note &&
@@ -55,6 +53,8 @@ float* Sampler::getSample() {
           v[thisv].sample=i; break;
         }
       }
+      v[thisv].f=pow(2,((float)v[thisv].note-60)/12)*s[v[thisv].sample].rate/44100;
+      v[thisv].vol=(float)ev[2]/128;
     }
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
@@ -62,7 +62,7 @@ float* Sampler::getSample() {
       printf("pitch %d\n",c[ev[0]&15].pitch);
       for (int i=0; i<v.size(); i++) {
         if (v[i].chan==(ev[0]&15)) {
-          v[i].f=pow(2,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0))/12)*s[0].rate/44100;
+          v[i].f=pow(2,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0))/12)*s[v[i].sample].rate/44100;
         }
       }
     }
@@ -346,7 +346,7 @@ void Sampler::seMouseDown(int button) {
       doUp=true;
       doXTarget=0;
     } else {
-      s[0].rate*=2;
+      s[curSample].rate*=2;
     }
   }
   if (PointInRect(mouse.x,mouse.y,580,40,580+40,40+20)) {
@@ -355,7 +355,7 @@ void Sampler::seMouseDown(int button) {
       doDown=true;
       doXTarget=0;
     } else {
-      s[0].rate/=2;
+      s[curSample].rate/=2;
     }
   }
   /// target ///
@@ -367,7 +367,7 @@ void Sampler::seMouseDown(int button) {
       doUp=true;
       doXTarget=1;
     } else {
-      s[0].noteMin+=12;
+      s[curSample].noteMin+=12;
     }
   }
   if (PointInRect(mouse.x,mouse.y,72-52,192,72-52+40,192+24)) {
@@ -376,7 +376,7 @@ void Sampler::seMouseDown(int button) {
       doDown=true;
       doXTarget=1;
     } else {
-      s[0].noteMin-=12;
+      s[curSample].noteMin-=12;
     }
   }
   
@@ -387,7 +387,7 @@ void Sampler::seMouseDown(int button) {
       doUp=true;
       doXTarget=2;
     } else {
-      s[0].noteMax+=12;
+      s[curSample].noteMax+=12;
     }
   }
   if (PointInRect(mouse.x,mouse.y,72+52,192,72+52+40,192+24)) {
@@ -396,7 +396,7 @@ void Sampler::seMouseDown(int button) {
       doDown=true;
       doXTarget=2;
     } else {
-      s[0].noteMax-=12;
+      s[curSample].noteMax-=12;
     }
   }
   
@@ -407,7 +407,7 @@ void Sampler::seMouseDown(int button) {
       doUp=true;
       doXTarget=3;
     } else {
-      s[0].velMin*=2;
+      s[curSample].velMin*=2;
     }
   }
   if (PointInRect(mouse.x,mouse.y,257-52,192,257-52+40,192+24)) {
@@ -416,18 +416,18 @@ void Sampler::seMouseDown(int button) {
       doDown=true;
       doXTarget=3;
     } else {
-      s[0].velMin/=2;
+      s[curSample].velMin/=2;
     }
   }
   
-  // vol ax
+  // vol max
   if (PointInRect(mouse.x,mouse.y,257+52,124,257+52+40,124+24)) {
     smupS[3]=2;
     if (button!=1) {
       doUp=true;
       doXTarget=4;
     } else {
-      s[0].velMax*=2;
+      s[curSample].velMax*=2;
     }
   }
   if (PointInRect(mouse.x,mouse.y,257+52,192,257+52+40,192+24)) {
@@ -436,7 +436,7 @@ void Sampler::seMouseDown(int button) {
       doDown=true;
       doXTarget=4;
     } else {
-      s[0].velMax/=2;
+      s[curSample].velMax/=2;
     }
   }
 }
