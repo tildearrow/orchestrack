@@ -935,13 +935,23 @@ void Sampler::drawGrid() {
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_ADD);
   SDL_SetRenderDrawColor(r,255,255,255,32);
   for (int i=0; i<v.size(); i++) {
-    tempr.x=v[i].note*4;
+    tempr.x=v[i].note*5;
     tempr.y=10;
-    tempr.w=4;
+    tempr.w=5;
     tempr.h=340;
     SDL_RenderFillRect(r,&tempr);
   }
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
+  SDL_SetRenderDrawColor(r,64,255,40,64);
+  // draw sample regions
+  for (int i=0; i<s.size(); i++) {
+    tempr.x=10+2+s[i].noteMin*5;
+    tempr.y=12;
+    tempr.w=5*(s[i].noteMax-s[i].noteMin);
+    tempr.h=336;
+    SDL_RenderFillRect(r,&tempr);
+    SDL_RenderDrawRect(r,&tempr);
+  }
   f->draw(370,16,tempc,1,0,0,"Note");
   f->draw(0,200,tempc,1,1,0,"NoteVol");
   f->drawf(83,400,tempc,0,0,"%d %d %d %d",tick/96,(tick/24)%4,(tick/6)%4,tick%6);
