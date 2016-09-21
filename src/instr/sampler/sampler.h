@@ -39,9 +39,11 @@ class Sampler: public OTrackInstrument {
   struct dentry {
     string name;
     int type;
+    int size;
   };
   struct listentry {
     string name;
+    string rh;
     SDL_Color color;
   };
   struct envp {
@@ -140,7 +142,7 @@ class Sampler: public OTrackInstrument {
   void seMouseMove(int button);
   void loadSample();
   void clearList();
-  void feedList(string name, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+  void feedList(string name, string rh, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
   void drawList();
   void drawLoadUI();
   void prepareSampleSel();

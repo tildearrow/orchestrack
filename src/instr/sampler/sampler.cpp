@@ -117,7 +117,7 @@ float* Sampler::getSample() {
 void Sampler::prepareSampleSel() {
   clearList();
   for (int i=0; i<s.size(); i++) {
-    feedList(s[i].path,255,255,255,255);
+    feedList(s[i].path,"",255,255,255,255);
   }
 }
 
@@ -187,8 +187,10 @@ int Sampler::readDir(const char* path) {
   ////// king
   dirent* de;
   dentry dede;
+  struct stat st;
   od=opendir(path);
   dentry tempelem;
+  string tempstr;
   if (od!=NULL) {
     listings.clear();
     while (1) {
@@ -198,8 +200,13 @@ int Sampler::readDir(const char* path) {
       } else {
         if (strcmp(".",de->d_name)!=0 && strcmp("..",de->d_name)!=0) {
           if (showHidden || (de->d_name[0]!='.')) {
+            tempstr=path;
+            tempstr+='/';
+            tempstr+=de->d_name;
+            stat(tempstr.c_str(),&st);
             dede.name=de->d_name;
             dede.type=de->d_type;
+            dede.size=st.st_size;
             listings.push_back(dede);
           }
         }
@@ -217,16 +224,20 @@ int Sampler::readDir(const char* path) {
     }
     clearList();
     for (int i=0; i<listings.size(); i++) {
+      char* sizee;
+      sizee=new char[21];
+      sprintf(sizee,"%d",listings[i].size);
       switch (listings[i].type) {
-        case 1: feedList(listings[i].name,255,192,160,255); break; // fifo
-        case 2: feedList(listings[i].name,255,255,160,255); break; // character
-        case 4: feedList(listings[i].name,160,192,255,255); break; // directory
-        case 6: feedList(listings[i].name,255,220,160,255); break; // block
-        case 8: feedList(listings[i].name,255,255,255,255); break; // file
-        case 10: feedList(listings[i].name,160,220,255,255); break; // link
-        case 12: feedList(listings[i].name,255,128,255,255); break; // socket
-        default: feedList(listings[i].name,128,128,128,255); break; // unknown
+        case 1: feedList(listings[i].name,"<fifo>",255,192,160,255); break; // fifo
+        case 2: feedList(listings[i].name,"<char>",255,255,160,255); break; // character
+        case 4: feedList(listings[i].name,"<dir>",160,192,255,255); break; // directory
+        case 6: feedList(listings[i].name,"<blk>",255,220,160,255); break; // block
+        case 8: feedList(listings[i].name,sizee,255,255,255,255); break; // file
+        case 10: feedList(listings[i].name,"<link>",160,220,255,255); break; // link
+        case 12: feedList(listings[i].name,"<sock>",255,128,255,255); break; // socket
+        default: feedList(listings[i].name,"<?>",128,128,128,255); break; // unknown
       }
+      delete[] sizee;
     }
     return 1;
   } else {
@@ -746,9 +757,10 @@ void Sampler::clearList() {
   listelem.resize(0);
 }
 
-void Sampler::feedList(string name, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+void Sampler::feedList(string name, string rh, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
   listentry tle;
   tle.name=name;
+  tle.rh=rh;
   tle.color.r=r;
   tle.color.g=g;
   tle.color.b=b;
@@ -777,6 +789,7 @@ void Sampler::drawList() {
 
   for (int i=fmax(0,listPos/20); i<fmin(listelem.size(),20+listPos/20); i++) {
     f->draw(33,66+(20*i)-listPos,listelem[i].color,0,0,0,listelem[i].name);
+    f->draw(33+671,66+(20*i)-listPos,listelem[i].color,2,0,0,listelem[i].rh);
   }
   
   SDL_RenderSetClipRect(r,NULL);

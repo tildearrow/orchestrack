@@ -37,8 +37,8 @@ void font::draw(int x, int y, SDL_Color col, int align, int valign, bool nocache
   temps=TTF_RenderUTF8_Blended(f, text.c_str(), col);
   if (temps==NULL) {printf("aaaa\n");return;}
   tempt=SDL_CreateTextureFromSurface(renderer, temps);
-  tempr.x=x-((align==1)?(temps->clip_rect.w/2):(0));
-  tempr.y=y-((valign==1)?(temps->clip_rect.h/2):(0));
+  tempr.x=x-((align)?(temps->clip_rect.w/(3-align)):(0));
+  tempr.y=y-((valign)?(temps->clip_rect.h/(3-valign)):(0));
   tempr.w=temps->clip_rect.w;
   tempr.h=temps->clip_rect.h;
   SDL_RenderCopy(renderer, tempt, &temps->clip_rect, &tempr);

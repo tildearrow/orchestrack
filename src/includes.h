@@ -11,6 +11,7 @@
 #else
 #include <unistd.h>
 #include <dirent.h>
+#include <sys/stat.h>
 #define DIR_SEP '/'
 #endif
 #define SDL_MAIN_HANDLED
