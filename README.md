@@ -10,7 +10,7 @@ orchestrack will be a digital audio workstation inspired by music trackers.
 
 - libsndfile
 
-- JACK Audio Connection Kit (on Linux, OS X/macOS and Windows via MinGW)
+- JACK Audio Connection Kit (on Linux, OS X/macOS and Windows via MinGW) (optional)
 
 # Compiling
 
