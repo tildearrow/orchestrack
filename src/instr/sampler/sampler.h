@@ -19,6 +19,8 @@ class Sampler: public OTrackInstrument {
     float period;
     float f;
     float vol;
+    int env;
+    int envpos;
   };
   struct smp {
     string path;
@@ -42,9 +44,26 @@ class Sampler: public OTrackInstrument {
     string name;
     SDL_Color color;
   };
+  struct envp {
+    float time;
+    float value;
+  };
+  struct envl {
+    std::vector<envp> p;
+    int start;
+    int attackEnd;
+    int decayEnd;
+    int sustainEnd;
+    int loopStart;
+    int loopEnd;
+    bool susLoop;
+    bool relMode;
+    bool sync;
+  };
   font* f;
   channel c[16];
   std::vector<voice> v;
+  std::vector<envl> e;
   std::vector<smp> s;
   std::vector<dentry> listings;
   std::vector<listentry> listelem;
