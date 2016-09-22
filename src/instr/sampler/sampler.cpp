@@ -27,7 +27,7 @@ float* Sampler::getSample() {
       for (int i=0; i<v.size(); i++) {
         if (v[i].chan==(ev[0]&15)) {
           if (v[i].note==ev[1]) {
-            printf("erased. %d %.2x %.2x\n",i,v[i].chan,v[i].note);
+            //printf("erased. %d %.2x %.2x\n",i,v[i].chan,v[i].note);
             v.erase(v.begin()+i); i--;
           }
         }
@@ -44,7 +44,7 @@ float* Sampler::getSample() {
       thisv=v.size()-1;
       v[thisv].chan=ev[0]&15;
       v[thisv].note=ev[1];
-      printf("allocated. %d %.2x %.2x\n",thisv,v[thisv].chan,v[thisv].note);
+      //printf("allocated. %d %.2x %.2x\n",thisv,v[thisv].chan,v[thisv].note);
       v[thisv].period=0;
       v[thisv].sample=0;
       for (int i=0; i<s.size(); i++) {
@@ -59,7 +59,7 @@ float* Sampler::getSample() {
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
       c[ev[0]&15].pitch=(ev[1]+(ev[2]<<7))-0x2000;
-      printf("pitch %d\n",c[ev[0]&15].pitch);
+      //printf("pitch %d\n",c[ev[0]&15].pitch);
       for (int i=0; i<v.size(); i++) {
         if (v[i].chan==(ev[0]&15)) {
           v[i].f=pow(2,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0))/12)*s[v[i].sample].rate/44100;
@@ -105,7 +105,7 @@ float* Sampler::getSample() {
   
   for (int i=0; i<v.size(); i++) {
     if (v[i].period>s[v[i].sample].len) {
-      printf("sample finished. %d\n",i);
+      //printf("sample finished. %d\n",i);
       v.erase(v.begin()+i); i--;
     }
   }
