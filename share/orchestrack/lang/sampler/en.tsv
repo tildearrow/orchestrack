@@ -1,0 +1,25 @@
+name	Sampler
+desc	default sampler
+dup	Up
+md	MD
+load	Load
+cancel	Cancel
+new	New
+delete	Del
+select	Select
+sselect	Select Sample
+note	Note
+notevol	NoteVol
+rate	Rate
+sample	Sample
+kp	Keypad
+up	Up
+down	Down
+range	Range
+param1	Param1
+param2	Param2
+to	to
+summary	Summary
+grid	Grid
+editor	Editor
+env	Envelope

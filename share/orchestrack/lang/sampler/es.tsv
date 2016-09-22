@@ -1,0 +1,25 @@
+name	Sampler
+desc	default sampler
+dup	Arriba
+md	CD
+load	Cargar
+cancel	Cancelar
+new	Nuevo
+delete	Borrar
+select	Seleccionar
+sselect	Seleccionar Sample
+note	Nota
+notevol	VolNota
+rate	Rate
+sample	Sample
+kp	TecNum
+up	Arriba
+down	Abajo
+range	Rango
+param1	Parám1
+param2	Parám2
+to	a
+summary	Resumen
+grid	Grid
+editor	Editor
+env	Envelope
