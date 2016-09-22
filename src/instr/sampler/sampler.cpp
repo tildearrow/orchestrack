@@ -158,6 +158,7 @@ int Sampler::readDir(const char* path) {
             dede.name=de->cFileName;
             dede.type=(de->dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)?(4):(8);
             listings.push_back(dede);
+	    dede.size=de->nFileSizeLow+((de->nFileSizeHigh)<<32);
           }
         }
       }
@@ -166,16 +167,20 @@ int Sampler::readDir(const char* path) {
     delete de;
     clearList();
     for (int i=0; i<listings.size(); i++) {
+      char* sizee;
+      sizee=new char[21];
+      sprintf(sizee,"%d",listings[i].size);
       switch (listings[i].type) {
-        case 1: feedList(listings[i].name,255,192,160,255); break; // fifo
-        case 2: feedList(listings[i].name,255,255,160,255); break; // character
-        case 4: feedList(listings[i].name,160,192,255,255); break; // directory
-        case 6: feedList(listings[i].name,255,220,160,255); break; // block
-        case 8: feedList(listings[i].name,255,255,255,255); break; // file
-        case 10: feedList(listings[i].name,160,220,255,255); break; // link
-        case 12: feedList(listings[i].name,255,128,255,255); break; // socket
-        default: feedList(listings[i].name,128,128,128,255); break; // unknown
+        case 1: feedList(listings[i].name,"<fifo>",255,192,160,255); break; // fifo
+        case 2: feedList(listings[i].name,"<char>",255,255,160,255); break; // character
+        case 4: feedList(listings[i].name,"<dir>",160,192,255,255); break; // directory
+        case 6: feedList(listings[i].name,"<blk>",255,220,160,255); break; // block
+        case 8: feedList(listings[i].name,sizee,255,255,255,255); break; // file
+        case 10: feedList(listings[i].name,"<link>",160,220,255,255); break; // link
+        case 12: feedList(listings[i].name,"<sock>",255,128,255,255); break; // socket
+        default: feedList(listings[i].name,"<?>",128,128,128,255); break; // unknown
       }
+      delete[] sizee;
     }
     return 1;
   }
