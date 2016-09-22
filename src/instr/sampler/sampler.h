@@ -70,6 +70,8 @@ class Sampler: public OTrackInstrument {
   std::vector<dentry> listings;
   std::vector<listentry> listelem;
   string wd;
+  int wdoff;
+  bool wddir;
   string sfname;
   unsigned char* ev;
   float* tbuf;

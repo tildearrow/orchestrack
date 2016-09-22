@@ -840,6 +840,7 @@ void Sampler::drawList() {
 }
 
 void Sampler::drawLoadUI() {
+  int sx, sy;
   tempr.x=0;
   tempr.y=0;
   tempr.w=740;
@@ -889,10 +890,31 @@ void Sampler::drawLoadUI() {
   f->draw(630,462,tempc,1,0,0,"Load");
   f->draw(685,462,tempc,1,0,0,"Cancel");
   
-  f->draw(83,30,tempc,0,0,0,wd);
+  TTF_SizeUTF8(f->f,wd.c_str(),&sx,&sy);
+  SDL_Rect clipr;
+  clipr.x=83; clipr.y=30; clipr.w=573; clipr.h=20;
+  SDL_RenderSetClipRect(r,&clipr);
+  f->draw(83-fmax(0,fmin(sx-573,wdoff)),30,tempc,0,0,0,wd);
+  SDL_RenderSetClipRect(r,NULL);
   f->draw(33,462,tempc,0,0,0,sfname);
   //f->draw(33,462,tempc,0,0,0,"filename.wav");
   drawList();
+  
+  if (sx>564) {
+    if (wddir) {
+      wdoff--;
+      if (wdoff<-50) {
+        wddir=0;
+      }
+    } else {
+      wdoff++;
+      if (wdoff>sx-523) {
+        wddir=1;
+      }
+    }
+  } else {
+    wddir=0; wdoff=0;
+  }
 }
 
 void Sampler::drawSampleSel() {
