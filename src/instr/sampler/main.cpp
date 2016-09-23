@@ -49,8 +49,8 @@ int audio(jack_nframes_t len, void* arg) {
   }
   for (int i=0; i<ec; i++) {
     jack_midi_event_get(&me[i],m,i);
-    /*
-    printf("- event %d time is %d. data (%lu):\n  -",i,me[i].time,me[i].size);
+    
+    /*printf("- event %d time is %d. data (%lu):\n  -",i,me[i].time,me[i].size);
     for (int j=0; j<me[i].size; j++) {
       printf(" %.2x",*(me[i].buffer+j));
     }

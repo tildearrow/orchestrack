@@ -45,7 +45,6 @@ float* Sampler::getSample() {
       thisv=v.size()-1;
       v[thisv].chan=ev[0]&15;
       v[thisv].note=ev[1];
-      //printf("allocated. %d %.2x %.2x\n",thisv,v[thisv].chan,v[thisv].note);
       v[thisv].period=0;
       v[thisv].sample=0;
       for (int i=0; i<s.size(); i++) {
@@ -54,8 +53,9 @@ float* Sampler::getSample() {
           v[thisv].sample=i; break;
         }
       }
-      v[thisv].f=pow(2,((float)v[thisv].note-60)/12)*s[v[thisv].sample].rate/44100;
-      v[thisv].vol=(float)ev[2]/128;
+      v[thisv].f=pow(2.0,((float)v[thisv].note-60.0)/12.0)*s[v[thisv].sample].rate/44100.0;
+      v[thisv].vol=(float)ev[2]/128.0;
+      //printf("allocated. %d %.2x %.2x %f %f\n",thisv,v[thisv].chan,v[thisv].note,v[thisv].vol,v[thisv].f);
     }
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
@@ -105,8 +105,8 @@ float* Sampler::getSample() {
   }
   
   for (int i=0; i<v.size(); i++) {
-    if (v[i].period>s[v[i].sample].len) {
-      //printf("sample finished. %d\n",i);
+    if ((int)v[i].period>s[v[i].sample].len) {
+      //printf("sample finished. %d %f %d\n",i,v[i].period,s[v[i].sample].len);
       v.erase(v.begin()+i); i--;
     }
   }
