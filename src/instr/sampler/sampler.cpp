@@ -193,7 +193,7 @@ string Sampler::friendlyErr1(int e) {
     case 95: return "Try doing something else.";
     case 121: return "Contact that host's administrator.";
     case 122: return "Try contacting your system administrator";
-    case 256: return "If it's a sound file, conver that file to";
+    case 256: return "If it's a sound file, convert that file to";
     case 257: return "I don't think I can do anything";
     case 258: return "Convert that file to a different format,";
     default: return strerror(e);
