@@ -49,6 +49,7 @@ class Sampler: public OTrackInstrument {
   struct envp {
     float time;
     float value;
+    int type;
   };
   struct envl {
     std::vector<envp> p;
