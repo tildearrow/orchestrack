@@ -441,6 +441,142 @@ void Sampler::loadMouseUp(int button) {
   listMouseUp(button);
 }
 
+void Sampler::grMouseMove(int button) {
+  hover(72-52,124+256,72-52+40,124+24+256,&smupS[0]);
+  hover(72-52,192+256,72-52+40,192+24+256,&smdownS[0]);
+  hover(72+52,124+256,72+52+40,124+24+256,&smupS[1]);
+  hover(72+52,192+256,72+52+40,192+24+256,&smdownS[1]);
+  hover(257-52,124+256,257-52+40,124+24+256,&smupS[2]);
+  hover(257-52,192+256,257-52+40,192+24+256,&smdownS[2]);
+  hover(257+52,124+256,257+52+40,124+24+256,&smupS[3]);
+  hover(257+52,192+256,257+52+40,192+24+256,&smdownS[3]);
+}
+
+void Sampler::grMouseDown(int button) {
+  /// target ///
+  
+  // note min
+  if (PointInRect(mouse.x,mouse.y,72-52,124+256,72-52+40,124+24+256)) {
+    smupS[0]=2;
+    if (button!=1) {
+      doUp=true;
+      doXTarget=1;
+    } else {
+      s[curSample].noteMin+=12;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,72-52,192+256,72-52+40,192+24+256)) {
+    smdownS[0]=2;
+    if (button!=1) {
+      doDown=true;
+      doXTarget=1;
+    } else {
+      s[curSample].noteMin-=12;
+    }
+  }
+  
+  // note max
+  if (PointInRect(mouse.x,mouse.y,72+52,124+256,72+52+40,124+24+256)) {
+    smupS[1]=2;
+    if (button!=1) {
+      doUp=true;
+      doXTarget=2;
+    } else {
+      s[curSample].noteMax+=12;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,72+52,192+256,72+52+40,192+24+256)) {
+    smdownS[1]=2;
+    if (button!=1) {
+      doDown=true;
+      doXTarget=2;
+    } else {
+      s[curSample].noteMax-=12;
+    }
+  }
+  
+  // vol min
+  if (PointInRect(mouse.x,mouse.y,257-52,124+256,257-52+40,124+24+256)) {
+    smupS[2]=2;
+    if (button!=1) {
+      doUp=true;
+      doXTarget=3;
+    } else {
+      s[curSample].velMin*=2;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,257-52,192+256,257-52+40,192+24+256)) {
+    smdownS[2]=2;
+    if (button!=1) {
+      doDown=true;
+      doXTarget=3;
+    } else {
+      s[curSample].velMin/=2;
+    }
+  }
+  
+  // vol max
+  if (PointInRect(mouse.x,mouse.y,257+52,124+256,257+52+40,124+24+256)) {
+    smupS[3]=2;
+    if (button!=1) {
+      doUp=true;
+      doXTarget=4;
+    } else {
+      s[curSample].velMax*=2;
+    }
+  }
+  if (PointInRect(mouse.x,mouse.y,257+52,192+256,257+52+40,192+24+256)) {
+    smdownS[3]=2;
+    if (button!=1) {
+      doDown=true;
+      doXTarget=4;
+    } else {
+      s[curSample].velMax/=2;
+    }
+  }
+
+}
+
+void Sampler::grMouseUp(int button) {
+  /// range ///
+  
+  if (smupS[0]!=1) {
+    smupS[0]=PointInRect(mouse.x,mouse.y,72-52,124+256,72-52+40,124+24+256);
+    doUp=false;
+  }
+  if (smdownS[0]!=1) {
+    smdownS[0]=PointInRect(mouse.x,mouse.y,72-52,192+256,72-52+40,192+24+256);
+    doDown=false;
+  }
+  
+  if (smupS[1]!=1) {
+    smupS[1]=PointInRect(mouse.x,mouse.y,72+52,124+256,72+52+40,124+24+256);
+    doUp=false;
+  }
+  if (smdownS[1]!=1) {
+    smdownS[1]=PointInRect(mouse.x,mouse.y,72+52,192+256,72+52+40,192+24+256);
+    doDown=false;
+  }
+  
+  if (smupS[2]!=1) {
+    smupS[2]=PointInRect(mouse.x,mouse.y,257-52,124+256,257-52+40,124+24+256);
+    doUp=false;
+  }
+  if (smdownS[2]!=1) {
+    smdownS[2]=PointInRect(mouse.x,mouse.y,257-52,192+256,257-52+40,192+24+256);
+    doDown=false;
+  }
+  
+  if (smupS[3]!=1) {
+    smupS[3]=PointInRect(mouse.x,mouse.y,257+52,124+256,257+52+40,124+24+256);
+    doUp=false;
+  }
+  if (smdownS[3]!=1) {
+    smdownS[3]=PointInRect(mouse.x,mouse.y,257+52,192+256,257+52+40,192+24+256);
+    doDown=false;
+  }
+}
+
 void Sampler::seMouseMove(int button) {
   if (showLoad || showSampleSel) {
     return;
@@ -448,15 +584,6 @@ void Sampler::seMouseMove(int button) {
   hover(690,10,690+40,10+20,&sloadS);
   hover(630,40,630+40,40+20,&seupS);
   hover(580,40,580+40,40+20,&sedownS);
-  
-  hover(72-52,124,72-52+40,124+24,&smupS[0]);
-  hover(72-52,192,72-52+40,192+24,&smdownS[0]);
-  hover(72+52,124,72+52+40,124+24,&smupS[1]);
-  hover(72+52,192,72+52+40,192+24,&smdownS[1]);
-  hover(257-52,124,257-52+40,124+24,&smupS[2]);
-  hover(257-52,192,257-52+40,192+24,&smdownS[2]);
-  hover(257+52,124,257+52+40,124+24,&smupS[3]);
-  hover(257+52,192,257+52+40,192+24,&smdownS[3]);
   
   hover(10,10,10+60,10+20,&sselectS);
 }
@@ -488,87 +615,6 @@ void Sampler::seMouseDown(int button) {
       doXTarget=0;
     } else {
       s[curSample].rate/=2;
-    }
-  }
-  /// target ///
-  
-  // note min
-  if (PointInRect(mouse.x,mouse.y,72-52,124,72-52+40,124+24)) {
-    smupS[0]=2;
-    if (button!=1) {
-      doUp=true;
-      doXTarget=1;
-    } else {
-      s[curSample].noteMin+=12;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,72-52,192,72-52+40,192+24)) {
-    smdownS[0]=2;
-    if (button!=1) {
-      doDown=true;
-      doXTarget=1;
-    } else {
-      s[curSample].noteMin-=12;
-    }
-  }
-  
-  // note max
-  if (PointInRect(mouse.x,mouse.y,72+52,124,72+52+40,124+24)) {
-    smupS[1]=2;
-    if (button!=1) {
-      doUp=true;
-      doXTarget=2;
-    } else {
-      s[curSample].noteMax+=12;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,72+52,192,72+52+40,192+24)) {
-    smdownS[1]=2;
-    if (button!=1) {
-      doDown=true;
-      doXTarget=2;
-    } else {
-      s[curSample].noteMax-=12;
-    }
-  }
-  
-  // vol min
-  if (PointInRect(mouse.x,mouse.y,257-52,124,257-52+40,124+24)) {
-    smupS[2]=2;
-    if (button!=1) {
-      doUp=true;
-      doXTarget=3;
-    } else {
-      s[curSample].velMin*=2;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,257-52,192,257-52+40,192+24)) {
-    smdownS[2]=2;
-    if (button!=1) {
-      doDown=true;
-      doXTarget=3;
-    } else {
-      s[curSample].velMin/=2;
-    }
-  }
-  
-  // vol max
-  if (PointInRect(mouse.x,mouse.y,257+52,124,257+52+40,124+24)) {
-    smupS[3]=2;
-    if (button!=1) {
-      doUp=true;
-      doXTarget=4;
-    } else {
-      s[curSample].velMax*=2;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,257+52,192,257+52+40,192+24)) {
-    smdownS[3]=2;
-    if (button!=1) {
-      doDown=true;
-      doXTarget=4;
-    } else {
-      s[curSample].velMax/=2;
     }
   }
 }
@@ -603,50 +649,15 @@ void Sampler::seMouseUp(int button) {
     sedownS=PointInRect(mouse.x,mouse.y,580,40,580+40,40+20);
     doDown=false;
   }
-  
-  /// range ///
-  
-  if (smupS[0]!=1) {
-    smupS[0]=PointInRect(mouse.x,mouse.y,72-52,124,72-52+40,124+24);
-    doUp=false;
-  }
-  if (smdownS[0]!=1) {
-    smdownS[0]=PointInRect(mouse.x,mouse.y,72-52,192,72-52+40,192+24);
-    doDown=false;
-  }
-  
-  if (smupS[1]!=1) {
-    smupS[1]=PointInRect(mouse.x,mouse.y,72+52,124,72+52+40,124+24);
-    doUp=false;
-  }
-  if (smdownS[1]!=1) {
-    smdownS[1]=PointInRect(mouse.x,mouse.y,72+52,192,72+52+40,192+24);
-    doDown=false;
-  }
-  
-  if (smupS[2]!=1) {
-    smupS[2]=PointInRect(mouse.x,mouse.y,257-52,124,257-52+40,124+24);
-    doUp=false;
-  }
-  if (smdownS[2]!=1) {
-    smdownS[2]=PointInRect(mouse.x,mouse.y,257-52,192,257-52+40,192+24);
-    doDown=false;
-  }
-  
-  if (smupS[3]!=1) {
-    smupS[3]=PointInRect(mouse.x,mouse.y,257+52,124,257+52+40,124+24);
-    doUp=false;
-  }
-  if (smdownS[3]!=1) {
-    smdownS[3]=PointInRect(mouse.x,mouse.y,257+52,192,257+52+40,192+24);
-    doDown=false;
-  }
 }
 
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
       mouse.x=x; mouse.y=y;
+      if (curView==1) {
+        grMouseMove(button);
+      }
       if (curView==2) {
         seMouseMove(button);
       }
@@ -669,6 +680,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (PointInRect(mouse.x,mouse.y,557,482,557+175,482+20)) {
         curView=3;
       }
+      if (curView==1) {
+        grMouseDown(button);
+      }
       if (curView==2) {
         seMouseDown(button);
       }
@@ -680,6 +694,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       mouse.b[button]=0;
       if (showLoad || showSampleSel) {
         loadMouseUp(button);
+      }
+      if (curView==1) {
+        grMouseUp(button);
       }
       if (curView==2) {
         seMouseUp(button);
@@ -1119,6 +1136,61 @@ void Sampler::drawSampleSel() {
   drawList();
 }
 
+void Sampler::upDown() {
+  if (doUp) {
+    if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
+      switch (doXTarget) {
+        case 0:
+          s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 1:
+          s[curSample].noteMin+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 2:
+          s[curSample].noteMax+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 3:
+          s[curSample].velMin+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 4:
+          s[curSample].velMax+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+      }
+    }
+    timeOnButton++;
+  }
+  if (doDown) {
+    if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
+      switch (doXTarget) {
+        case 0:
+          s[curSample].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 1:
+          s[curSample].noteMin-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 2:
+          s[curSample].noteMax-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 3:
+          s[curSample].velMin-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+        case 4:
+          s[curSample].velMax-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          break;
+      }
+    }
+    s[curSample].rate=fmax(0,s[curSample].rate);
+    s[curSample].noteMin=fmax(0,s[curSample].noteMin);
+    s[curSample].noteMax=fmax(0,s[curSample].noteMax);
+    s[curSample].velMin=fmax(0,s[curSample].velMin);
+    s[curSample].velMax=fmax(0,s[curSample].velMax);
+    timeOnButton++;
+  }
+  if (!(doUp || doDown)) {
+    timeOnButton=0;
+  }
+}
+
 void Sampler::drawSummary() {
   
 }
@@ -1252,6 +1324,8 @@ void Sampler::drawGrid() {
   f->draw(277+52,194+256,tempc,1,0,0,"Down");
   f->drawf(277+52,170+256,tempc,1,1,
            "%d",s[curSample].velMax);
+
+  upDown();
 }
 
 void Sampler::drawSampleEdit() {
@@ -1291,59 +1365,7 @@ void Sampler::drawSampleEdit() {
   f->draw(650,40,tempc,1,0,0,"Up");
   f->draw(600,40,tempc,1,0,0,"Down");
   
-  
-  if (doUp) {
-    if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
-      switch (doXTarget) {
-        case 0:
-          s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-        case 1:
-          s[curSample].noteMin+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-        case 2:
-          s[curSample].noteMax+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-        case 3:
-          s[curSample].velMin+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-        case 4:
-          s[curSample].velMax+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-      }
-    }
-    timeOnButton++;
-  }
-  if (doDown) {
-    if (timeOnButton%(int)fmax(64-timeOnButton,1)==0) {
-      switch (doXTarget) {
-        case 0:
-          s[curSample].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-        case 1:
-          s[curSample].noteMin-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-        case 2:
-          s[curSample].noteMax-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-        case 3:
-          s[curSample].velMin-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-        case 4:
-          s[curSample].velMax-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
-          break;
-      }
-    }
-    s[curSample].rate=fmax(0,s[curSample].rate);
-    s[curSample].noteMin=fmax(0,s[curSample].noteMin);
-    s[curSample].noteMax=fmax(0,s[curSample].noteMax);
-    s[curSample].velMin=fmax(0,s[curSample].velMin);
-    s[curSample].velMax=fmax(0,s[curSample].velMax);
-    timeOnButton++;
-  }
-  if (!(doUp || doDown)) {
-    timeOnButton=0;
-  }
+  upDown();
 }
 
 void Sampler::drawUI() {

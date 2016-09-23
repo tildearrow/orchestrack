@@ -135,6 +135,7 @@ class Sampler: public OTrackInstrument {
   string friendlyErr2(int e);
   void hover(int x, int y, int x2, int y2, int* result);
   void drawKeypad();
+  void upDown();
   void kpMouseDown(int button);
   void kpMouseUp(int button);
   void kpMouseMove(int button);
@@ -145,6 +146,9 @@ class Sampler: public OTrackInstrument {
   void loadMouseDown(int button);
   void loadMouseUp(int button);
   void loadMouseMove(int button);
+  void grMouseDown(int button);
+  void grMouseUp(int button);
+  void grMouseMove(int button);
   void seMouseDown(int button);
   void seMouseUp(int button);
   void seMouseMove(int button);
