@@ -41,6 +41,7 @@ void font::draw(int x, int y, SDL_Color col, int align, int valign, bool nocache
   tempr.y=y-((valign)?(temps->clip_rect.h/(3-valign)):(0));
   tempr.w=temps->clip_rect.w;
   tempr.h=temps->clip_rect.h;
+  SDL_SetTextureAlphaMod(tempt,col.a);
   SDL_RenderCopy(renderer, tempt, &temps->clip_rect, &tempr);
   SDL_DestroyTexture(tempt);
   SDL_FreeSurface(temps);

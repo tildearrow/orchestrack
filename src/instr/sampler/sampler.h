@@ -71,6 +71,8 @@ class Sampler: public OTrackInstrument {
   std::vector<listentry> listelem;
   string wd;
   int wdoff;
+  int erra;
+  string errl[3];
   bool wddir;
   string sfname;
   unsigned char* ev;
@@ -127,6 +129,9 @@ class Sampler: public OTrackInstrument {
   int curSample;
   string kpCurVal;
   float* kpVar;
+  string friendlyErr0(int e);
+  string friendlyErr1(int e);
+  string friendlyErr2(int e);
   void hover(int x, int y, int x2, int y2, int* result);
   void drawKeypad();
   void kpMouseDown(int button);
