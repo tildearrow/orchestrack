@@ -812,10 +812,16 @@ void Sampler::loadSample() {
     }
     temp+=listings[loadHIndex].name;
     if (readDir(temp.c_str())) {
+      int sx;
+      TTF_SizeUTF8(f->f,wd.c_str(),&sx,NULL);
       wd=temp;
       listPos=0;
       loadHIndex=-1;
       sfname="";
+      if (wdoff>sx-573 && wddir==1) {
+        wddir=0;
+      }
+      wdoff=fmax(0,fmin(sx-573,wdoff));
     } else {
       perror("can't read dir");
       erra=64;
