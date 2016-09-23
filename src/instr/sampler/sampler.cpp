@@ -709,14 +709,20 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
 
 void Sampler::loadSample() {
   if (listings[loadHIndex].type==4) {
-    if (wd.at(wd.size()-1)!=DIR_SEP) {
-      wd+=DIR_SEP;
+    string temp;
+    temp=wd;
+    if (temp.at(temp.size()-1)!=DIR_SEP) {
+      temp+=DIR_SEP;
     }
-    wd+=listings[loadHIndex].name;
-    readDir(wd.c_str());
-    listPos=0;
-    loadHIndex=-1;
-    sfname="";
+    temp+=listings[loadHIndex].name;
+    if (readDir(temp.c_str())) {
+      wd=temp;
+      listPos=0;
+      loadHIndex=-1;
+      sfname="";
+    } else {
+      perror("can't read dir");
+    }
   } else if (listings[loadHIndex].type==8) {
     // try to load sample
     string path;
