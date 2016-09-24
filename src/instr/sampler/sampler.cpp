@@ -1,4 +1,3 @@
-/// TODO: move range controls to grid view!
 #include "sampler.h"
 
 OTrackInsSpec* Sampler::getspec() {
