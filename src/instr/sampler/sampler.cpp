@@ -1261,7 +1261,7 @@ void Sampler::drawGrid() {
   f->drawf(92-52,170+256,tempc,1,1,
            "%c%c%d",sChromaNote[s[curSample].noteMin%12]
                    ,sChromaSemitone[s[curSample].noteMin%12]
-                   ,s[curSample].noteMin/12);
+                   ,(s[curSample].noteMin/12)-2);
   
   // right
   tempr.x=62+52; tempr1.x=0;
@@ -1282,7 +1282,7 @@ void Sampler::drawGrid() {
   f->drawf(92+52,170+256,tempc,1,1,
            "%c%c%d",sChromaNote[s[curSample].noteMax%12]
                    ,sChromaSemitone[s[curSample].noteMax%12]
-                   ,s[curSample].noteMax/12);
+                   ,(s[curSample].noteMax/12)-2);
   
   /// notevol
   
