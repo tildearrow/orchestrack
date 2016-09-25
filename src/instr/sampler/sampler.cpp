@@ -16,15 +16,16 @@ void Sampler::reset() {
 }
 
 float* Sampler::getSample() {
+  int i, j;
   if (busy) {v.resize(0); return sample;}
-  float element0, element1, element, definitepos;
+  float element0, element1, element;
   sample[0]=0;
   sample[1]=0;
   ev=(unsigned char*)getEvent();
   while (ev!=NULL) {
     if ((ev[0]>>4)==8) {
       // find voice with properties, then destroy it
-      for (int i=0; i<v.size(); i++) {
+      for (i=0; i<v.size(); i++) {
         if (v[i].chan==(ev[0]&15)) {
           if (v[i].note==ev[1]) {
             //printf("erased. %d %.2x %.2x\n",i,v[i].chan,v[i].note);
@@ -47,7 +48,7 @@ float* Sampler::getSample() {
       v[thisv].periodN=0;
       v[thisv].periodD=0;
       v[thisv].sample=0;
-      for (int i=0; i<s.size(); i++) {
+      for (i=0; i<s.size(); i++) {
         if (s[i].noteMin<=v[thisv].note && s[i].noteMax>=v[thisv].note &&
             s[i].velMin<=ev[2] && s[i].velMax>=ev[2]) {
           v[thisv].sample=i; break;
@@ -61,7 +62,7 @@ float* Sampler::getSample() {
       // pitch bend.
       c[ev[0]&15].pitch=(ev[1]+(ev[2]<<7))-0x2000;
       //printf("pitch %d\n",c[ev[0]&15].pitch);
-      for (int i=0; i<v.size(); i++) {
+      for (i=0; i<v.size(); i++) {
         if (v[i].chan==(ev[0]&15)) {
           v[i].f=pow(2,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0))/12)*s[v[i].sample].rate/44100;
         }
@@ -84,7 +85,7 @@ float* Sampler::getSample() {
     }
     ev=(unsigned char*)getEvent();
   }
-  for (int i=0; i<v.size(); i++) {
+  for (i=0; i<v.size(); i++) {
     if (s[v[i].sample].chan==1) {
       element0=s[v[i].sample].data[0][v[i].periodN];
       element1=s[v[i].sample].data[0][v[i].periodN+1];
@@ -92,7 +93,7 @@ float* Sampler::getSample() {
       
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
-    } else for (int j=0; j<s[v[i].sample].chan; j++) {
+    } else for (j=0; j<s[v[i].sample].chan; j++) {
       element0=s[v[i].sample].data[j][v[i].periodN];
       element1=s[v[i].sample].data[j][v[i].periodN+1];
       element=element0+((element1-element0)*v[i].periodD);
@@ -104,7 +105,7 @@ float* Sampler::getSample() {
     v[i].periodD=fmod(v[i].periodD,1);
   }
   
-  for (int i=0; i<v.size(); i++) {
+  for (i=0; i<v.size(); i++) {
     if ((int)v[i].periodN>s[v[i].sample].len) {
       //printf("sample finished. %d %f %d\n",i,v[i].period,s[v[i].sample].len);
       v.erase(v.begin()+i); i--;
