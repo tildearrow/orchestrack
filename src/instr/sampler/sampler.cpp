@@ -110,7 +110,7 @@ float* Sampler::getSample() {
       element=element0+((element1-element0)*v[i].periodD);*/
       
       element=intNone(s[v[i].sample].data[0],v[i].periodN,v[i].periodD);
-      if (element==INFINITY) {printf("huh?\n");}
+      
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
     } else for (j=0; j<s[v[i].sample].chan; j++) {
@@ -746,7 +746,10 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             s[ssize].data=new float*[si.channels];
             tbuf=new float[si.channels];
             for (int i=0; i<si.channels; i++) {
-              s[ssize].data[i]=new float[si.frames+2]; // prevent click
+              s[ssize].data[i]=new float[si.frames+16]; // prevent click
+              for (int j=0; j<si.frames+16; j++) {
+                s[ssize].data[i][j]=0;
+              }
             }
             for (int i=0; i<si.frames; i++) {
               sf_readf_float(sndf,tbuf,1);
@@ -893,7 +896,10 @@ void Sampler::loadSample() {
       s[curSample].data=new float*[si.channels];
       tbuf=new float[si.channels];
       for (int i=0; i<si.channels; i++) {
-        s[curSample].data[i]=new float[si.frames];
+        s[curSample].data[i]=new float[si.frames+16];
+        for (int j=0; j<si.frames+16; j++) {
+          s[curSample].data[i][j]=0;
+        }
       }
       for (int i=0; i<si.frames; i++) {
         sf_readf_float(sndf,tbuf,1);
@@ -1468,7 +1474,10 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].data=new float*[si.channels];
     tbuf=new float[si.channels];
     for (int i=0; i<si.channels; i++) {
-      s[0].data[i]=new float[si.frames];
+      s[0].data[i]=new float[si.frames+16];
+      for (int j=0; j<si.frames+16; j++) {
+        s[0].data[i][j]=0;
+      }
     }
     for (int i=0; i<si.frames; i++) {
       sf_readf_float(sndf,tbuf,1);
