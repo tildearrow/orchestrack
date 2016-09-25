@@ -723,7 +723,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             s[ssize].data=new float*[si.channels];
             tbuf=new float[si.channels];
             for (int i=0; i<si.channels; i++) {
-              s[ssize].data[i]=new float[si.frames];
+              s[ssize].data[i]=new float[si.frames+2]; // prevent click
             }
             for (int i=0; i<si.frames; i++) {
               sf_readf_float(sndf,tbuf,1);
