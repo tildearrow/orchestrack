@@ -3,6 +3,7 @@
 #include "../../font/font.h"
 #include "../../ui/button.h"
 #include <sndfile.h>
+#include <assert.h>
 
 class Sampler: public OTrackInstrument {
   struct channel {
