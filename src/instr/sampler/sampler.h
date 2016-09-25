@@ -16,7 +16,8 @@ class Sampler: public OTrackInstrument {
     int pos;
     int pressure;
     int sample;
-    float period;
+    long periodN;
+    float periodD;
     float f;
     float vol;
     int env;

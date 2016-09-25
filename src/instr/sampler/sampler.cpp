@@ -44,7 +44,8 @@ float* Sampler::getSample() {
       thisv=v.size()-1;
       v[thisv].chan=ev[0]&15;
       v[thisv].note=ev[1];
-      v[thisv].period=0;
+      v[thisv].periodN=0;
+      v[thisv].periodD=0;
       v[thisv].sample=0;
       for (int i=0; i<s.size(); i++) {
         if (s[i].noteMin<=v[thisv].note && s[i].noteMax>=v[thisv].note &&
@@ -85,26 +86,26 @@ float* Sampler::getSample() {
   }
   for (int i=0; i<v.size(); i++) {
     if (s[v[i].sample].chan==1) {
-      definitepos=fmin(v[i].period,s[v[i].sample].len);
-      element0=s[v[i].sample].data[0][(int)definitepos];
-      element1=s[v[i].sample].data[0][(int)definitepos+1];
-      element=element0+((element1-element0)*fmod(definitepos,1));
+      element0=s[v[i].sample].data[0][v[i].periodN];
+      element1=s[v[i].sample].data[0][v[i].periodN+1];
+      element=element0+((element1-element0)*v[i].periodD);
       
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
     } else for (int j=0; j<s[v[i].sample].chan; j++) {
-      definitepos=fmin(v[i].period,s[v[i].sample].len);
-      element0=s[v[i].sample].data[j][(int)definitepos];
-      element1=s[v[i].sample].data[j][(int)definitepos+1];
-      element=element0+((element1-element0)*fmod(definitepos,1));
+      element0=s[v[i].sample].data[j][v[i].periodN];
+      element1=s[v[i].sample].data[j][v[i].periodN+1];
+      element=element0+((element1-element0)*v[i].periodD);
       
       sample[j]+=element*v[i].vol;
     }
-    v[i].period+=v[i].f;
+    v[i].periodD+=v[i].f;
+    v[i].periodN+=(int)v[i].periodD;
+    v[i].periodD=fmod(v[i].periodD,1);
   }
   
   for (int i=0; i<v.size(); i++) {
-    if ((int)v[i].period>s[v[i].sample].len) {
+    if ((int)v[i].periodN>s[v[i].sample].len) {
       //printf("sample finished. %d %f %d\n",i,v[i].period,s[v[i].sample].len);
       v.erase(v.begin()+i); i--;
     }
