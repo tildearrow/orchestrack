@@ -15,10 +15,18 @@ void Sampler::reset() {
   v.resize(0);
 }
 
+inline float Sampler::intNone(float* b, int n, float d) {
+  return b[n];
+}
+
+inline float Sampler::intLinear(float* b, int n, float d) {
+  return b[n]+((b[n+1]-b[n])*d);
+}
+
 float* Sampler::getSample() {
   int i, j;
   if (busy) {v.resize(0); return sample;}
-  float element0, element1, element;
+  float element;
   sample[0]=0;
   sample[1]=0;
   ev=(unsigned char*)getEvent();
@@ -87,16 +95,20 @@ float* Sampler::getSample() {
   }
   for (i=0; i<v.size(); i++) {
     if (s[v[i].sample].chan==1) {
+      /*
       element0=s[v[i].sample].data[0][v[i].periodN];
       element1=s[v[i].sample].data[0][v[i].periodN+1];
-      element=element0+((element1-element0)*v[i].periodD);
+      element=element0+((element1-element0)*v[i].periodD);*/
+      
+      element=intLinear(s[v[i].sample].data[0],v[i].periodN,v[i].periodD);
       
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
     } else for (j=0; j<s[v[i].sample].chan; j++) {
+      /*
       element0=s[v[i].sample].data[j][v[i].periodN];
-      element1=s[v[i].sample].data[j][v[i].periodN+1];
-      element=element0+((element1-element0)*v[i].periodD);
+      element1=s[v[i].sample].data[j][v[i].periodN+1];*/
+      element=intLinear(s[v[i].sample].data[j],v[i].periodN,v[i].periodD);
       
       sample[j]+=element*v[i].vol;
     }
