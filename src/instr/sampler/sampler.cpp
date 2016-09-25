@@ -23,6 +23,15 @@ inline float Sampler::intLinear(float* b, int n, float d) {
   return b[n]+((b[n+1]-b[n])*d);
 }
 
+// slightly modified version of http://www.musicdsp.org/showone.php?id=49
+inline float Sampler::intCubic(float* b, int n, float d) {
+  float a, bb, c;
+  a=(3*(b[n]-b[n+1])-b[n-1]+b[n+2])/2;
+  bb=2*b[n+1]+b[n-1]-(5*b[n]+b[n+2])/2;
+  c=(b[n+1]-b[n-1])/2;
+  return (((a*d)+bb)*d+c)*d+b[n];
+}
+
 float* Sampler::getSample() {
   int i, j;
   if (busy) {v.resize(0); return sample;}
@@ -100,7 +109,7 @@ float* Sampler::getSample() {
       element1=s[v[i].sample].data[0][v[i].periodN+1];
       element=element0+((element1-element0)*v[i].periodD);*/
       
-      element=intLinear(s[v[i].sample].data[0],v[i].periodN,v[i].periodD);
+      element=intCubic(s[v[i].sample].data[0],v[i].periodN,v[i].periodD);
       
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
@@ -108,7 +117,7 @@ float* Sampler::getSample() {
       /*
       element0=s[v[i].sample].data[j][v[i].periodN];
       element1=s[v[i].sample].data[j][v[i].periodN+1];*/
-      element=intLinear(s[v[i].sample].data[j],v[i].periodN,v[i].periodD);
+      element=intCubic(s[v[i].sample].data[j],v[i].periodN,v[i].periodD);
       
       sample[j]+=element*v[i].vol;
     }

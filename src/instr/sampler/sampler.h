@@ -133,6 +133,7 @@ class Sampler: public OTrackInstrument {
   float* kpVar;
   inline float intNone(float* b, int n, float d);
   inline float intLinear(float* b, int n, float d);
+  inline float intCubic(float* b, int n, float d);
   string friendlyErr0(int e);
   string friendlyErr1(int e);
   string friendlyErr2(int e);
