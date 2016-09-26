@@ -109,7 +109,7 @@ float* Sampler::getSample() {
       element1=s[v[i].sample].data[0][v[i].periodN+1];
       element=element0+((element1-element0)*v[i].periodD);*/
       
-      element=intNone(s[v[i].sample].data[0],v[i].periodN,v[i].periodD);
+      element=intCubic(s[v[i].sample].data[0],v[i].periodN,v[i].periodD);
       
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
