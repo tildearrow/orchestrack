@@ -2,6 +2,7 @@
 #include "../instr.h"
 #include "../../font/font.h"
 #include "../../ui/button.h"
+#include "../../format/riff.h"
 #include <sndfile.h>
 #include <assert.h>
 
@@ -81,6 +82,7 @@ class Sampler: public OTrackInstrument {
   unsigned char* ev;
   float* tbuf;
   SNDFILE* sndf;
+  riff* lf;
   SF_INFO si;
   SDL_Texture* but;
   SDL_Texture* grid;

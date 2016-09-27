@@ -1467,6 +1467,10 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].noteMax=127;
     s[0].velMin=0;
     s[0].velMax=127;
+    FILE* fo;
+    fo=fopen("../share/orchestrack/loop.wav","rb");
+    lf=readRIFF(fo);
+    fclose(fo);
     sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
     s[0].len=si.frames;
     s[0].chan=si.channels;
