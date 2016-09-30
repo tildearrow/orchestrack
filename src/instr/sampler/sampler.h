@@ -3,8 +3,13 @@
 #include "../../font/font.h"
 #include "../../ui/button.h"
 #include "../../format/riff.h"
+#include "../../engine/lutgen.h"
 #include <sndfile.h>
 #include <assert.h>
+
+#define fShift (16-(WFIR_FRACBITS+1+WFIR_LOG2WIDTH))
+#define fMask ((((1L<<(17-fShift))-1)&~((1L<<WFIR_LOG2WIDTH)-1)))
+#define fHalve (1L<<(16-(WFIR_FRACBITS+2)))
 
 class Sampler: public OTrackInstrument {
   struct channel {
@@ -84,6 +89,7 @@ class Sampler: public OTrackInstrument {
   string sfname;
   unsigned char* ev;
   float* tbuf;
+  float table[WFIR_LUTLEN*WFIR_WIDTH];
   SNDFILE* sndf;
   riff* lf;
   SF_INFO si;
@@ -140,6 +146,7 @@ class Sampler: public OTrackInstrument {
   inline float intNone(float* b, int n, float d);
   inline float intLinear(float* b, int n, float d);
   inline float intCubic(float* b, int n, float d);
+  inline float intSinc(float* b, int n, float d);
   string friendlyErr0(int e);
   string friendlyErr1(int e);
   string friendlyErr2(int e);

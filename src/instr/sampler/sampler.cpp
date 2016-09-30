@@ -32,6 +32,19 @@ inline float Sampler::intCubic(float* b, int n, float d) {
   return (((a*d)+bb)*d+c)*d+b[n];
 }
 
+inline float Sampler::intSinc(float* b, int n, float d) {
+  float one;
+  one=0;
+  int pl;
+  float* where;
+  pl=((int)(d*65536))&0xffff;
+  where=table+(((pl+fHalve)>>fShift)&fMask);
+  for (int i=-3; i<5; i++) {
+    one+=b[n+i]*where[i+3];
+  }
+  return one;
+}
+
 float* Sampler::getSample() {
   int i, j;
   if (busy) {v.resize(0); return sample;}
@@ -109,7 +122,7 @@ float* Sampler::getSample() {
       element1=s[v[i].sample].data[0][v[i].periodN+1];
       element=element0+((element1-element0)*v[i].periodD);*/
       
-      element=intCubic(s[v[i].sample].data[0],v[i].periodN,v[i].periodD);
+      element=intSinc(s[v[i].sample].data[0],v[i].periodN+8,v[i].periodD);
       
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
@@ -117,7 +130,7 @@ float* Sampler::getSample() {
       /*
       element0=s[v[i].sample].data[j][v[i].periodN];
       element1=s[v[i].sample].data[j][v[i].periodN+1];*/
-      element=intCubic(s[v[i].sample].data[j],v[i].periodN,v[i].periodD);
+      element=intSinc(s[v[i].sample].data[j],v[i].periodN+8,v[i].periodD);
       
       sample[j]+=element*v[i].vol;
     }
@@ -751,7 +764,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
                 s[ssize].data[i][j]=0;
               }
             }
-            for (int i=0; i<si.frames; i++) {
+            for (int i=8; i<si.frames+8; i++) {
               sf_readf_float(sndf,tbuf,1);
               for (int j=0; j<si.channels; j++) {
                 s[ssize].data[j][i]=tbuf[j];
@@ -901,7 +914,7 @@ void Sampler::loadSample() {
           s[curSample].data[i][j]=0;
         }
       }
-      for (int i=0; i<si.frames; i++) {
+      for (int i=8; i<si.frames+8; i++) {
         sf_readf_float(sndf,tbuf,1);
         for (int j=0; j<si.channels; j++) {
           s[curSample].data[j][i]=tbuf[j];
@@ -1483,7 +1496,7 @@ bool Sampler::init(int inChannels, int outChannels) {
         s[0].data[i][j]=0;
       }
     }
-    for (int i=0; i<si.frames; i++) {
+    for (int i=8; i<si.frames+8; i++) {
       sf_readf_float(sndf,tbuf,1);
       for (int j=0; j<si.channels; j++) {
         s[0].data[j][i]=tbuf[j];
@@ -1491,6 +1504,7 @@ bool Sampler::init(int inChannels, int outChannels) {
     }
     sf_close(sndf);
     delete[] tbuf;
+    windowed_fir_init(table);
     showHidden=false;
     busy=false;
     return true;
