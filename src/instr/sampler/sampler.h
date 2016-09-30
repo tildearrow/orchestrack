@@ -33,6 +33,9 @@ class Sampler: public OTrackInstrument {
     char velMin, velMax;
     float rate;
     float** data;
+    int loopStart;
+    int loopEnd;
+    int loopType;
   };
   struct {
     int x;
