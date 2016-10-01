@@ -1185,16 +1185,16 @@ void Sampler::upDown() {
           s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
           break;
         case 1:
-          s[curSample].noteMin+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          s[curSample].noteMin=fmin(s[curSample].noteMin+1,s[curSample].noteMax);
           break;
         case 2:
-          s[curSample].noteMax+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          s[curSample].noteMax=fmin(s[curSample].noteMax+1,127);
           break;
         case 3:
-          s[curSample].velMin+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          s[curSample].velMin=fmin(s[curSample].velMin+1,s[curSample].velMax);
           break;
         case 4:
-          s[curSample].velMax+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          s[curSample].velMax=fmin(s[curSample].velMax+1,127);
           break;
       }
     }
@@ -1207,24 +1207,20 @@ void Sampler::upDown() {
           s[curSample].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
           break;
         case 1:
-          s[curSample].noteMin-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          s[curSample].noteMin=fmax(s[curSample].noteMin-1,0);
           break;
         case 2:
-          s[curSample].noteMax-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          s[curSample].noteMax=fmax(s[curSample].noteMax-1,s[curSample].noteMin);
           break;
         case 3:
-          s[curSample].velMin-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          s[curSample].velMin=fmax(s[curSample].velMin-1,0);
           break;
         case 4:
-          s[curSample].velMax-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
+          s[curSample].velMax=fmax(s[curSample].velMax-1,s[curSample].velMin);
           break;
       }
     }
     s[curSample].rate=fmax(0,s[curSample].rate);
-    s[curSample].noteMin=fmax(0,s[curSample].noteMin);
-    s[curSample].noteMax=fmax(0,s[curSample].noteMax);
-    s[curSample].velMin=fmax(0,s[curSample].velMin);
-    s[curSample].velMax=fmax(0,s[curSample].velMax);
     timeOnButton++;
   }
   if (!(doUp || doDown)) {
