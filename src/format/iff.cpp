@@ -1,7 +1,7 @@
 /// xxd -g 1 loop.wav:
 
 /*****************************************************************************\
-| 00000000: 52 49 46 46 e8 00 00 00 57 41 56 45 66 6d 74 20  RIFF....WAVEfmt  |
+| 00000000: 52 49 46 46 e8 00 00 00 57 41 56 45 66 6d 74 20  IFF....WAVEfmt  |
 | 00000010: 10 00 00 00 01 00 01 00 ab 20 00 00 ab 20 00 00  ......... ... .. |
 | 00000020: 01 00 08 00 64 61 74 61 40 00 00 00 80 80 ec e3  ....data@....... |
 | 00000030: df d8 d5 d2 cf cc c9 c6 c1 bd b8 ad a8 a2 9a 95  ................ |
@@ -18,25 +18,36 @@
 | 000000e0: 4d 50 54 20 31 2e 32 36 2e 30 35 2e 30 30 00 00  MPT 1.26.05.00.. |
 \*****************************************************************************/
 
-#include "riff.h"
+#include "iff.h"
 
-riff* readRIFF(FILE* f) {
-  riff* r;
+iff* readIFF(FILE* f) {
+  iff* r;
   int curc;
   curc=0;
-  r=new riff;
+  r=new iff;
+  r->isRIFF=false;
   fseek(f,0,SEEK_SET);
   r->h.id[0]=fgetc(f);
   r->h.id[1]=fgetc(f);
   r->h.id[2]=fgetc(f);
   r->h.id[3]=fgetc(f);
   r->h.id[4]=0;
-  if (strcmp(r->h.id,"RIFF")!=0) {
+  if (strcmp(r->h.id,"RIFF")!=0 && strcmp(r->h.id,"FORM")!=0) {
     delete r;
     return NULL;
   }
-  //printf("is riff\n");
-  r->h.size=fgeti(f);
+  if (strcmp(r->h.id,"RIFF")==0) {
+    printf("is RIFF\n");
+    r->isRIFF=true;
+    r->h.size=fgeti(f);
+  } else if (strcmp(r->h.id,"FORM")==0) {
+    printf("is IFF\n");
+    r->h.size=fgetbi(f);
+  } else {
+    printf("is some IFF derivative. failing\n");
+    delete r;
+    return NULL;
+  }
   //printf("has size %d\n",r->h.size);
   r->h.format[0]=fgetc(f);
   r->h.format[1]=fgetc(f);
@@ -52,12 +63,16 @@ riff* readRIFF(FILE* f) {
     r->s[curc].id[2]=fgetc(f);
     r->s[curc].id[3]=fgetc(f);
     r->s[curc].id[4]=0;
-    r->s[curc].size=fgeti(f);
+    if (r->isRIFF) {
+      r->s[curc].size=fgeti(f);
+    } else {
+      r->s[curc].size=fgetbi(f);
+    }
     if (feof(f)) {
       r->s.resize(r->s.size()-1);
       break;
     }
-    //printf("-CHUNK %s (%d bytes)-\n",r->s[curc].id,r->s[curc].size);
+    printf("-CHUNK %s (%d bytes)-\n",r->s[curc].id,r->s[curc].size);
     r->s[curc].data=new unsigned char[r->s[curc].size];
     //printf("DATA:");
     for (int i=0; i<r->s[curc].size; i++) {
@@ -70,7 +85,7 @@ riff* readRIFF(FILE* f) {
   return r;
 }
 
-void freeRIFF(riff* r) {
+void freeIFF(iff* r) {
   for (int i=0; i<r->s.size(); i++) {
     delete[] r->s[i].data;
   }

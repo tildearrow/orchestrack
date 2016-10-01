@@ -103,7 +103,7 @@ class Sampler: public OTrackInstrument {
   float table[WFIR_LUTLEN*WFIR_WIDTH];
   // for file loading //
   SNDFILE* sndf;
-  riff* lf;
+  iff* lf;
   rwave* lwf;
   SF_INFO si;
   // textures //

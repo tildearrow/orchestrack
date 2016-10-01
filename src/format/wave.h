@@ -1,4 +1,4 @@
-#include "riff.h"
+#include "iff.h"
 
 struct rwave {
   struct {
@@ -55,6 +55,6 @@ struct rwave {
   } inst;
 };
 
-rwave* readWAVE(riff* f);
+rwave* readWAVE(iff* f);
 
 void freeWAVE(rwave* r);

@@ -3,7 +3,7 @@ extern "C" {
   #include "../file/fextra.h"
 }
 
-struct riff {
+struct iff {
   struct header {
     char id[5];
     long size;
@@ -15,8 +15,9 @@ struct riff {
     unsigned char* data;
   };
   std::vector<subchnk> s;
+  bool isRIFF;
 };
 
-riff* readRIFF(FILE* f);
+iff* readIFF(FILE* f);
 
-void freeRIFF(riff* r);
+void freeIFF(iff* r);

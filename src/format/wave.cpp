@@ -1,6 +1,6 @@
 #include "wave.h"
 
-rwave* readWAVE(riff* f) {
+rwave* readWAVE(iff* f) {
   rwave* r;
   r=new rwave;
   r->smpl.loops=0;

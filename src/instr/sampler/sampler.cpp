@@ -909,14 +909,12 @@ void Sampler::loadSample() {
         }
       }
       sf_close(sndf);
-      s[curSample].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
       delete[] tbuf;
       FILE* fo;
       fo=fopen(path.c_str(),"rb");
-      freeRIFF(lf);
-      lf=readRIFF(fo);
+      lf=readIFF(fo);
+      printf("iff: %d\n",lf);
       fclose(fo);
-      freeWAVE(lwf);
       lwf=readWAVE(lf);
       printf("%ld\n",lwf->smpl.loops);
       if ((lwf->smpl.loops)>0) {
@@ -928,6 +926,9 @@ void Sampler::loadSample() {
         s[curSample].loopStart=0;
         s[curSample].loopEnd=0;
       }
+      freeIFF(lf);
+      freeWAVE(lwf);
+      s[curSample].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
       showLoad=false;
       busy=false;
     } else {
@@ -1480,31 +1481,36 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].noteMax=127;
     s[0].velMin=0;
     s[0].velMax=127;
+    /*
     FILE* fo;
     fo=fopen("../share/orchestrack/testsmp.wav","rb");
-    lf=readRIFF(fo);
+    lf=readIFF(fo);
     fclose(fo);
-    lwf=readWAVE(lf);
-    sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
-    s[0].len=si.frames;
-    s[0].chan=si.channels;
-    s[0].rate=si.samplerate;
-    s[0].data=new float*[si.channels];
-    tbuf=new float[si.channels];
-    for (int i=0; i<si.channels; i++) {
-      s[0].data[i]=new float[si.frames+16];
-      for (int j=0; j<si.frames+16; j++) {
+    if (lf) {
+      lwf=readWAVE(lf);
+    }
+    sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);*/
+    s[0].len=128;
+    s[0].chan=1;
+    s[0].rate=44100;
+    s[0].data=new float*[1];
+    s[0].loopStart=0;
+    s[0].loopEnd=127;
+    s[0].loopType=1;
+    //tbuf=new float[si.channels];
+    for (int i=0; i<1; i++) {
+      s[0].data[i]=new float[128+16];
+      for (int j=0; j<128+16; j++) {
         s[0].data[i][j]=0;
       }
     }
-    for (int i=8; i<si.frames+8; i++) {
-      sf_readf_float(sndf,tbuf,1);
-      for (int j=0; j<si.channels; j++) {
-        s[0].data[j][i]=tbuf[j];
-      }
+    for (int i=8; i<128+8; i++) {
+      //sf_readf_float(sndf,tbuf,1);
+      s[0].data[0][i]=((float)i/256)-1;
     }
+    /*
     sf_close(sndf);
-    delete[] tbuf;
+    delete[] tbuf;*/
     windowed_fir_init(table);
     showHidden=false;
     busy=false;
