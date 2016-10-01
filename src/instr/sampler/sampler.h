@@ -3,6 +3,7 @@
 #include "../../font/font.h"
 #include "../../ui/button.h"
 #include "../../format/wave.h"
+#include "../../format/aiff.h"
 #include "../../engine/lutgen.h"
 #include <sndfile.h>
 #include <assert.h>
@@ -105,6 +106,7 @@ class Sampler: public OTrackInstrument {
   SNDFILE* sndf;
   iff* lf;
   rwave* lwf;
+  aiff* laf;
   SF_INFO si;
   // textures //
   SDL_Texture* but;

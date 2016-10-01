@@ -1,3 +1,5 @@
+#ifndef _IFF_H
+#define _IFF_H
 #include "../includes.h"
 extern "C" {
   #include "../file/fextra.h"
@@ -21,3 +23,4 @@ struct iff {
 iff* readIFF(FILE* f);
 
 void freeIFF(iff* r);
+#endif

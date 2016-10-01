@@ -915,19 +915,25 @@ void Sampler::loadSample() {
       lf=readIFF(fo);
       printf("iff: %d\n",lf);
       fclose(fo);
-      lwf=readWAVE(lf);
-      printf("%ld\n",lwf->smpl.loops);
-      if ((lwf->smpl.loops)>0) {
-        s[curSample].loopType=1;
-        s[curSample].loopStart=lwf->smpl.l[0].start;
-        s[curSample].loopEnd=lwf->smpl.l[0].end;
+      if (lf->isRIFF) {
+        lwf=readWAVE(lf);
+        printf("%ld\n",lwf->smpl.loops);
+        if ((lwf->smpl.loops)>0) {
+          s[curSample].loopType=1;
+          s[curSample].loopStart=lwf->smpl.l[0].start;
+          s[curSample].loopEnd=lwf->smpl.l[0].end;
+        } else {
+          s[curSample].loopType=0;
+          s[curSample].loopStart=0;
+          s[curSample].loopEnd=0;
+        }
+        freeWAVE(lwf);
       } else {
-        s[curSample].loopType=0;
-        s[curSample].loopStart=0;
-        s[curSample].loopEnd=0;
+        laf=readAIFF(lf);
+        freeAIFF(laf);
       }
       freeIFF(lf);
-      freeWAVE(lwf);
+      
       s[curSample].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
       showLoad=false;
       busy=false;
