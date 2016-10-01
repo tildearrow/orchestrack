@@ -44,17 +44,10 @@ int audio(jack_nframes_t len, void* arg) {
   }
   ec=jack_midi_get_event_count(m);
   if (ec!=0) {
-    //printf("have %d events:\n",ec);
     me=new jack_midi_event_t[ec];
   }
   for (int i=0; i<ec; i++) {
     jack_midi_event_get(&me[i],m,i);
-    
-    /*printf("- event %d time is %d. data (%lu):\n  -",i,me[i].time,me[i].size);
-    for (int j=0; j<me[i].size; j++) {
-      printf(" %.2x",*(me[i].buffer+j));
-    }
-    printf("\n");*/
   }
   if (ec!=0) {
     nep=me[0].time;
@@ -74,7 +67,6 @@ int audio(jack_nframes_t len, void* arg) {
     s[0][i]=pt[0];
     s[1][i]=pt[1];
   }
-  //delete[] me; // haha
   return 0;
 }
 #else
@@ -196,7 +188,6 @@ int main() {
           break;
         case SDL_FINGERMOTION:
 	  touch=true;
-	  //printf("move %d %d %d\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
           ins.mouseEvent(0,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
           break;
 #endif

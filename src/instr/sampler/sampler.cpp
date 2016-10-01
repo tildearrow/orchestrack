@@ -58,15 +58,10 @@ float* Sampler::getSample() {
       for (i=0; i<v.size(); i++) {
         if (v[i].chan==(ev[0]&15)) {
           if (v[i].note==ev[1]) {
-            //printf("erased. %d %.2x %.2x\n",i,v[i].chan,v[i].note);
             v.erase(v.begin()+i); i--;
           }
         }
       }
-      /*
-      v[ev[0]&15].period=0;
-      v[ev[0]&15].f=0;
-      v[ev[0]&15].vol=(float)ev[2]/128;*/
     }
     if ((ev[0]>>4)==9) {
       // allocate a voice
@@ -86,12 +81,10 @@ float* Sampler::getSample() {
       }
       v[thisv].f=pow(2.0,((float)v[thisv].note-60.0)/12.0)*s[v[thisv].sample].rate/44100.0;
       v[thisv].vol=(float)ev[2]/128.0;
-      //printf("allocated. %d %.2x %.2x %f %f\n",thisv,v[thisv].chan,v[thisv].note,v[thisv].vol,v[thisv].f);
     }
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
       c[ev[0]&15].pitch=(ev[1]+(ev[2]<<7))-0x2000;
-      //printf("pitch %d\n",c[ev[0]&15].pitch);
       for (i=0; i<v.size(); i++) {
         if (v[i].chan==(ev[0]&15)) {
           v[i].f=pow(2,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0))/12)*s[v[i].sample].rate/44100;
@@ -109,7 +102,6 @@ float* Sampler::getSample() {
       switch (ev[0]&15) {
         case 8: tick++; break;
         case 0xa: tick=0; break;
-        //case 0xc: tick=0; break;
         case 0xf: reset(); break;
       }
     }
@@ -117,19 +109,11 @@ float* Sampler::getSample() {
   }
   for (i=0; i<v.size(); i++) {
     if (s[v[i].sample].chan==1) {
-      /*
-      element0=s[v[i].sample].data[0][v[i].periodN];
-      element1=s[v[i].sample].data[0][v[i].periodN+1];
-      element=element0+((element1-element0)*v[i].periodD);*/
-      
       element=intSinc(s[v[i].sample].data[0],v[i].periodN+8,v[i].periodD);
       
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
     } else for (j=0; j<s[v[i].sample].chan; j++) {
-      /*
-      element0=s[v[i].sample].data[j][v[i].periodN];
-      element1=s[v[i].sample].data[j][v[i].periodN+1];*/
       element=intSinc(s[v[i].sample].data[j],v[i].periodN+8,v[i].periodD);
       
       sample[j]+=element*v[i].vol;
@@ -144,7 +128,6 @@ float* Sampler::getSample() {
   
   for (i=0; i<v.size(); i++) {
     if ((int)v[i].periodN>s[v[i].sample].len) {
-      //printf("sample finished. %d %f %d\n",i,v[i].period,s[v[i].sample].len);
       v.erase(v.begin()+i); i--;
     }
   }
@@ -1007,9 +990,7 @@ void Sampler::drawList() {
   oldPolledMY=polledMY;
   polledMY=mouse.y;
   
-  if (touching) {
-    //printf("fSpeed: %f\n",polledMY-oldPolledMY);
-  } else {
+  if (!touching) {
     if (listDir) {
       listPos-=listSpeed;
     } else {
@@ -1030,7 +1011,6 @@ void Sampler::drawList() {
     if (listPos>-0.5) {
       listPos=0;
     }
-    //printf("listPos: %f\n",listPos);
   }
   
   if (listPos>0 && (listPos+382)>20*(listelem.size()) && !touching) {
@@ -1045,7 +1025,6 @@ void Sampler::drawList() {
         listPos=(20*(float)listelem.size()-392);
       }
     }
-    //printf("listPos: %f. target %f\n",listPos,((20*(float)listings.size()-392)+0.5));
   }
 }
 
@@ -1107,7 +1086,6 @@ void Sampler::drawLoadUI() {
   f->draw(83-fmax(0,fmin(sx-573,wdoff)),30,tempc,0,0,0,wd);
   SDL_RenderSetClipRect(r,NULL);
   f->draw(33,462,tempc,0,0,0,sfname);
-  //f->draw(33,462,tempc,0,0,0,"filename.wav");
   drawList();
   
   tempc.r=255; tempc.g=255; tempc.b=255; tempc.a=erra*2;
@@ -1193,7 +1171,6 @@ void Sampler::drawSampleSel() {
   
   f->draw(370,30,tempc,1,0,0,"Select Sample");
   f->draw(33,462,tempc,0,0,0,sfname);
-  //f->draw(33,462,tempc,0,0,0,"filename.wav");
   drawList();
 }
 
@@ -1266,7 +1243,6 @@ void Sampler::drawGrid() {
   tempr.y=0;
   tempr.w=128;
   tempr.h=64;
-  //SDL_RenderCopy(r,but,NULL,&tempr);
   // draw currently playing notes
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_ADD);
   SDL_SetRenderDrawColor(r,255,255,255,32);
@@ -1482,10 +1458,6 @@ bool Sampler::init(int inChannels, int outChannels) {
   if (inChannels==0) {
     sample=new float[outChannels];
     outCh=outChannels;
-    /*v.resize(16);
-    for (int i=0; i<v.size(); i++) {
-      v[i].period=0;
-    }*/
     char* twd;
 #ifndef _WIN32
     twd=getcwd(NULL,PATH_MAX);
