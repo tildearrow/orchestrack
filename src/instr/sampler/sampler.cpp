@@ -843,6 +843,8 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.a=255;
   smodeactive=drawButton(r,0,0,175,20,tempc,4);
   showLoad=false;
+  // init eye candy //
+  aBBPos=-30;
 }
 
 void Sampler::loadSample() {
@@ -1413,8 +1415,14 @@ void Sampler::drawUI() {
   
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
   
+  aBBPos*=0.7;
+  
+  if (aBBPos>-0.02 && aBBPos!=0) {
+    aBBPos=0;
+  }
+  
   tempr.x=8;  tempr1.x=0;
-  tempr.y=482; tempr1.y=0;
+  tempr.y=482-aBBPos; tempr1.y=0;
   tempr.w=175; tempr1.w=175;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,(curView==0)?(smodeactive):(smode),&tempr1,&tempr);
@@ -1428,10 +1436,10 @@ void Sampler::drawUI() {
   tempr.x=557;  tempr1.x=0;
   SDL_RenderCopy(r,(curView==3)?(smodeactive):(smode),&tempr1,&tempr);
   
-  f->draw(95,482,tempc,1,0,0,"Summary");
-  f->draw(278,482,tempc,1,0,0,"Grid");
-  f->draw(462,482,tempc,1,0,0,"Editor");
-  f->draw(644,482,tempc,1,0,0,"Envelope");
+  f->draw(95,482-aBBPos,tempc,1,0,0,"Summary");
+  f->draw(278,482-aBBPos,tempc,1,0,0,"Grid");
+  f->draw(462,482-aBBPos,tempc,1,0,0,"Editor");
+  f->draw(644,482-aBBPos,tempc,1,0,0,"Envelope");
   
   switch (curView) {
     case 0: drawSummary(); break;

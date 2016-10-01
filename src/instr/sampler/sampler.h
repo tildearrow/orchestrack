@@ -122,6 +122,7 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* srangebutton;
   SDL_Texture* sselect; int sselectS;
   // eye candy //
+  float aBBPos;
   // temporary SDL stuff //
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;
