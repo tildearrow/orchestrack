@@ -1260,9 +1260,9 @@ void Sampler::drawGrid() {
   // draw sample regions
   for (int i=0; i<s.size(); i++) {
     tempr.x=10+2+s[i].noteMin*5;
-    tempr.y=12;
+    tempr.y=12+336.0*((float)s[i].velMin/127.0);
     tempr.w=5*(s[i].noteMax-s[i].noteMin);
-    tempr.h=336;
+    tempr.h=336.0*((float)(s[i].velMax-s[i].velMin)/127.0);
     SDL_RenderFillRect(r,&tempr);
     SDL_RenderDrawRect(r,&tempr);
   }
