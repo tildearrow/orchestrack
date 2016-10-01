@@ -18,3 +18,5 @@ struct riff {
 };
 
 riff* readRIFF(FILE* f);
+
+void freeRIFF(riff* r);

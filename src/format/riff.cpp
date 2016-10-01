@@ -35,16 +35,16 @@ riff* readRIFF(FILE* f) {
     delete r;
     return NULL;
   }
-  printf("is riff\n");
+  //printf("is riff\n");
   r->h.size=fgeti(f);
-  printf("has size %d\n",r->h.size);
+  //printf("has size %d\n",r->h.size);
   r->h.format[0]=fgetc(f);
   r->h.format[1]=fgetc(f);
   r->h.format[2]=fgetc(f);
   r->h.format[3]=fgetc(f);
   r->h.format[4]=0;
-  printf("type: %s\n",r->h.format);
-  printf("begin read subchunks\n");
+  //printf("type: %s\n",r->h.format);
+  //printf("begin read subchunks\n");
   while (!feof(f)) {
     r->s.resize(r->s.size()+1);
     r->s[curc].id[0]=fgetc(f);
@@ -57,15 +57,22 @@ riff* readRIFF(FILE* f) {
       r->s.resize(r->s.size()-1);
       break;
     }
-    printf("-CHUNK %s (%d bytes)-\n",r->s[curc].id,r->s[curc].size);
+    //printf("-CHUNK %s (%d bytes)-\n",r->s[curc].id,r->s[curc].size);
     r->s[curc].data=new unsigned char[r->s[curc].size];
-    printf("DATA:");
+    //printf("DATA:");
     for (int i=0; i<r->s[curc].size; i++) {
       r->s[curc].data[i]=fgetc(f);
-      printf(" %.2x",r->s[curc].data[i]);
+      //printf(" %.2x",r->s[curc].data[i]);
     }
-    printf("\n");
+    //printf("\n");
     curc++;
   }
   return r;
+}
+
+void freeRIFF(riff* r) {
+  for (int i=0; i<r->s.size(); i++) {
+    delete[] r->s[i].data;
+  }
+  delete r;
 }

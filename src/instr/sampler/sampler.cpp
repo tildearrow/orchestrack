@@ -136,6 +136,9 @@ float* Sampler::getSample() {
     }
     v[i].periodD+=v[i].f;
     v[i].periodN+=(int)v[i].periodD;
+    if (s[v[i].sample].loopType==1 && v[i].periodN>s[v[i].sample].loopEnd) {
+      v[i].periodN=s[v[i].sample].loopStart+(v[i].periodN%(s[v[i].sample].loopEnd+1));
+    }
     v[i].periodD=fmod(v[i].periodD,1);
   }
   
@@ -923,6 +926,23 @@ void Sampler::loadSample() {
       sf_close(sndf);
       s[curSample].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
       delete[] tbuf;
+      FILE* fo;
+      fo=fopen(path.c_str(),"rb");
+      freeRIFF(lf);
+      lf=readRIFF(fo);
+      fclose(fo);
+      freeWAVE(lwf);
+      lwf=readWAVE(lf);
+      printf("%ld\n",lwf->smpl.loops);
+      if ((lwf->smpl.loops)>0) {
+        s[curSample].loopType=1;
+        s[curSample].loopStart=lwf->smpl.l[0].start;
+        s[curSample].loopEnd=lwf->smpl.l[0].end;
+      } else {
+        s[curSample].loopType=0;
+        s[curSample].loopStart=0;
+        s[curSample].loopEnd=0;
+      }
       showLoad=false;
       busy=false;
     } else {
@@ -1481,9 +1501,10 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].velMin=0;
     s[0].velMax=127;
     FILE* fo;
-    fo=fopen("../share/orchestrack/loop.wav","rb");
+    fo=fopen("../share/orchestrack/testsmp.wav","rb");
     lf=readRIFF(fo);
     fclose(fo);
+    lwf=readWAVE(lf);
     sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
     s[0].len=si.frames;
     s[0].chan=si.channels;

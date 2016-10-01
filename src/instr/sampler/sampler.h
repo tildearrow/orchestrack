@@ -2,7 +2,7 @@
 #include "../instr.h"
 #include "../../font/font.h"
 #include "../../ui/button.h"
-#include "../../format/riff.h"
+#include "../../format/wave.h"
 #include "../../engine/lutgen.h"
 #include <sndfile.h>
 #include <assert.h>
@@ -92,6 +92,7 @@ class Sampler: public OTrackInstrument {
   float table[WFIR_LUTLEN*WFIR_WIDTH];
   SNDFILE* sndf;
   riff* lf;
+  rwave* lwf;
   SF_INFO si;
   SDL_Texture* but;
   SDL_Texture* grid;
