@@ -12,11 +12,13 @@
 #define fHalve (1L<<(16-(WFIR_FRACBITS+2)))
 
 class Sampler: public OTrackInstrument {
+  // channel structure //
   struct channel {
     int pitch;
     short ctrl[128];
     int pressure;
   };
+  // voice structure //
   struct voice {
     int chan;
     int note;
@@ -30,6 +32,7 @@ class Sampler: public OTrackInstrument {
     int env;
     int envpos;
   };
+  // sample structure //
   struct smp {
     string path;
     int len;
@@ -42,26 +45,31 @@ class Sampler: public OTrackInstrument {
     int loopEnd;
     int loopType;
   };
+  // mouse structure //
   struct {
     int x;
     int y;
     bool b[4];
   } mouse;
+  // directory entry structure //
   struct dentry {
     string name;
     int type;
     int size;
   };
+  // list entry structure //
   struct listentry {
     string name;
     string rh;
     SDL_Color color;
   };
+  // envelope point structure //
   struct envp {
     float time;
     float value;
     int type;
   };
+  // envelope structure //
   struct envl {
     std::vector<envp> p;
     int start;
@@ -76,11 +84,13 @@ class Sampler: public OTrackInstrument {
   };
   font* f;
   channel c[16];
+  // vectors //
   std::vector<voice> v;
   std::vector<envl> e;
   std::vector<smp> s;
   std::vector<dentry> listings;
   std::vector<listentry> listelem;
+  // list stuff //
   string wd;
   int wdoff;
   int erra;
@@ -89,11 +99,14 @@ class Sampler: public OTrackInstrument {
   string sfname;
   unsigned char* ev;
   float* tbuf;
+  // sinc table //
   float table[WFIR_LUTLEN*WFIR_WIDTH];
+  // for file loading //
   SNDFILE* sndf;
   riff* lf;
   rwave* lwf;
   SF_INFO si;
+  // textures //
   SDL_Texture* but;
   SDL_Texture* grid;
   SDL_Texture* spath;
@@ -108,12 +121,17 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* srange;
   SDL_Texture* srangebutton;
   SDL_Texture* sselect; int sselectS;
+  // eye candy //
+  // temporary SDL stuff //
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;
+  // internal switches //
   bool showLoad;
   bool showSampleSel;
   bool showHidden;
+  // busy indicator //
   bool busy;
+  // list variables //
   float listPos;
   float fingerS;
   float listSpeed;
@@ -122,7 +140,9 @@ class Sampler: public OTrackInstrument {
   float touchSPos;
   float polledMY, oldPolledMY;
   bool touching;
+  // real-time MIDI tick //
   long tick;
+  // more list variables //
   int loadHIndex, loadSIndex;
   // doXtarget:
   // 0: rate
@@ -134,26 +154,36 @@ class Sampler: public OTrackInstrument {
   // 6: param1 max
   // 7: param2 min
   // 8: param2 max
+  // accel button variables //
   bool doUp, doDown; int doXTarget;
   int timeOnButton;
   // 0: drawSummary
   // 1: drawGrid
   // 2: drawSampleEdit
   // 3: drawEnvEdit
+  // main UI variables //
   int curView;
+  // sample edit variables //
   int curSample;
+  // keypad variables //
   string kpCurVal;
   float* kpVar;
+  // interpolation methods //
   inline float intNone(float* b, int n, float d);
   inline float intLinear(float* b, int n, float d);
   inline float intCubic(float* b, int n, float d);
   inline float intSinc(float* b, int n, float d);
+  // error string functions //
   string friendlyErr0(int e);
   string friendlyErr1(int e);
   string friendlyErr2(int e);
+  // check for hover //
   void hover(int x, int y, int x2, int y2, int* result);
+  // draw keypad //
   void drawKeypad();
+  // accel button update //
   void upDown();
+  // down/up/move //
   void kpMouseDown(int button);
   void kpMouseUp(int button);
   void kpMouseMove(int button);
@@ -170,17 +200,21 @@ class Sampler: public OTrackInstrument {
   void seMouseDown(int button);
   void seMouseUp(int button);
   void seMouseMove(int button);
+  // loading functions //
   void loadSample();
+  // list functions //
   void clearList();
   void feedList(string name, string rh, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
   void drawList();
   void drawLoadUI();
   void prepareSampleSel();
+  // draw UI functions //
   void drawSampleSel();
   void drawSummary();
   void drawGrid();
   void drawEnvEdit();
   void drawSampleEdit();
+  // directory functions //
   string topLevel(string path);
   int readDir(const char* path);
   public:
