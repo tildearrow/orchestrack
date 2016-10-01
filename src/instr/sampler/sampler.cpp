@@ -929,7 +929,28 @@ void Sampler::loadSample() {
         }
         freeWAVE(lwf);
       } else {
+        int candidate;
         laf=readAIFF(lf);
+        if (laf->inst.sloop.mode>0) {
+          candidate=0;
+          s[curSample].loopType=1;
+          for (int i=0; i<laf->m.size(); i++) {
+            if (laf->m[i].id==laf->inst.sloop.start) {
+              candidate=i; break;
+            }
+          }
+          s[curSample].loopStart=laf->m[candidate].pos;
+          for (int i=0; i<laf->m.size(); i++) {
+            if (laf->m[i].id==laf->inst.sloop.end) {
+              candidate=i; break;
+            }
+          }
+          s[curSample].loopEnd=laf->m[candidate].pos;
+        } else {
+          s[curSample].loopType=0;
+          s[curSample].loopStart=0;
+          s[curSample].loopEnd=0;
+        }
         freeAIFF(laf);
       }
       freeIFF(lf);

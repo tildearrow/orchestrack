@@ -3,10 +3,8 @@
 aiff* readAIFF(iff* f) {
   aiff* r;
   r=new aiff;
-  /*
-  r->smpl.loops=0;
-  r->smpl.l.resize(0);
-   */
+  r->inst.sloop.mode=0;
+  r->inst.rloop.mode=0;
   for (int i=0; i<f->s.size(); i++) {
     if (strcmp(f->s[i].id,"MARK")==0) {
       printf("marker chunk!\n");
@@ -19,7 +17,7 @@ aiff* readAIFF(iff* f) {
         r->m[j].id=(f->s[i].data[curpos++]<<8)+(f->s[i].data[curpos++]);
         r->m[j].pos=(f->s[i].data[curpos++]<<24)+(f->s[i].data[curpos++]<<16)+
                    (f->s[i].data[curpos++]<<8)+(f->s[i].data[curpos++]);
-        nameSize=((f->s[i].data[curpos++]+1)/2)*2;
+        nameSize=1+((f->s[i].data[curpos++])/2)*2;
         for (int k=0; k<nameSize; k++) {
           r->m[j].name+=f->s[i].data[curpos++];
         }
