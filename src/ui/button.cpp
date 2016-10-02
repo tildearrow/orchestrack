@@ -134,9 +134,7 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     
     cl=fopen(cn,"rb");
     if (cl) {
-      for (int i=0; i<w*3*h*4; i++) {
-        ppp[i]=fgetc(cl);
-      }
+      fread(ppp,1,w*3*h*4,cl);
       fclose(cl);
     } else {
     
