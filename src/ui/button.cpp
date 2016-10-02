@@ -108,6 +108,15 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int 
 
 SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color color, int rr) {
   SDL_Rect rect;
+  FILE* cl;
+  FILE* clw;
+  char* cn;
+#ifdef _WIN32
+  cn=new char[MAX_PATH];
+#else
+  cn=new char[PATH_MAX];
+#endif
+  sprintf(cn,"bcache-%x-%x-%x-%x%x%x%x",w,h,rr,color.r,color.g,color.b,color.a);
   rect.x=0; rect.y=0; rect.w=w; rect.h=h;
   SDL_Texture* t;
   t=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING,w*3,h);
@@ -123,8 +132,16 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     unsigned char* ppp;
     ppp=(unsigned char*)p;
     
-    memset(pp,0,w*3*h*4);
+    cl=fopen(cn,"rb");
+    if (cl) {
+      for (int i=0; i<w*3*h*4; i++) {
+        ppp[i]=fgetc(cl);
+      }
+      fclose(cl);
+    } else {
     
+    memset(pp,0,w*3*h*4);
+
     // --- first --- //
     
     tempcolor.r=(unsigned char)fmin(255,color.r+128);
@@ -224,6 +241,16 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
     tempcolor1.a=0;
     roundRect(pp,w*3,tempcolor,tempcolor1,(w*2)+3,3,w-6,h-10,rr-2);
     
+    // cache write //
+    clw=fopen(cn,"wb");
+    if (clw) {
+      for (int i=0; i<w*3*h*4; i++) {
+        fputc(pp[i],clw);
+      }
+      fclose(clw);
+    } else {
+      printf("can't cache button.\n");
+    }
     // copy result
     for (int i=0; i<w*3; i++) {
       for (int j=0; j<h; j++) {
@@ -233,6 +260,8 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
         ppp[(i*4)+(j*pitch)+3]=pp[(i*4)+(j*pitch)+3];//color.a;
       }
     }
+    }
+    
     delete[] pp;
     
     SDL_UnlockTexture(t);
@@ -241,5 +270,6 @@ SDL_Texture* drawButton(SDL_Renderer* r, int x, int y, int w, int h, SDL_Color c
   }
   rect.x=x; rect.y=y;
   
+  delete[] cn;
   return t;
 }
