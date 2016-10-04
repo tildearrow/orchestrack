@@ -1,3 +1,4 @@
+// TODO: envelopes!
 #include "sampler.h"
 
 OTrackInsSpec* Sampler::getspec() {
@@ -124,6 +125,9 @@ float* Sampler::getSample() {
       v[i].periodN=s[v[i].sample].loopStart+(v[i].periodN%(s[v[i].sample].loopEnd+1));
     }
     v[i].periodD=fmod(v[i].periodD,1);
+    v[i].envposD+=65536/44100;
+    v[i].envposN+=(int)v[i].envposD;
+    v[i].envposD=fmod(v[i].envposD,1);
   }
   
   for (i=0; i<v.size(); i++) {
@@ -811,6 +815,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.b=16;
   tempc.a=255;
   spath=drawButton(r,0,0,600,20,tempc,4);
+  spathlarge=drawButton(r,0,0,640,20,tempc,4);
   slfdir=drawButton(r,0,0,580,20,tempc,4);
   slfpath=drawButton(r,0,0,570,20,tempc,4);
   srange=drawButton(r,0,0,60,36,tempc,4);
@@ -821,6 +826,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   sload=drawButton(r,0,0,40,20,tempc,4);
   scancel=drawButton(r,0,0,50,20,tempc,4);
   sselect=drawButton(r,0,0,60,20,tempc,4);
+  senvsel=drawButton(r,0,0,70,20,tempc,4);
   srangebutton=drawButton(r,0,0,40,24,tempc,4);
   tempc.r=32;
   tempc.g=32;
@@ -1431,6 +1437,23 @@ void Sampler::drawSampleEdit() {
   upDown();
 }
 
+void Sampler::drawEnvEdit() {
+  tempr.x=90;  tempr1.x=0;
+  tempr.y=10; tempr1.y=0;
+  tempr.w=640; tempr1.w=640;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  
+  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.y=10; tempr1.y=0;
+  tempr.w=70;  tempr1.w=70;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
+  f->draw(45,10,tempc,1,0,0,"Envelope");
+  
+  f->draw(93,10,tempc,0,0,0,"[insert name here]");
+}
+
 void Sampler::drawUI() {
   tempc.r=255;
   tempc.g=255;
@@ -1469,6 +1492,7 @@ void Sampler::drawUI() {
     case 0: drawSummary(); break;
     case 1: drawGrid(); break;
     case 2: drawSampleEdit(); break;
+    case 3: drawEnvEdit(); break;
   }
   
   if (showLoad) {
@@ -1483,6 +1507,13 @@ void Sampler::drawUI() {
   SDL_SetRenderDrawColor(r,(mouse.b[0])?(0):(255),(mouse.b[1])?(0):(255),(mouse.b[2])?(0):(255),255);
   SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);
   ***/
+  
+  SDL_SetRenderDrawColor(r,255,255,255,255);
+  
+  for (int i=0; i<v.size(); i++) {
+    SDL_RenderDrawPoint(r,v[i].envposN/256,i);
+  }
+  
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }
 

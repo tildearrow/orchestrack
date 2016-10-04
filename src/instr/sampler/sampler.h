@@ -31,7 +31,8 @@ class Sampler: public OTrackInstrument {
     float f;
     float vol;
     int env;
-    int envpos;
+    int envposN;
+    float envposD;
   };
   // sample structure //
   struct smp {
@@ -112,6 +113,8 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* but;
   SDL_Texture* grid;
   SDL_Texture* spath;
+  SDL_Texture* spathlarge;
+  SDL_Texture* senvsel;
   SDL_Texture* sload; int sloadS; int supS; int seupS; int sedownS;
   SDL_Texture* scancel; int scancelS;
   SDL_Texture* sloadform;
