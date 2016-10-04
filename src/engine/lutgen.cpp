@@ -194,7 +194,7 @@ void windowed_fir_init(float* where)
     float pcllen = (float)(1L << WFIR_FRACBITS);
     float norm  = 1.0f / (float)(2.0f * pcllen);
     float cut   = WFIR_CUTOFF;
-    float scale = (float) WFIR_QUANTSCALE;
+    //float scale = (float) WFIR_QUANTSCALE;
 
     for (pcl = 0; pcl < WFIR_LUTLEN; pcl++) {
         float gain,coefs[WFIR_WIDTH];

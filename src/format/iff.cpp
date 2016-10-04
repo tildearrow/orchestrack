@@ -72,7 +72,7 @@ iff* readIFF(FILE* f) {
       r->s.resize(r->s.size()-1);
       break;
     }
-    printf("-CHUNK %s (%d bytes)-\n",r->s[curc].id,r->s[curc].size);
+    printf("-CHUNK %s (%ld bytes)-\n",r->s[curc].id,r->s[curc].size);
     r->s[curc].data=new unsigned char[r->s[curc].size];
     //printf("DATA:");
     for (int i=0; i<r->s[curc].size; i++) {

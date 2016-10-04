@@ -14,15 +14,22 @@ aiff* readAIFF(iff* f) {
       curpos=2;
       for (size_t j=0; j<r->m.size(); j++) {
         int nameSize;
-        r->m[j].id=(f->s[i].data[curpos++]<<8)+(f->s[i].data[curpos++]);
-        r->m[j].pos=(f->s[i].data[curpos++]<<24)+(f->s[i].data[curpos++]<<16)+
-                   (f->s[i].data[curpos++]<<8)+(f->s[i].data[curpos++]);
+        r->m[j].id=(f->s[i].data[curpos]<<8);
+        curpos++;
+        r->m[j].id+=(f->s[i].data[curpos++]);
+        r->m[j].pos=(f->s[i].data[curpos]<<24);
+        curpos++;
+        r->m[j].pos+=(f->s[i].data[curpos]<<16);
+        curpos++;
+        r->m[j].pos+=(f->s[i].data[curpos]<<8);
+        curpos++;
+        r->m[j].pos+=(f->s[i].data[curpos++]);
         nameSize=1+((f->s[i].data[curpos++])/2)*2;
         for (int k=0; k<nameSize; k++) {
           r->m[j].name+=f->s[i].data[curpos++];
         }
-        printf("marker %d:\n",j);
-        printf("id %d pos %d name %s\n",r->m[j].id,r->m[j].pos,r->m[j].name.c_str());
+        printf("marker %lu:\n",j);
+        printf("id %d pos %ld name %s\n",r->m[j].id,r->m[j].pos,r->m[j].name.c_str());
       }
     } else if (strcmp(f->s[i].id,"INST")==0) {
       printf("instrument chunk!\n");

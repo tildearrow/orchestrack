@@ -18,8 +18,8 @@ rwave* readWAVE(iff* f) {
       r->fmt.bps=f->s[i].data[14]+(f->s[i].data[15]<<8);
       printf("- aformat: %d\n",r->fmt.aformat);
       printf("- channels: %d\n",r->fmt.chan);
-      printf("- rate: %d\n",r->fmt.srate);
-      printf("- brate: %d\n",r->fmt.byterate);
+      printf("- rate: %ld\n",r->fmt.srate);
+      printf("- brate: %ld\n",r->fmt.byterate);
       printf("- bal: %d\n",r->fmt.bal);
       printf("- bps: %d\n",r->fmt.bps);
     } else if (strcmp(f->s[i].id,"data")==0) {

@@ -972,7 +972,7 @@ void Sampler::loadSample() {
         case SF_ERR_SYSTEM: ee=errno; break;
         case SF_ERR_MALFORMED_FILE: ee=257; break;
         case SF_ERR_UNSUPPORTED_ENCODING: ee=258; break;
-        default: fprintf(stderr,"huh?\n");
+        default: ee=0; fprintf(stderr,"huh?\n"); break;
       }
       erra=64;
       errl[0]=friendlyErr0(ee);
