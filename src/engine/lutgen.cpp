@@ -102,7 +102,7 @@ void cubic_spline_init(void)
             if (cubic_spline_lut[indx + 2] > cubic_spline_lut[max]) max = indx + 2;
             if (cubic_spline_lut[indx + 3] > cubic_spline_lut[max]) max = indx + 3;
 
-            cubic_spline_lut[max] += (SPLINE_QUANTSCALE - sum);
+            cubic_spline_lut[max] += (short)(SPLINE_QUANTSCALE - sum);
         }
 #endif
     }

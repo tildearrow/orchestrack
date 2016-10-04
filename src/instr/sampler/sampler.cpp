@@ -47,7 +47,7 @@ inline float Sampler::intSinc(float* b, int n, float d) {
 }
 
 float* Sampler::getSample() {
-  int i, j;
+  size_t i, j;
   if (busy) {v.resize(0); return sample;}
   float element;
   sample[0]=0;
@@ -80,15 +80,15 @@ float* Sampler::getSample() {
           v[thisv].sample=i; break;
         }
       }
-      v[thisv].f=pow(2.0,((float)v[thisv].note-60.0)/12.0)*s[v[thisv].sample].rate/44100.0;
-      v[thisv].vol=(float)ev[2]/128.0;
+      v[thisv].f=pow(2.0f,((float)v[thisv].note-60.0f)/12.0f)*s[v[thisv].sample].rate/44100.0f;
+      v[thisv].vol=(float)ev[2]/128.0f;
     }
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
       c[ev[0]&15].pitch=(ev[1]+(ev[2]<<7))-0x2000;
       for (i=0; i<v.size(); i++) {
         if (v[i].chan==(ev[0]&15)) {
-          v[i].f=pow(2,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0))/12)*s[v[i].sample].rate/44100;
+          v[i].f=pow(2.0f,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0f))/12)*s[v[i].sample].rate/44100;
         }
       }
     }
@@ -114,7 +114,7 @@ float* Sampler::getSample() {
       
       sample[0]+=element*v[i].vol;
       sample[1]+=element*v[i].vol;
-    } else for (j=0; j<s[v[i].sample].chan; j++) {
+    } else for (j=0; j<(size_t)s[v[i].sample].chan; j++) {
       element=intSinc(s[v[i].sample].data[j],v[i].periodN+8,v[i].periodD);
       
       sample[j]+=element*v[i].vol;
@@ -124,10 +124,10 @@ float* Sampler::getSample() {
     if (s[v[i].sample].loopType==1 && v[i].periodN>s[v[i].sample].loopEnd) {
       v[i].periodN=s[v[i].sample].loopStart+(v[i].periodN%(s[v[i].sample].loopEnd+1));
     }
-    v[i].periodD=fmod(v[i].periodD,1);
+    v[i].periodD=fmod(v[i].periodD,1.0f);
     v[i].envposD+=65536/44100;
     v[i].envposN+=(int)v[i].envposD;
-    v[i].envposD=fmod(v[i].envposD,1);
+    v[i].envposD=fmod(v[i].envposD,1.0f);
   }
   
   for (i=0; i<v.size(); i++) {
@@ -142,7 +142,7 @@ float* Sampler::getSample() {
 
 void Sampler::prepareSampleSel() {
   clearList();
-  for (int i=0; i<s.size(); i++) {
+  for (size_t i=0; i<s.size(); i++) {
     feedList(s[i].path,"",255,255,255,255);
   }
 }
@@ -280,7 +280,7 @@ int Sampler::readDir(const char* path) {
             dede.name=de->cFileName;
             dede.type=(de->dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)?(4):(8);
             listings.push_back(dede);
-	    dede.size=de->nFileSizeLow+((de->nFileSizeHigh)<<32);
+	    dede.size=de->nFileSizeLow;//+((de->nFileSizeHigh)<<32);
           }
         }
       }
@@ -288,7 +288,7 @@ int Sampler::readDir(const char* path) {
     FindClose(od);
     delete de;
     clearList();
-    for (int i=0; i<listings.size(); i++) {
+    for (size_t i=0; i<listings.size(); i++) {
       char* sizee;
       sizee=new char[21];
       sprintf(sizee,"%d",listings[i].size);
@@ -413,7 +413,7 @@ void Sampler::listMouseUp(int button) {
   }
   if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
     if (!scrolling) {
-      if (loadHIndex==(int)((mouse.y-63+listPos)/20) && loadHIndex<listelem.size()) {
+      if (loadHIndex==(int)((mouse.y-63+listPos)/20) && loadHIndex<(int)listelem.size()) {
         if (showSampleSel) {
           curSample=loadHIndex;
           showSampleSel=false;
@@ -421,8 +421,8 @@ void Sampler::listMouseUp(int button) {
           loadSample();
         }
       } else {
-        loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+listPos)/20);
-        if (loadHIndex<listelem.size() && loadHIndex>-1) {
+        loadHIndex=(!PointInRect(mouse.x,mouse.y,30,60,30+680,60+392))?(-1):((mouse.y-63+(int)listPos)/20);
+        if (loadHIndex<(int)listelem.size() && loadHIndex>-1) {
           sfname=listelem[loadHIndex].name;
         } else {
           sfname="";
@@ -743,13 +743,13 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             s[ssize].velMin=0;
             s[ssize].velMax=127;
             sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
-            s[ssize].len=si.frames;
+            s[ssize].len=(int)si.frames;
             s[ssize].chan=si.channels;
-            s[ssize].rate=si.samplerate;
+            s[ssize].rate=(float)si.samplerate;
             s[ssize].data=new float*[si.channels];
             tbuf=new float[si.channels];
             for (int i=0; i<si.channels; i++) {
-              s[ssize].data[i]=new float[si.frames+16]; // prevent click
+              s[ssize].data[i]=new float[(size_t)si.frames+16]; // prevent click
               for (int j=0; j<si.frames+16; j++) {
                 s[ssize].data[i][j]=0;
               }
@@ -871,7 +871,7 @@ void Sampler::loadSample() {
       if (wdoff>sx-573 && wddir==1) {
         wddir=0;
       }
-      wdoff=fmax(0,fmin(sx-573,wdoff));
+      wdoff=(int)fmax(0,fmin(sx-573,wdoff));
     } else {
       perror("can't read dir");
       erra=64;
@@ -893,17 +893,17 @@ void Sampler::loadSample() {
       printf("loading sample...\n");
       busy=true;
       v.resize(0);
-      s[curSample].len=si.frames;
+      s[curSample].len=(int)si.frames;
       for (int i=0; i<s[curSample].chan; i++) {
         delete[] s[curSample].data[i];
       }
       delete[] s[curSample].data;
       s[curSample].chan=si.channels;
-      s[curSample].rate=si.samplerate;
+      s[curSample].rate=(float)si.samplerate;
       s[curSample].data=new float*[si.channels];
       tbuf=new float[si.channels];
       for (int i=0; i<si.channels; i++) {
-        s[curSample].data[i]=new float[si.frames+16];
+        s[curSample].data[i]=new float[(size_t)si.frames+16];
         for (int j=0; j<si.frames+16; j++) {
           s[curSample].data[i][j]=0;
         }
@@ -919,7 +919,7 @@ void Sampler::loadSample() {
       FILE* fo;
       fo=fopen(path.c_str(),"rb");
       lf=readIFF(fo);
-      printf("iff: %d\n",lf);
+      //printf("iff: %d\n",lf);
       fclose(fo);
       if (lf->isRIFF) {
         lwf=readWAVE(lf);
@@ -940,13 +940,13 @@ void Sampler::loadSample() {
         if (laf->inst.sloop.mode>0) {
           candidate=0;
           s[curSample].loopType=1;
-          for (int i=0; i<laf->m.size(); i++) {
+          for (size_t i=0; i<laf->m.size(); i++) {
             if (laf->m[i].id==laf->inst.sloop.start) {
               candidate=i; break;
             }
           }
           s[curSample].loopStart=laf->m[candidate].pos;
-          for (int i=0; i<laf->m.size(); i++) {
+          for (size_t i=0; i<laf->m.size(); i++) {
             if (laf->m[i].id==laf->inst.sloop.end) {
               candidate=i; break;
             }
@@ -1007,24 +1007,24 @@ void Sampler::drawList() {
   SDL_Rect clipr;
   clipr.x=32; clipr.y=62; clipr.w=676; clipr.h=388;
   SDL_RenderSetClipRect(r,&clipr);
-  if (loadHIndex!=-1 && loadHIndex<listelem.size()) {
+  if (loadHIndex!=-1 && loadHIndex<(int)listelem.size()) {
     SDL_SetRenderDrawColor(r,255,255,255,(!scrolling && touching && loadHIndex==(int)((mouse.y-63+listPos)/20))?(128):(64));
     tempr.x=33;
-    tempr.y=66+20*loadHIndex-listPos;
+    tempr.y=66+20*loadHIndex-(int)listPos;
     tempr.w=674;
     tempr.h=20;
     SDL_RenderFillRect(r,&tempr);
   }
 
-  for (int i=fmax(0,listPos/20); i<fmin(listelem.size(),20+listPos/20); i++) {
-    f->draw(33,66+(20*i)-listPos,listelem[i].color,0,0,0,listelem[i].name);
-    f->draw(33+671,66+(20*i)-listPos,listelem[i].color,2,0,0,listelem[i].rh);
+  for (int i=(int)fmax(0,listPos/20); i<fmin(listelem.size(),20+listPos/20); i++) {
+    f->draw(33,66+(20*i)-(int)listPos,listelem[i].color,0,0,0,listelem[i].name);
+    f->draw(33+671,66+(20*i)-(int)listPos,listelem[i].color,2,0,0,listelem[i].rh);
   }
   
   SDL_RenderSetClipRect(r,NULL);
   
   oldPolledMY=polledMY;
-  polledMY=mouse.y;
+  polledMY=(float)mouse.y;
   
   if (!touching) {
     if (listDir) {
@@ -1033,9 +1033,9 @@ void Sampler::drawList() {
       listPos+=listSpeed;
     }
     if ((listPos+382)>20*(listelem.size()) || listPos<0) {
-      listSpeed*=0.6;
+      listSpeed*=0.6f;
     } else {
-      listSpeed*=0.9;
+      listSpeed*=0.9f;
     }
     if (listSpeed<0.1) {
       listSpeed=0;
@@ -1119,7 +1119,7 @@ void Sampler::drawLoadUI() {
   SDL_Rect clipr;
   clipr.x=83; clipr.y=30; clipr.w=573; clipr.h=20;
   SDL_RenderSetClipRect(r,&clipr);
-  f->draw(83-fmax(0,fmin(sx-573,wdoff)),30,tempc,0,0,0,wd);
+  f->draw(83-(int)fmax(0,fmin(sx-573,wdoff)),30,tempc,0,0,0,wd);
   SDL_RenderSetClipRect(r,NULL);
   f->draw(33,462,tempc,0,0,0,sfname);
   drawList();
@@ -1218,16 +1218,16 @@ void Sampler::upDown() {
           s[curSample].rate+=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
           break;
         case 1:
-          s[curSample].noteMin=fmin(s[curSample].noteMin+1,s[curSample].noteMax);
+          s[curSample].noteMin=(char)fmin(s[curSample].noteMin+1,s[curSample].noteMax);
           break;
         case 2:
-          s[curSample].noteMax=fmin(s[curSample].noteMax+1,127);
+          s[curSample].noteMax=(char)fmin(s[curSample].noteMax+1,127);
           break;
         case 3:
-          s[curSample].velMin=fmin(s[curSample].velMin+1,s[curSample].velMax);
+          s[curSample].velMin=(char)fmin(s[curSample].velMin+1,s[curSample].velMax);
           break;
         case 4:
-          s[curSample].velMax=fmin(s[curSample].velMax+1,127);
+          s[curSample].velMax=(char)fmin(s[curSample].velMax+1,127);
           break;
       }
     }
@@ -1240,20 +1240,20 @@ void Sampler::upDown() {
           s[curSample].rate-=(int)fmax(1,pow(10,(float)timeOnButton/128)/10);
           break;
         case 1:
-          s[curSample].noteMin=fmax(s[curSample].noteMin-1,0);
+          s[curSample].noteMin=(char)fmax(s[curSample].noteMin-1,0);
           break;
         case 2:
-          s[curSample].noteMax=fmax(s[curSample].noteMax-1,s[curSample].noteMin);
+          s[curSample].noteMax=(char)fmax(s[curSample].noteMax-1,s[curSample].noteMin);
           break;
         case 3:
-          s[curSample].velMin=fmax(s[curSample].velMin-1,0);
+          s[curSample].velMin=(char)fmax(s[curSample].velMin-1,0);
           break;
         case 4:
-          s[curSample].velMax=fmax(s[curSample].velMax-1,s[curSample].velMin);
+          s[curSample].velMax=(char)fmax(s[curSample].velMax-1,s[curSample].velMin);
           break;
       }
     }
-    s[curSample].rate=fmax(0,s[curSample].rate);
+    s[curSample].rate=fmax(0.0f,s[curSample].rate);
     timeOnButton++;
   }
   if (!(doUp || doDown)) {
@@ -1278,7 +1278,7 @@ void Sampler::drawGrid() {
   // draw currently playing notes
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_ADD);
   SDL_SetRenderDrawColor(r,255,255,255,32);
-  for (int i=0; i<v.size(); i++) {
+  for (size_t i=0; i<v.size(); i++) {
     tempr.x=v[i].note*5;
     tempr.y=10;
     tempr.w=5;
@@ -1288,11 +1288,11 @@ void Sampler::drawGrid() {
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
   SDL_SetRenderDrawColor(r,64,255,40,64);
   // draw sample regions
-  for (int i=0; i<s.size(); i++) {
+  for (size_t i=0; i<s.size(); i++) {
     tempr.x=10+2+s[i].noteMin*5;
-    tempr.y=12+336.0*((float)s[i].velMin/127.0);
+    tempr.y=(int)(12+336.0f*((float)s[i].velMin/127.0f));
     tempr.w=5*(s[i].noteMax-s[i].noteMin);
-    tempr.h=336.0*((float)(s[i].velMax-s[i].velMin)/127.0);
+    tempr.h=(int)(336.0f*((float)(s[i].velMax-s[i].velMin)/127.0f));
     SDL_RenderFillRect(r,&tempr);
     SDL_RenderDrawRect(r,&tempr);
   }
@@ -1462,14 +1462,14 @@ void Sampler::drawUI() {
   
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
   
-  aBBPos*=0.7;
+  aBBPos*=0.7f;
   
   if (aBBPos>-0.02 && aBBPos!=0) {
     aBBPos=0;
   }
   
   tempr.x=8;  tempr1.x=0;
-  tempr.y=482-aBBPos; tempr1.y=0;
+  tempr.y=482-(int)aBBPos; tempr1.y=0;
   tempr.w=175; tempr1.w=175;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,(curView==0)?(smodeactive):(smode),&tempr1,&tempr);
@@ -1483,10 +1483,10 @@ void Sampler::drawUI() {
   tempr.x=557;  tempr1.x=0;
   SDL_RenderCopy(r,(curView==3)?(smodeactive):(smode),&tempr1,&tempr);
   
-  f->draw(95,482-aBBPos,tempc,1,0,0,"Summary");
-  f->draw(278,482-aBBPos,tempc,1,0,0,"Grid");
-  f->draw(462,482-aBBPos,tempc,1,0,0,"Editor");
-  f->draw(644,482-aBBPos,tempc,1,0,0,"Envelope");
+  f->draw(95,482-(int)aBBPos,tempc,1,0,0,"Summary");
+  f->draw(278,482-(int)aBBPos,tempc,1,0,0,"Grid");
+  f->draw(462,482-(int)aBBPos,tempc,1,0,0,"Editor");
+  f->draw(644,482-(int)aBBPos,tempc,1,0,0,"Envelope");
   
   switch (curView) {
     case 0: drawSummary(); break;
@@ -1510,7 +1510,7 @@ void Sampler::drawUI() {
   
   SDL_SetRenderDrawColor(r,255,255,255,255);
   
-  for (int i=0; i<v.size(); i++) {
+  for (size_t i=0; i<v.size(); i++) {
     SDL_RenderDrawPoint(r,v[i].envposN/256,i);
   }
   

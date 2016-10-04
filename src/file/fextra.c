@@ -139,8 +139,8 @@ int fputi(int c, FILE* f) {
 }
 
 int fputll(long long c, FILE* f) {
-  if ((fputc(c,f)==EOF)||(fputc(c>>8,f)==EOF)||
-      (fputc(c>>16,f)==EOF)||(fputc(c>>24,f)==EOF)||
+  if ((fputc((unsigned char)c,f)==EOF)||(fputc((unsigned short)c>>8,f)==EOF)||
+      (fputc((unsigned int)c>>16,f)==EOF)||(fputc((unsigned int)c>>24,f)==EOF)||
       (fputc(c>>32,f)==EOF)||(fputc(c>>40,f)==EOF)||
       (fputc(c>>48,f)==EOF)||(fputc(c>>56,f)==EOF)) {
     return EOF;
@@ -166,8 +166,8 @@ int fputui(unsigned int c, FILE* f) {
 }
 
 int fputull(unsigned long long c, FILE* f) {
-  if ((fputc(c,f)==EOF)||(fputc(c>>8,f)==EOF)||
-      (fputc(c>>16,f)==EOF)||(fputc(c>>24,f)==EOF)||
+  if ((fputc((unsigned char)c,f)==EOF)||(fputc((unsigned short)c>>8,f)==EOF)||
+      (fputc((unsigned int)c>>16,f)==EOF)||(fputc((unsigned int)c>>24,f)==EOF)||
       (fputc(c>>32,f)==EOF)||(fputc(c>>40,f)==EOF)||
       (fputc(c>>48,f)==EOF)||(fputc(c>>56,f)==EOF)) {
     return EOF;
@@ -195,8 +195,8 @@ int fputbi(int c, FILE* f) {
 int fputbll(long long c, FILE* f) {
   if ((fputc(c>>56,f)==EOF)||(fputc(c>>48,f)==EOF)||
       (fputc(c>>40,f)==EOF)||(fputc(c>>32,f)==EOF)||
-      (fputc(c>>24,f)==EOF)||(fputc(c>>16,f)==EOF)||
-      (fputc(c>>8,f)==EOF)||(fputc(c,f)==EOF)) {
+      (fputc((unsigned int)c>>24,f)==EOF)||(fputc((unsigned int)c>>16,f)==EOF)||
+      (fputc((unsigned short)c>>8,f)==EOF)||(fputc((unsigned char)c,f)==EOF)) {
     return EOF;
   }
   return 0;
@@ -222,8 +222,8 @@ int fputbui(unsigned int c, FILE* f) {
 int fputbull(unsigned long long c,FILE* f) {
   if ((fputc(c>>56,f)==EOF)||(fputc(c>>48,f)==EOF)||
       (fputc(c>>40,f)==EOF)||(fputc(c>>32,f)==EOF)||
-      (fputc(c>>24,f)==EOF)||(fputc(c>>16,f)==EOF)||
-      (fputc(c>>8,f)==EOF)||(fputc(c,f)==EOF)) {
+      (fputc((unsigned int)c>>24,f)==EOF)||(fputc((unsigned int)c>>16,f)==EOF)||
+      (fputc((unsigned short)c>>8,f)==EOF)||(fputc((unsigned char)c,f)==EOF)) {
     return EOF;
   }
   return 0;
@@ -232,16 +232,19 @@ int fputbull(unsigned long long c,FILE* f) {
 
 /* writing float/double */
 int fputf(float c, FILE* f) {
-  
+  return EOF;
 }
 
 int fputd(double c, FILE* f) {
+  return EOF;
 }
 
 
 /* big endian writing float/double */
 int fputbf(float c, FILE* f) {
+  return EOF;
 }
 
 int fputbd(double c, FILE* f) {
+  return EOF;
 }

@@ -73,7 +73,7 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int 
         bitmap[where]=255;
         bitmap[where+1]=255;
         bitmap[where+2]=255;
-        bitmap[where+3]=(res[4]*255.0);
+        bitmap[where+3]=(unsigned char)(res[4]*255.0);
       }
     }
   }

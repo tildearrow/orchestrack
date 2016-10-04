@@ -5,14 +5,14 @@ aiff* readAIFF(iff* f) {
   r=new aiff;
   r->inst.sloop.mode=0;
   r->inst.rloop.mode=0;
-  for (int i=0; i<f->s.size(); i++) {
+  for (size_t i=0; i<f->s.size(); i++) {
     if (strcmp(f->s[i].id,"MARK")==0) {
       printf("marker chunk!\n");
       r->m.resize((f->s[i].data[0]<<8)+(f->s[i].data[1]));
       printf("markers: %lu\n",r->m.size());
       int curpos;
       curpos=2;
-      for (int j=0; j<r->m.size(); j++) {
+      for (size_t j=0; j<r->m.size(); j++) {
         int nameSize;
         r->m[j].id=(f->s[i].data[curpos++]<<8)+(f->s[i].data[curpos++]);
         r->m[j].pos=(f->s[i].data[curpos++]<<24)+(f->s[i].data[curpos++]<<16)+

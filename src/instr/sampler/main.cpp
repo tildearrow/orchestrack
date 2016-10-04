@@ -179,16 +179,16 @@ int main() {
         case SDL_FINGERUP:
 	  touch=true;
 	  printf("up %d %d %lld\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
-          ins.mouseEvent(1,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
+          ins.mouseEvent(1,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),(int)e->tfinger.fingerId);
           break;
         case SDL_FINGERDOWN:
 	  touch=true;
 	  printf("down %d %d %lld\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
-          ins.mouseEvent(2,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
+          ins.mouseEvent(2,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),(int)e->tfinger.fingerId);
           break;
         case SDL_FINGERMOTION:
 	  touch=true;
-          ins.mouseEvent(0,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
+          ins.mouseEvent(0,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),(int)e->tfinger.fingerId);
           break;
 #endif
         case SDL_QUIT:

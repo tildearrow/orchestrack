@@ -5,7 +5,7 @@ rwave* readWAVE(iff* f) {
   r=new rwave;
   r->smpl.loops=0;
   r->smpl.l.resize(0);
-  for (int i=0; i<f->s.size(); i++) {
+  for (size_t i=0; i<f->s.size(); i++) {
     if (strcmp(f->s[i].id,"fmt ")==0) {
       printf("format chunk!\n");
       r->fmt.aformat=f->s[i].data[0]+(f->s[i].data[1]<<8);

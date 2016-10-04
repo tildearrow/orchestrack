@@ -86,7 +86,7 @@ iff* readIFF(FILE* f) {
 }
 
 void freeIFF(iff* r) {
-  for (int i=0; i<r->s.size(); i++) {
+  for (size_t i=0; i<r->s.size(); i++) {
     delete[] r->s[i].data;
   }
   delete r;
