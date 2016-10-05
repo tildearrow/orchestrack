@@ -18,6 +18,7 @@
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include "../lib/gfx/SDL2_gfxPrimitives.h"
 //#include <json.hpp>
 #include <vector>
 #include <string>

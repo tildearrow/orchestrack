@@ -48,6 +48,7 @@ inline float Sampler::intSinc(float* b, int n, float d) {
 
 float* Sampler::getSample() {
   size_t i, j;
+  float calc;
   if (busy) {v.resize(0); return sample;}
   float element;
   sample[0]=0;
@@ -109,15 +110,16 @@ float* Sampler::getSample() {
     ev=(unsigned char*)getEvent();
   }
   for (i=0; i<v.size(); i++) {
+    calc=v[i].vol*(e[v[i].env].p[v[i].envpi].value+((e[v[i].env].p[v[i].envpi+1].value-e[v[i].env].p[v[i].envpi].value)*(1.0f-((e[v[i].env].p[v[i].envpi+1].time-e[v[i].env].p[v[i].envpi].time)-(float)v[i].envposN)/(e[v[i].env].p[v[i].envpi+1].time-e[v[i].env].p[v[i].envpi].time))));
     if (s[v[i].sample].chan==1) {
       element=intSinc(s[v[i].sample].data[0],v[i].periodN+8,v[i].periodD);
       
-      sample[0]+=element*v[i].vol;
-      sample[1]+=element*v[i].vol;
+      sample[0]+=element*calc;
+      sample[1]+=element*calc;
     } else for (j=0; j<(size_t)s[v[i].sample].chan; j++) {
       element=intSinc(s[v[i].sample].data[j],v[i].periodN+8,v[i].periodD);
       
-      sample[j]+=element*v[i].vol;
+      sample[j]+=element*calc;
     }
     v[i].periodD+=v[i].f;
     v[i].periodN+=(int)v[i].periodD;
@@ -128,6 +130,10 @@ float* Sampler::getSample() {
     v[i].envposD+=65536/44100;
     v[i].envposN+=(int)v[i].envposD;
     v[i].envposD=fmod(v[i].envposD,1.0f);
+    if (v[i].envposN>e[v[i].env].p[v[i].envpi+1].time) {
+      v[i].envpi++;
+      v[i].envposN=0;
+    }
   }
   
   for (i=0; i<v.size(); i++) {
@@ -1466,8 +1472,18 @@ void Sampler::drawEnvEdit() {
   f->draw(93,10,tempc,0,0,0,"[insert name here]");
   SDL_SetRenderDrawColor(r,255,255,128,255);
   for (size_t i=0; i<e[0].p.size(); i++) {
-    SDL_RenderDrawPoint(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f));
+    aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),4,255,255,128,255);
+    if (i<e[0].p.size()-1) {
+      aalineRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),
+      10+(e[0].p[i+1].time/256),340-(e[0].p[i+1].value*300.0f),255,255,128,255);
+    }
   }
+  
+  for (size_t i=0; i<v.size(); i++) {
+    SDL_RenderDrawLine(r,10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),40,10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),340);
+    f->drawf(10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),340,tempc,0,0,"%d: %d",i,v[i].envpi);
+  }
+  
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }
 
@@ -1527,9 +1543,7 @@ void Sampler::drawUI() {
   
   SDL_SetRenderDrawColor(r,255,255,255,255);
   
-  for (size_t i=0; i<v.size(); i++) {
-    SDL_RenderDrawPoint(r,v[i].envposN/256,i);
-  }
+  
   
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }
@@ -1574,10 +1588,10 @@ bool Sampler::init(int inChannels, int outChannels) {
     e[0].p[1].type=0;
     e[0].p[2].type=0;
     e[0].p[0].value=1;
-    e[0].p[1].value=0.6;
+    e[0].p[1].value=0.3;
     e[0].p[2].value=0;
     e[0].p[0].time=0;
-    e[0].p[1].time=65536;
+    e[0].p[1].time=5000;
     e[0].p[2].time=150000;
     //tbuf=new float[si.channels];
     for (int i=0; i<1; i++) {

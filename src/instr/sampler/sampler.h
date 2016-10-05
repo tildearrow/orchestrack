@@ -31,6 +31,7 @@ class Sampler: public OTrackInstrument {
     float f;
     float vol;
     int env;
+    int envpi;
     int envposN;
     float envposD;
   };

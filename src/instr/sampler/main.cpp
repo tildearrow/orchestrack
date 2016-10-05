@@ -29,8 +29,11 @@ SDL_Event* e;
 bool q;
 bool touch;
 
+int dp1, dp2;
+
 #ifdef HAVE_JACK
 int audio(jack_nframes_t len, void* arg) {
+  dp1=SDL_GetPerformanceCounter();
   float* s[2];
   int nep; // next event position
   int cei; // current event index
@@ -67,6 +70,7 @@ int audio(jack_nframes_t len, void* arg) {
     s[0][i]=pt[0];
     s[1][i]=pt[1];
   }
+  dp2=SDL_GetPerformanceCounter();
   return 0;
 }
 #else
@@ -200,6 +204,7 @@ int main() {
     }
     SDL_RenderClear(r);
     ins.drawUI();
+    fprintf(stderr,"DEBUG PC %d\n",dp2-dp1);
     SDL_RenderPresent(r);
     if (q) {break;}
   }
