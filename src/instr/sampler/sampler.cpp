@@ -1464,6 +1464,11 @@ void Sampler::drawEnvEdit() {
   f->draw(45,10,tempc,1,0,0,"Envelope");
   
   f->draw(93,10,tempc,0,0,0,"[insert name here]");
+  SDL_SetRenderDrawColor(r,255,255,128,255);
+  for (size_t i=0; i<e[0].p.size(); i++) {
+    SDL_RenderDrawPoint(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f));
+  }
+  SDL_SetRenderDrawColor(r,0,0,0,255);
 }
 
 void Sampler::drawUI() {
@@ -1563,6 +1568,17 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].loopStart=0;
     s[0].loopEnd=127;
     s[0].loopType=1;
+    e.resize(1);
+    e[0].p.resize(3);
+    e[0].p[0].type=0;
+    e[0].p[1].type=0;
+    e[0].p[2].type=0;
+    e[0].p[0].value=1;
+    e[0].p[1].value=0.6;
+    e[0].p[2].value=0;
+    e[0].p[0].time=0;
+    e[0].p[1].time=65536;
+    e[0].p[2].time=150000;
     //tbuf=new float[si.channels];
     for (int i=0; i<1; i++) {
       s[0].data[i]=new float[128+16];
