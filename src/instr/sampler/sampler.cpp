@@ -682,6 +682,23 @@ void Sampler::seMouseUp(int button) {
   }
 }
 
+void Sampler::envMouseMove(int button) {
+  selPoint=-1;
+  for (size_t i=0; i<e[0].p.size(); i++) {
+     if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-4,340-(e[0].p[i].value*300.0f)-4,10+(e[0].p[i].time/256)+4,340-(e[0].p[i].value*300.0f)+4)) {
+       selPoint=i; break;
+     }
+  }
+}
+
+void Sampler::envMouseDown(int button) {
+  
+}
+
+void Sampler::envMouseUp(int button) {
+  
+}
+
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
@@ -691,6 +708,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (curView==2) {
         seMouseMove(button);
+      }
+      if (curView==3) {
+        envMouseMove(button);
       }
       if (showLoad || showSampleSel) {
         loadMouseMove(button);
@@ -717,6 +737,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (curView==2) {
         seMouseDown(button);
       }
+      if (curView==3) {
+        envMouseDown(button);
+      }
       if (showLoad || showSampleSel) {
         loadMouseDown(button);
       }
@@ -731,6 +754,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (curView==2) {
         seMouseUp(button);
+      }
+      if (curView==3) {
+        envMouseUp(button);
       }
       if (supS!=1) {
         supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
@@ -1473,6 +1499,9 @@ void Sampler::drawEnvEdit() {
   SDL_SetRenderDrawColor(r,255,255,128,255);
   for (size_t i=0; i<e[0].p.size(); i++) {
     aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),4,255,255,128,255);
+    if (i==selPoint) {
+      aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),5,255,255,0,255);
+    }
     if (i<e[0].p.size()-1) {
       aalineRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),
       10+(e[0].p[i+1].time/256),340-(e[0].p[i+1].value*300.0f),255,255,128,255);

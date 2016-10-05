@@ -173,6 +173,8 @@ class Sampler: public OTrackInstrument {
   int curView;
   // sample edit variables //
   int curSample;
+  // envelope edit variables //
+  int selPoint;
   // keypad variables //
   string kpCurVal;
   float* kpVar;
@@ -208,6 +210,9 @@ class Sampler: public OTrackInstrument {
   void seMouseDown(int button);
   void seMouseUp(int button);
   void seMouseMove(int button);
+  void envMouseDown(int button);
+  void envMouseUp(int button);
+  void envMouseMove(int button);
   // loading functions //
   void loadSample();
   // list functions //
