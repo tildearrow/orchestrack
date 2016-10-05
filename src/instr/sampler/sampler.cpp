@@ -133,6 +133,10 @@ float* Sampler::getSample() {
     if (v[i].envposN>e[v[i].env].p[v[i].envpi+1].time) {
       v[i].envpi++;
       v[i].envposN=0;
+      if (v[i].envpi==(e[v[i].env].p.size()-1)) {
+        v.erase(v.begin()+i); i--;
+        printf("end of envelope.\n");
+      }
     }
   }
   
