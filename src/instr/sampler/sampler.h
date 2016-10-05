@@ -112,6 +112,7 @@ class Sampler: public OTrackInstrument {
   // textures //
   SDL_Texture* but;
   SDL_Texture* grid;
+  SDL_Texture* envbg;
   SDL_Texture* spath;
   SDL_Texture* spathlarge;
   SDL_Texture* senvsel;

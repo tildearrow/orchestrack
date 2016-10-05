@@ -810,6 +810,11 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.b=98;
   tempc.a=255;
   grid=drawButton(r,0,0,720,340,tempc,4);
+  tempc.r=64;
+  tempc.g=56;
+  tempc.b=6;
+  tempc.a=255;
+  envbg=drawButton(r,0,0,720,300,tempc,4);
   tempc.r=16;
   tempc.g=16;
   tempc.b=16;
@@ -1438,6 +1443,11 @@ void Sampler::drawSampleEdit() {
 }
 
 void Sampler::drawEnvEdit() {
+  tempr.x=10;  tempr1.x=0;
+  tempr.y=40;  tempr1.y=0;
+  tempr.w=720; tempr1.w=720;
+  tempr.h=300; tempr1.h=300;
+  SDL_RenderCopy(r,envbg,&tempr1,&tempr);
   tempr.x=90;  tempr1.x=0;
   tempr.y=10; tempr1.y=0;
   tempr.w=640; tempr1.w=640;
