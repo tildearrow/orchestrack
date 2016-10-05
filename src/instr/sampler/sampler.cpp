@@ -926,45 +926,47 @@ void Sampler::loadSample() {
       lf=readIFF(fo);
       //printf("iff: %d\n",lf);
       fclose(fo);
-      if (lf->isRIFF) {
-        lwf=readWAVE(lf);
-        printf("%ld\n",lwf->smpl.loops);
-        if ((lwf->smpl.loops)>0) {
-          s[curSample].loopType=1;
-          s[curSample].loopStart=lwf->smpl.l[0].start;
-          s[curSample].loopEnd=lwf->smpl.l[0].end;
-        } else {
-          s[curSample].loopType=0;
-          s[curSample].loopStart=0;
-          s[curSample].loopEnd=0;
-        }
-        freeWAVE(lwf);
-      } else {
-        int candidate;
-        laf=readAIFF(lf);
-        if (laf->inst.sloop.mode>0) {
-          candidate=0;
-          s[curSample].loopType=1;
-          for (size_t i=0; i<laf->m.size(); i++) {
-            if (laf->m[i].id==laf->inst.sloop.start) {
-              candidate=i; break;
-            }
+      if (lf!=NULL) {
+        if (lf->isRIFF) {
+          lwf=readWAVE(lf);
+          printf("%ld\n",lwf->smpl.loops);
+          if ((lwf->smpl.loops)>0) {
+            s[curSample].loopType=1;
+            s[curSample].loopStart=lwf->smpl.l[0].start;
+            s[curSample].loopEnd=lwf->smpl.l[0].end;
+          } else {
+            s[curSample].loopType=0;
+            s[curSample].loopStart=0;
+            s[curSample].loopEnd=0;
           }
-          s[curSample].loopStart=laf->m[candidate].pos;
-          for (size_t i=0; i<laf->m.size(); i++) {
-            if (laf->m[i].id==laf->inst.sloop.end) {
-              candidate=i; break;
-            }
-          }
-          s[curSample].loopEnd=laf->m[candidate].pos;
+          freeWAVE(lwf);
         } else {
-          s[curSample].loopType=0;
-          s[curSample].loopStart=0;
-          s[curSample].loopEnd=0;
+          int candidate;
+          laf=readAIFF(lf);
+          if (laf->inst.sloop.mode>0) {
+            candidate=0;
+            s[curSample].loopType=1;
+            for (size_t i=0; i<laf->m.size(); i++) {
+              if (laf->m[i].id==laf->inst.sloop.start) {
+                candidate=i; break;
+              }
+            }
+            s[curSample].loopStart=laf->m[candidate].pos;
+            for (size_t i=0; i<laf->m.size(); i++) {
+              if (laf->m[i].id==laf->inst.sloop.end) {
+                candidate=i; break;
+              }
+            }
+            s[curSample].loopEnd=laf->m[candidate].pos;
+          } else {
+            s[curSample].loopType=0;
+            s[curSample].loopStart=0;
+            s[curSample].loopEnd=0;
+          }
+          freeAIFF(laf);
         }
-        freeAIFF(laf);
+        freeIFF(lf);
       }
-      freeIFF(lf);
       
       s[curSample].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
       showLoad=false;
