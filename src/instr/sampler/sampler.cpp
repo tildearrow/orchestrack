@@ -51,6 +51,7 @@ float* Sampler::getSample() {
   float calc;
   if (busy) {v.resize(0); return sample;}
   float element;
+  float val0, val1, timediff;
   sample[0]=0;
   sample[1]=0;
   ev=(unsigned char*)getEvent();
@@ -110,7 +111,10 @@ float* Sampler::getSample() {
     ev=(unsigned char*)getEvent();
   }
   for (i=0; i<v.size(); i++) {
-    calc=v[i].vol*(e[v[i].env].p[v[i].envpi].value+((e[v[i].env].p[v[i].envpi+1].value-e[v[i].env].p[v[i].envpi].value)*(1.0f-((e[v[i].env].p[v[i].envpi+1].time-e[v[i].env].p[v[i].envpi].time)-(float)v[i].envposN)/(e[v[i].env].p[v[i].envpi+1].time-e[v[i].env].p[v[i].envpi].time))));
+    val0=e[v[i].env].p[v[i].envpi].value;
+    val1=e[v[i].env].p[v[i].envpi+1].value;
+    timediff=e[v[i].env].p[v[i].envpi+1].time-e[v[i].env].p[v[i].envpi].time;
+    calc=v[i].vol*(val0+((val1-val0)*(1.0f-(timediff-(float)v[i].envposN)/timediff)));
     if (s[v[i].sample].chan==1) {
       element=intSinc(s[v[i].sample].data[0],v[i].periodN+8,v[i].periodD);
       
