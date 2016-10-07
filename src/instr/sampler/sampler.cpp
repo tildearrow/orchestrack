@@ -13,8 +13,21 @@ OTrackInsSpec* Sampler::getspec() {
 }
 
 void Sampler::reset() {
-  v.resize(0);
+  vResize(0);
 }
+
+/* TODO: test if this actually works
+ *       sorry, i have school and therefore
+ *       can't test on non-friday/non-saturday
+ */
+void Sampler::vErase(size_t which) {
+  printf("ERASE\n");
+  for (int i=which; i<vSize-1; i++) {
+    memcpy(&v[i],&v[i+1],sizeof(voice));
+  }
+  vResize(vSize-1);
+}
+
 
 inline float Sampler::intNone(float* b, int n, float d) {
   return b[n];
@@ -49,7 +62,7 @@ inline float Sampler::intSinc(float* b, int n, float d) {
 float* Sampler::getSample() {
   size_t i, j;
   float calc;
-  if (busy) {v.resize(0); return sample;}
+  if (busy) {vResize(0); return sample;}
   float element;
   float val0, val1, timediff;
   sample[0]=0;
@@ -58,25 +71,26 @@ float* Sampler::getSample() {
   while (ev!=NULL) {
     if ((ev[0]>>4)==8) {
       // find voice with properties, then destroy it
-      for (i=0; i<v.size(); i++) {
+      for (i=0; i<vSize; i++) {
         if (v[i].chan==(ev[0]&15)) {
           if (v[i].note==ev[1]) {
-            v.erase(v.begin()+i); i--;
+            //// TODO: FIX THIS
+            vErase(i); i--;
           }
         }
       }
     }
     if ((ev[0]>>4)==9) {
       // allocate a voice
-      v.resize(v.size()+1);
+      vResize(vSize+1);
       int thisv;
-      thisv=v.size()-1;
+      thisv=vSize-1;
       v[thisv].chan=ev[0]&15;
       v[thisv].note=ev[1];
       v[thisv].periodN=0;
       v[thisv].periodD=0;
       v[thisv].sample=0;
-      for (i=0; i<s.size(); i++) {
+      for (i=0; i<sSize; i++) {
         if (s[i].noteMin<=v[thisv].note && s[i].noteMax>=v[thisv].note &&
             s[i].velMin<=ev[2] && s[i].velMax>=ev[2]) {
           v[thisv].sample=i; break;
@@ -88,7 +102,7 @@ float* Sampler::getSample() {
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
       c[ev[0]&15].pitch=(ev[1]+(ev[2]<<7))-0x2000;
-      for (i=0; i<v.size(); i++) {
+      for (i=0; i<vSize; i++) {
         if (v[i].chan==(ev[0]&15)) {
           v[i].f=pow(2.0f,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0f))/12)*s[v[i].sample].rate/44100;
         }
@@ -110,7 +124,8 @@ float* Sampler::getSample() {
     }
     ev=(unsigned char*)getEvent();
   }
-  for (i=0; i<v.size(); i++) {
+  for (i=0; i<vSize; i++) {
+    //printf("%d %d\n",v[i].env,v[i].envpi);
     val0=e[v[i].env].p[v[i].envpi].value;
     val1=e[v[i].env].p[v[i].envpi+1].value;
     timediff=e[v[i].env].p[v[i].envpi+1].time-e[v[i].env].p[v[i].envpi].time;
@@ -137,16 +152,18 @@ float* Sampler::getSample() {
     if (v[i].envposN>e[v[i].env].p[v[i].envpi+1].time) {
       v[i].envpi++;
       v[i].envposN=0;
-      if (v[i].envpi==(e[v[i].env].p.size()-1)) {
-        v.erase(v.begin()+i); i--;
+      if (v[i].envpi==(e[v[i].env].pSize-1)) {
+        // TODO: FIX!!!!!!
+        vErase(i); i--;
         printf("end of envelope.\n");
       }
     }
   }
   
-  for (i=0; i<v.size(); i++) {
+  for (i=0; i<vSize; i++) {
     if ((int)v[i].periodN>s[v[i].sample].len) {
-      v.erase(v.begin()+i); i--;
+      // TODO: HERE TOO
+      vErase(i); i--;
     }
   }
   sample[0]=sample[0]/4;
@@ -156,7 +173,7 @@ float* Sampler::getSample() {
 
 void Sampler::prepareSampleSel() {
   clearList();
-  for (size_t i=0; i<s.size(); i++) {
+  for (size_t i=0; i<sSize; i++) {
     feedList(s[i].path,"",255,255,255,255);
   }
 }
@@ -692,7 +709,7 @@ void Sampler::seMouseUp(int button) {
 
 void Sampler::envMouseMove(int button) {
   selPoint=-1;
-  for (size_t i=0; i<e[0].p.size(); i++) {
+  for (size_t i=0; i<e[0].pSize; i++) {
      if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-4,340-(e[0].p[i].value*300.0f)-4,10+(e[0].p[i].time/256)+4,340-(e[0].p[i].value*300.0f)+4)) {
        selPoint=i; break;
      }
@@ -705,6 +722,36 @@ void Sampler::envMouseDown(int button) {
 
 void Sampler::envMouseUp(int button) {
   
+}
+
+void Sampler::vResize(size_t newsize) {
+  //printf("RESIZE! %zu\n",newsize);
+  voice* t;
+  t=new voice[newsize];
+  for (size_t i=0; i<vSize, i<newsize; i++) {
+    memcpy(&t[i],&v[i],sizeof(voice));
+  }
+  if (newsize>vSize) {
+    //printf("set\n");
+    for (size_t i=vSize; i<newsize; i++) {
+      //printf("seeet\n");
+      memset(&t[i],0,sizeof(voice));
+    }
+  }
+  vSize=newsize;
+  delete[] v;
+  v=t;
+}
+
+void Sampler::sResize(size_t newsize) {
+  smp* t;
+  t=new smp[newsize];
+  for (size_t i=0; i<sSize, i<newsize; i++) {
+    memcpy(&t[i],&s[i],sizeof(smp));
+  }
+  sSize=newsize;
+  delete[] s;
+  s=t;
 }
 
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
@@ -770,12 +817,12 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
         if (supS && (showLoad || showSampleSel)) {
           if (showSampleSel) {
-            s.resize(s.size()+1);
-            int ssize=s.size()-1;
+            sResize(sSize+1);
+            int ssize=sSize-1;
             s[ssize].path="Sample";
             char* sl;
             sl=new char[21];
-            sprintf(sl,"%zu",s.size());
+            sprintf(sl,"%zu",sSize);
             s[ssize].path+=sl;
             delete[] sl;
             s[ssize].noteMin=0;
@@ -937,7 +984,7 @@ void Sampler::loadSample() {
     if (sfe==SF_ERR_NO_ERROR) {
       printf("loading sample...\n");
       busy=true;
-      v.resize(0);
+      vResize(0);
       s[curSample].len=(int)si.frames;
       for (int i=0; i<s[curSample].chan; i++) {
         delete[] s[curSample].data[i];
@@ -1325,7 +1372,7 @@ void Sampler::drawGrid() {
   // draw currently playing notes
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_ADD);
   SDL_SetRenderDrawColor(r,255,255,255,32);
-  for (size_t i=0; i<v.size(); i++) {
+  for (size_t i=0; i<vSize; i++) {
     tempr.x=v[i].note*5;
     tempr.y=10;
     tempr.w=5;
@@ -1335,7 +1382,7 @@ void Sampler::drawGrid() {
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
   SDL_SetRenderDrawColor(r,64,255,40,64);
   // draw sample regions
-  for (size_t i=0; i<s.size(); i++) {
+  for (size_t i=0; i<sSize; i++) {
     tempr.x=10+2+s[i].noteMin*5;
     tempr.y=(int)(12+336.0f*((float)s[i].velMin/127.0f));
     tempr.w=5*(s[i].noteMax-s[i].noteMin);
@@ -1505,18 +1552,18 @@ void Sampler::drawEnvEdit() {
   
   f->draw(93,10,tempc,0,0,0,"[insert name here]");
   SDL_SetRenderDrawColor(r,255,255,128,255);
-  for (size_t i=0; i<e[0].p.size(); i++) {
+  for (size_t i=0; i<e[0].pSize; i++) {
     aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),4,255,255,128,255);
     if (i==selPoint) {
       aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),5,255,255,0,255);
     }
-    if (i<e[0].p.size()-1) {
+    if (i<e[0].pSize-1) {
       aalineRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),
       10+(e[0].p[i+1].time/256),340-(e[0].p[i+1].value*300.0f),255,255,128,255);
     }
   }
   
-  for (size_t i=0; i<v.size(); i++) {
+  for (size_t i=0; i<vSize; i++) {
     SDL_RenderDrawLine(r,10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),40,10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),340);
     f->drawf(10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),340,tempc,0,0,"%d: %d",i,v[i].envpi);
   }
@@ -1597,7 +1644,9 @@ bool Sampler::init(int inChannels, int outChannels) {
 #endif
     wd=twd;
     delete[] twd;
-    s.resize(1);
+    //sResize(1);
+    s=new smp[1];
+    sSize=1;
     s[0].path="Sample1";
     s[0].noteMin=0;
     s[0].noteMax=127;
@@ -1619,8 +1668,11 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].loopStart=0;
     s[0].loopEnd=127;
     s[0].loopType=1;
-    e.resize(1);
-    e[0].p.resize(3);
+    //e.resize(1);
+    /// TODO: fix here, soon
+    //e[0].p.resize(3);
+    e[0].p=new envp[3];
+    e[0].pSize=3;
     e[0].p[0].type=0;
     e[0].p[1].type=0;
     e[0].p[2].type=0;
@@ -1644,6 +1696,8 @@ bool Sampler::init(int inChannels, int outChannels) {
     /*
     sf_close(sndf);
     delete[] tbuf;*/
+    vSize=0;
+    v=new voice[0];
     windowed_fir_init(table);
     showHidden=false;
     busy=false;

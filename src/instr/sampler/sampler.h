@@ -74,7 +74,8 @@ class Sampler: public OTrackInstrument {
   };
   // envelope structure //
   struct envl {
-    std::vector<envp> p;
+    envp* p;
+    size_t pSize;
     int start;
     int attackEnd;
     int decayEnd;
@@ -88,9 +89,11 @@ class Sampler: public OTrackInstrument {
   font* f;
   channel c[16];
   // vectors //
-  std::vector<voice> v;
-  std::vector<envl> e;
-  std::vector<smp> s;
+  voice* v;
+  envl e[1024];
+  smp* s;
+  size_t sSize;
+  size_t vSize;
   std::vector<dentry> listings;
   std::vector<listentry> listelem;
   // list stuff //
@@ -183,6 +186,10 @@ class Sampler: public OTrackInstrument {
   inline float intLinear(float* b, int n, float d);
   inline float intCubic(float* b, int n, float d);
   inline float intSinc(float* b, int n, float d);
+  // vector-like functions //
+  void sResize(size_t newsize);
+  void vResize(size_t newsize);
+  void vErase(size_t which);
   // error string functions //
   string friendlyErr0(int e);
   string friendlyErr1(int e);
