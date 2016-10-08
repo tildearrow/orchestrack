@@ -47,7 +47,7 @@ mingw32-make.exe
 
 1. Retrieve/build all dependencies.
 
-2. Create a new directory named "build" under project folder.
+2. Create a new directory named "build" under project directory.
 
 3. Open a command prompt, change dir to "build" and do
 
