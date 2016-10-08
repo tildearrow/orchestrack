@@ -89,7 +89,7 @@ class Sampler: public OTrackInstrument {
   font* f;
   channel c[16];
   // vectors //
-  voice* v;
+  voice v[256];
   envl e[1024];
   smp* s;
   size_t sSize;
@@ -240,6 +240,8 @@ class Sampler: public OTrackInstrument {
   public:
     OTrackInsSpec* getspec();
     float* getSample();
+    unsigned char* saveState(int* size);
+    bool loadState(unsigned char* data, int size);
     void setRenderer(SDL_Renderer* renderer);
     void mouseEvent(int type, int button, int x, int y, int finger);
     void drawUI();

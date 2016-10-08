@@ -16,15 +16,16 @@ void Sampler::reset() {
   vResize(0);
 }
 
-/* TODO: test if this actually works
- *       sorry, i have school and therefore
- *       can't test on non-friday/non-saturday
- */
+bool Sampler::loadState(unsigned char* data, int size) {
+  return false;
+}
+
+unsigned char* Sampler::saveState(int* size) {
+  return NULL;
+}
+
 void Sampler::vErase(size_t which) {
-  printf("ERASE\n");
-  for (int i=which; i<vSize-1; i++) {
-    memcpy(&v[i],&v[i+1],sizeof(voice));
-  }
+  memcpy(&v[which],&v[which+1],sizeof(voice)*(vSize-which-1));
   vResize(vSize-1);
 }
 
@@ -74,7 +75,6 @@ float* Sampler::getSample() {
       for (i=0; i<vSize; i++) {
         if (v[i].chan==(ev[0]&15)) {
           if (v[i].note==ev[1]) {
-            //// TODO: FIX THIS
             vErase(i); i--;
           }
         }
@@ -153,7 +153,6 @@ float* Sampler::getSample() {
       v[i].envpi++;
       v[i].envposN=0;
       if (v[i].envpi==(e[v[i].env].pSize-1)) {
-        // TODO: FIX!!!!!!
         vErase(i); i--;
         printf("end of envelope.\n");
       }
@@ -162,7 +161,6 @@ float* Sampler::getSample() {
   
   for (i=0; i<vSize; i++) {
     if ((int)v[i].periodN>s[v[i].sample].len) {
-      // TODO: HERE TOO
       vErase(i); i--;
     }
   }
@@ -725,22 +723,28 @@ void Sampler::envMouseUp(int button) {
 }
 
 void Sampler::vResize(size_t newsize) {
+  if (newsize>256) {
+    printf("trying to play more than 256 voices!\n");
+    return;
+  }
   //printf("RESIZE! %zu\n",newsize);
+  /*
   voice* t;
   t=new voice[newsize];
   for (size_t i=0; i<vSize, i<newsize; i++) {
     memcpy(&t[i],&v[i],sizeof(voice));
   }
+  vSize=newsize;
+  delete[] v;
+  v=t;*/
   if (newsize>vSize) {
     //printf("set\n");
     for (size_t i=vSize; i<newsize; i++) {
       //printf("seeet\n");
-      memset(&t[i],0,sizeof(voice));
+      memset(&v[i],0,sizeof(voice));
     }
   }
   vSize=newsize;
-  delete[] v;
-  v=t;
 }
 
 void Sampler::sResize(size_t newsize) {
@@ -1053,6 +1057,10 @@ void Sampler::loadSample() {
           freeAIFF(laf);
         }
         freeIFF(lf);
+      } else {
+        s[curSample].loopType=0;
+        s[curSample].loopStart=0;
+        s[curSample].loopEnd=0;
       }
       
       s[curSample].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
@@ -1668,9 +1676,6 @@ bool Sampler::init(int inChannels, int outChannels) {
     s[0].loopStart=0;
     s[0].loopEnd=127;
     s[0].loopType=1;
-    //e.resize(1);
-    /// TODO: fix here, soon
-    //e[0].p.resize(3);
     e[0].p=new envp[3];
     e[0].pSize=3;
     e[0].p[0].type=0;
@@ -1697,7 +1702,7 @@ bool Sampler::init(int inChannels, int outChannels) {
     sf_close(sndf);
     delete[] tbuf;*/
     vSize=0;
-    v=new voice[0];
+    //v=new voice[0];
     windowed_fir_init(table);
     showHidden=false;
     busy=false;

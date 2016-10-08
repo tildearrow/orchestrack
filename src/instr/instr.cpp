@@ -15,6 +15,14 @@ void* OTrackInstrument::getEvent() {
   }
 }
 
+bool OTrackInstrument::loadState(unsigned char* data, int size) {
+  return false;
+}
+
+unsigned char* OTrackInstrument::saveState(int* size) {
+  return NULL;
+}
+
 // Please modify when making instruments.
 OTrackInsSpec* OTrackInstrument::getspec() {
   OTrackInsSpec* aspec;

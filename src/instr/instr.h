@@ -23,6 +23,8 @@ class OTrackInstrument {
     void submitEvent(void* data);
     void* getEvent();
     virtual float* getSample();
+    virtual unsigned char* saveState(int* size);
+    virtual bool loadState(unsigned char* data, int size);
     virtual void drawUI();
     virtual void setRenderer(SDL_Renderer* renderer);
     virtual void mouseEvent(int type, int button, int x, int y, int finger);
