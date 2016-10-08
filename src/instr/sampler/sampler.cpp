@@ -1537,6 +1537,78 @@ void Sampler::drawSampleEdit() {
   f->draw(650,40,tempc,1,0,0,"Up");
   f->draw(600,40,tempc,1,0,0,"Down");
   
+  /// envelopes ///
+  
+  // volume //
+  tempr.x=90;  tempr1.x=0;
+  tempr.y=70; tempr1.y=0;
+  tempr.w=640; tempr1.w=640;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  
+  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.y=70; tempr1.y=0;
+  tempr.w=70;  tempr1.w=70;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
+  f->draw(45,70,tempc,1,0,0,"Volume");
+  
+  // panning //
+  tempr.x=90;  tempr1.x=0;
+  tempr.y=100; tempr1.y=0;
+  tempr.w=640; tempr1.w=640;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  
+  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.y=100; tempr1.y=0;
+  tempr.w=70;  tempr1.w=70;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
+  f->draw(45,100,tempc,1,0,0,"Panning");
+  
+  // pitch //
+  tempr.x=90;  tempr1.x=0;
+  tempr.y=130; tempr1.y=0;
+  tempr.w=640; tempr1.w=640;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  
+  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.y=130; tempr1.y=0;
+  tempr.w=70;  tempr1.w=70;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
+  f->draw(45,130,tempc,1,0,0,"Pitch");
+  
+  // cutoff //
+  tempr.x=90;  tempr1.x=0;
+  tempr.y=160; tempr1.y=0;
+  tempr.w=640; tempr1.w=640;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  
+  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.y=160; tempr1.y=0;
+  tempr.w=70;  tempr1.w=70;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
+  f->draw(45,160,tempc,1,0,0,"Cutoff");
+  
+  // resonance //
+  tempr.x=90;  tempr1.x=0;
+  tempr.y=190; tempr1.y=0;
+  tempr.w=640; tempr1.w=640;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  
+  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.y=190; tempr1.y=0;
+  tempr.w=70;  tempr1.w=70;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
+  f->draw(45,190,tempc,1,0,0,"Resonan.");
+  
   upDown();
 }
 
