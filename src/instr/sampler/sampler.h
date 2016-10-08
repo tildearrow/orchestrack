@@ -133,6 +133,7 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* sselect; int sselectS;
   // eye candy //
   float aBBPos;
+  int selRot;
   // temporary SDL stuff //
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;
@@ -178,6 +179,7 @@ class Sampler: public OTrackInstrument {
   int curSample;
   // envelope edit variables //
   int selPoint;
+  bool selGrab;
   // keypad variables //
   string kpCurVal;
   float* kpVar;
@@ -187,6 +189,7 @@ class Sampler: public OTrackInstrument {
   inline float intCubic(float* b, int n, float d);
   inline float intSinc(float* b, int n, float d);
   // vector-like functions //
+  void pResize(envp** which, size_t newsize);
   void sResize(size_t newsize);
   void vResize(size_t newsize);
   void vErase(size_t which);

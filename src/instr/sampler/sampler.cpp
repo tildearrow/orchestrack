@@ -706,20 +706,39 @@ void Sampler::seMouseUp(int button) {
 }
 
 void Sampler::envMouseMove(int button) {
-  selPoint=-1;
-  for (size_t i=0; i<e[0].pSize; i++) {
-     if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-4,340-(e[0].p[i].value*300.0f)-4,10+(e[0].p[i].time/256)+4,340-(e[0].p[i].value*300.0f)+4)) {
-       selPoint=i; break;
-     }
+  if (selGrab) {
+    e[0].p[selPoint].value=fmin(1,fmax(0,(340.0f-(float)mouse.y)/300.0f));
+    if (selPoint!=0) {
+      if (selPoint==e[0].pSize-1) {
+        e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time,(mouse.x-10)*256);
+      } else {
+        e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time));
+      }
+    }
+  } else {
+    selPoint=-1;
+    for (size_t i=0; i<e[0].pSize; i++) {
+      if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-4,340-(e[0].p[i].value*300.0f)-4,10+(e[0].p[i].time/256)+4,340-(e[0].p[i].value*300.0f)+4)) {
+        selPoint=i; break;
+      }
+    }
   }
 }
 
 void Sampler::envMouseDown(int button) {
-  
+  if (button==0) {
+    if (selPoint!=-1) {
+      printf("grabbing!\n");
+      selGrab=true;
+    }
+  }
 }
 
 void Sampler::envMouseUp(int button) {
-  
+  if (button==0) {
+    selGrab=false;
+    printf("end of grab\n");
+  }
 }
 
 void Sampler::vResize(size_t newsize) {
@@ -1637,6 +1656,11 @@ void Sampler::drawEnvEdit() {
     aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),4,255,255,128,255);
     if (i==selPoint) {
       aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),5,255,255,0,255);
+      if (selGrab) {
+        selRot=(selRot+4)%360;
+        arcRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),8,selRot,selRot+90,255,255,0,255);
+        arcRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),8,selRot+180,selRot+270,255,255,0,255);
+      }
     }
     if (i<e[0].pSize-1) {
       aalineRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),
@@ -1764,6 +1788,7 @@ bool Sampler::init(int inChannels, int outChannels) {
     //v=new voice[0];
     windowed_fir_init(table);
     showHidden=false;
+    selPoint=-1;
     busy=false;
     return true;
   } else {
