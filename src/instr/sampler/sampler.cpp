@@ -149,7 +149,7 @@ float* Sampler::getSample() {
     v[i].envposD+=65536/44100;
     v[i].envposN+=(int)v[i].envposD;
     v[i].envposD=fmod(v[i].envposD,1.0f);
-    if (v[i].envposN>e[v[i].env].p[v[i].envpi+1].time) {
+    if ((v[i].envposN+e[v[i].env].p[v[i].envpi].time)>e[v[i].env].p[v[i].envpi+1].time) {
       v[i].envpi++;
       v[i].envposN=0;
       if (v[i].envpi==(e[v[i].env].pSize-1)) {
@@ -710,9 +710,9 @@ void Sampler::envMouseMove(int button) {
     e[0].p[selPoint].value=fmin(1,fmax(0,(340.0f-(float)mouse.y)/300.0f));
     if (selPoint!=0) {
       if (selPoint==e[0].pSize-1) {
-        e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time,(mouse.x-10)*256);
+        e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,(mouse.x-10)*256);
       } else {
-        e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time));
+        e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time-1));
       }
     }
   } else {
@@ -767,9 +767,9 @@ void Sampler::envMouseDown(int button) {
       e[0].p[selPoint].value=fmin(1,fmax(0,(340.0f-(float)mouse.y)/300.0f));
       if (selPoint!=0) {
         if (selPoint==e[0].pSize-1) {
-          e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time,(mouse.x-10)*256);
+          e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,(mouse.x-10)*256);
         } else {
-          e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time));
+          e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time-1));
         }
       }
     }
