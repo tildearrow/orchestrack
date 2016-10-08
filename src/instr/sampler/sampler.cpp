@@ -732,10 +732,52 @@ void Sampler::envMouseDown(int button) {
       selGrab=true;
     }
   }
+  if (button==2) {
+    if (selPoint==-1) {
+      int left, right;
+      printf("creating point!!!\n");
+      for (int i=(e[0].pSize-1); i>=0; i--) {
+        if (e[0].p[i].time<(mouse.x-10)*256) {
+          left=i; break;
+        }
+      }
+      for (int i=0; i<e[0].pSize; i++) {
+        if (e[0].p[i].time>(mouse.x-10)*256) {
+          right=i; break;
+        }
+      }
+      printf("left %d right %d\n",left,right);
+      pResize(&e[0].p,&e[0].pSize,e[0].pSize+1);
+      // special case: end of envelope
+      if (left==e[0].pSize-2) {
+        memset(&e[0].p[left+1],0,sizeof(envp));
+        selPoint=left+1;
+        selGrab=true;
+      } else {
+      // slide right points
+        for (int i=e[0].pSize-1; i>=right; i--) {
+          memcpy(&e[0].p[i],&e[0].p[i-1],sizeof(envp));
+        }
+        // clean up point
+        memset(&e[0].p[right],0,sizeof(envp));
+        selPoint=right;
+        selGrab=true;
+      }
+      // modify point
+      e[0].p[selPoint].value=fmin(1,fmax(0,(340.0f-(float)mouse.y)/300.0f));
+      if (selPoint!=0) {
+        if (selPoint==e[0].pSize-1) {
+          e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time,(mouse.x-10)*256);
+        } else {
+          e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time));
+        }
+      }
+    }
+  }
 }
 
 void Sampler::envMouseUp(int button) {
-  if (button==0) {
+  if (selGrab) {
     selGrab=false;
     printf("end of grab\n");
   }
@@ -775,6 +817,17 @@ void Sampler::sResize(size_t newsize) {
   sSize=newsize;
   delete[] s;
   s=t;
+}
+
+void Sampler::pResize(envp** which, size_t* cursize, size_t newsize) {
+  envp* t;
+  t=new envp[newsize];
+  for (size_t i=0; i<(*cursize), i<newsize; i++) {
+    memcpy(&t[i],&which[0][i],sizeof(envp));
+  }
+  *cursize=newsize;
+  delete[] *which;
+  *which=t;
 }
 
 void Sampler::initSample(int which) {

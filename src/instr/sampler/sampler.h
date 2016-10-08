@@ -189,7 +189,7 @@ class Sampler: public OTrackInstrument {
   inline float intCubic(float* b, int n, float d);
   inline float intSinc(float* b, int n, float d);
   // vector-like functions //
-  void pResize(envp** which, size_t newsize);
+  void pResize(envp** which, size_t* cursize, size_t newsize);
   void sResize(size_t newsize);
   void vResize(size_t newsize);
   void vErase(size_t which);
