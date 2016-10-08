@@ -172,7 +172,7 @@ float* Sampler::getSample() {
 void Sampler::prepareSampleSel() {
   clearList();
   for (size_t i=0; i<sSize; i++) {
-    feedList(s[i].path,"",255,255,255,255);
+    feedList(s[i].path[0],"",255,255,255,255);
   }
 }
 
@@ -758,6 +758,31 @@ void Sampler::sResize(size_t newsize) {
   s=t;
 }
 
+void Sampler::initSample(int which) {
+  char* sl;
+  printf("which: %d\n",which);
+  s[which].path=new string;
+  s[which].path[0]="Sample";
+  sl=new char[21];
+  sprintf(sl,"%d",which);
+  s[which].path[0]+=sl;
+  delete[] sl;
+  s[which].len=128;
+  s[which].chan=1;
+  s[which].rate=44100;
+  s[which].data=new float*[1];
+  s[which].loopStart=0;
+  s[which].loopEnd=127;
+  s[which].loopType=1;
+  s[which].data[0]=new float[128+16];
+  for (int i=0; i<128+16; i++) {
+    s[which].data[0][i]=0;
+  }
+  for (int i=8; i<128+8; i++) {
+    s[which].data[0][i]=((float)i/256)-1;
+  }
+}
+
 void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
@@ -822,36 +847,8 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         if (supS && (showLoad || showSampleSel)) {
           if (showSampleSel) {
             sResize(sSize+1);
-            int ssize=sSize-1;
-            s[ssize].path="Sample";
-            char* sl;
-            sl=new char[21];
-            sprintf(sl,"%zu",sSize);
-            s[ssize].path+=sl;
-            delete[] sl;
-            s[ssize].noteMin=0;
-            s[ssize].noteMax=127;
-            s[ssize].velMin=0;
-            s[ssize].velMax=127;
-            sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);
-            s[ssize].len=(int)si.frames;
-            s[ssize].chan=si.channels;
-            s[ssize].rate=(float)si.samplerate;
-            s[ssize].data=new float*[si.channels];
-            tbuf=new float[si.channels];
-            for (int i=0; i<si.channels; i++) {
-              s[ssize].data[i]=new float[(size_t)si.frames+16]; // prevent click
-              for (int j=0; j<si.frames+16; j++) {
-                s[ssize].data[i][j]=0;
-              }
-            }
-            for (int i=8; i<si.frames+8; i++) {
-              sf_readf_float(sndf,tbuf,1);
-              for (int j=0; j<si.channels; j++) {
-                s[ssize].data[j][i]=tbuf[j];
-              }
-            }
-            sf_close(sndf);
+            int ssize1=sSize-1;
+            initSample(ssize1);
             prepareSampleSel();
           } else {
             printf("goes up\n");
@@ -1063,7 +1060,7 @@ void Sampler::loadSample() {
         s[curSample].loopEnd=0;
       }
       
-      s[curSample].path=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
+      s[curSample].path[0]=listings[loadHIndex].name.erase(listings[loadHIndex].name.find_last_of('.'),listings[loadHIndex].name.size()-listings[loadHIndex].name.find_last_of('.'));
       showLoad=false;
       busy=false;
     } else {
@@ -1529,7 +1526,7 @@ void Sampler::drawSampleEdit() {
   SDL_RenderCopy(r,sselect,&tempr1,&tempr);
   f->draw(40,10,tempc,1,0,0,"Sample");
   
-  f->draw(83,10,tempc,0,0,0,s[curSample].path);
+  f->draw(83,10,tempc,0,0,0,s[curSample].path[0]);
   f->drawf(83,40,tempc,0,0,"%f",s[curSample].rate);
   f->draw(710,10,tempc,1,0,0,"Load");
   f->draw(705,40,tempc,1,0,0,"Keypad");
@@ -1655,11 +1652,13 @@ bool Sampler::init(int inChannels, int outChannels) {
     //sResize(1);
     s=new smp[1];
     sSize=1;
+    initSample(0);
+    /*
     s[0].path="Sample1";
     s[0].noteMin=0;
     s[0].noteMax=127;
     s[0].velMin=0;
-    s[0].velMax=127;
+    s[0].velMax=127;*/
     /*
     FILE* fo;
     fo=fopen("../share/orchestrack/testsmp.wav","rb");
@@ -1669,13 +1668,7 @@ bool Sampler::init(int inChannels, int outChannels) {
       lwf=readWAVE(lf);
     }
     sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);*/
-    s[0].len=128;
-    s[0].chan=1;
-    s[0].rate=44100;
-    s[0].data=new float*[1];
-    s[0].loopStart=0;
-    s[0].loopEnd=127;
-    s[0].loopType=1;
+    
     e[0].p=new envp[3];
     e[0].pSize=3;
     e[0].p[0].type=0;
@@ -1688,16 +1681,6 @@ bool Sampler::init(int inChannels, int outChannels) {
     e[0].p[1].time=5000;
     e[0].p[2].time=150000;
     //tbuf=new float[si.channels];
-    for (int i=0; i<1; i++) {
-      s[0].data[i]=new float[128+16];
-      for (int j=0; j<128+16; j++) {
-        s[0].data[i][j]=0;
-      }
-    }
-    for (int i=8; i<128+8; i++) {
-      //sf_readf_float(sndf,tbuf,1);
-      s[0].data[0][i]=((float)i/256)-1;
-    }
     /*
     sf_close(sndf);
     delete[] tbuf;*/

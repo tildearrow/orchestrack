@@ -37,7 +37,7 @@ class Sampler: public OTrackInstrument {
   };
   // sample structure //
   struct smp {
-    string path;
+    string* path;
     int len;
     int chan;
     char noteMin, noteMax;
@@ -221,6 +221,7 @@ class Sampler: public OTrackInstrument {
   void envMouseUp(int button);
   void envMouseMove(int button);
   // loading functions //
+  void initSample(int which);
   void loadSample();
   // list functions //
   void clearList();
