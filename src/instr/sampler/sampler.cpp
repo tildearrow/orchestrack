@@ -836,7 +836,7 @@ void Sampler::initSample(int which) {
   s[which].path=new string;
   s[which].path[0]="Sample";
   sl=new char[21];
-  sprintf(sl,"%d",which);
+  sprintf(sl,"%d",which+1);
   s[which].path[0]+=sl;
   delete[] sl;
   s[which].len=128;
