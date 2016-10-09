@@ -29,6 +29,11 @@ void Sampler::vErase(size_t which) {
   vResize(vSize-1);
 }
 
+void Sampler::pErase(envp** which, size_t* cursize, size_t which1) {
+  //printf("erasing!!\n");
+  memcpy(&which[0][which1],&which[0][which1+1],sizeof(envp)*((*cursize)-which1-1));
+  pResize(which,cursize,(*cursize)-1);
+}
 
 inline float Sampler::intNone(float* b, int n, float d) {
   return b[n];
@@ -724,14 +729,49 @@ void Sampler::envMouseMove(int button) {
         selPoint=i; break;
       }
     }
+    if (pMenuVis) {
+      pMenuSel=-1;
+      if (PointInRect(mouse.x,mouse.y,pMenuPos.x,pMenuPos.y,pMenuPos.x+106,pMenuPos.y+21)) {
+        pMenuSel=0;
+      }
+      if (PointInRect(mouse.x,mouse.y,pMenuPos.x,pMenuPos.y+28,pMenuPos.x+106,pMenuPos.y+49)) {
+        pMenuSel=1;
+      }
+      if (PointInRect(mouse.x,mouse.y,pMenuPos.x,pMenuPos.y+52,pMenuPos.x+106,pMenuPos.y+71)) {
+        pMenuSel=2;
+      }
+      if (PointInRect(mouse.x,mouse.y,pMenuPos.x,pMenuPos.y+72,pMenuPos.x+106,pMenuPos.y+91)) {
+        pMenuSel=3;
+      }
+      if (PointInRect(mouse.x,mouse.y,pMenuPos.x,pMenuPos.y+92,pMenuPos.x+106,pMenuPos.y+111)) {
+        pMenuSel=4;
+      }
+      if (PointInRect(mouse.x,mouse.y,pMenuPos.x,pMenuPos.y+112,pMenuPos.x+106,pMenuPos.y+131)) {
+        pMenuSel=5;
+      }
+    }
   }
 }
 
 void Sampler::envMouseDown(int button) {
   if (button==0) {
-    if (selPoint!=-1) {
-      printf("grabbing!\n");
-      selGrab=true;
+    if (pMenuVis) {
+      switch (pMenuSel) {
+        case 0:
+          if (pMenuTarget!=0) {
+            pErase(&e[0].p,&e[0].pSize,pMenuTarget);
+          }
+          break;
+        default:
+          printf("to be done.\n");
+      }
+      pMenuTarget=-1;
+      pMenuVis=false;
+    } else {
+      if (selPoint!=-1) {
+        printf("grabbing!\n");
+        selGrab=true;
+      }
     }
   }
   if (button==2) {
@@ -774,6 +814,14 @@ void Sampler::envMouseDown(int button) {
           e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time-1));
         }
       }
+    } else {
+      // show point menu
+      pMenuVis=true;
+      pMenuTarget=selPoint;
+      pMenuPos.x=mouse.x;
+      pMenuPos.y=mouse.y;
+      pMenuPos.w=108;
+      pMenuPos.h=134;
     }
   }
 }
@@ -815,7 +863,7 @@ void Sampler::sResize(size_t newsize) {
 void Sampler::pResize(envp** which, size_t* cursize, size_t newsize) {
   envp* t;
   t=new envp[newsize];
-  for (size_t i=0; i<(*cursize), i<newsize; i++) {
+  for (size_t i=0; (i<(*cursize) && i<newsize); i++) {
     memcpy(&t[i],&which[0][i],sizeof(envp));
   }
   *cursize=newsize;
@@ -1719,6 +1767,54 @@ void Sampler::drawEnvEdit() {
     f->drawf(10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),340,tempc,0,0,"%d: %d",i,v[i].envpi);
   }
   
+  if (pMenuVis) {
+    SDL_SetRenderDrawColor(r,0,0,0,128);
+    SDL_RenderFillRect(r,&pMenuPos);
+    SDL_SetRenderDrawColor(r,128,128,128,128);
+    switch (pMenuSel) {
+      case 0:
+        tempr.x=pMenuPos.x; tempr.y=pMenuPos.y+3;
+        tempr.w=106;        tempr.h=20;
+        SDL_RenderFillRect(r,&tempr);
+        break;
+      case 1:
+        tempr.x=pMenuPos.x; tempr.y=pMenuPos.y+28;
+        tempr.w=106;        tempr.h=20;
+        SDL_RenderFillRect(r,&tempr);
+        break;
+      case 2:
+        tempr.x=pMenuPos.x; tempr.y=pMenuPos.y+53;
+        tempr.w=106;        tempr.h=18;
+        SDL_RenderFillRect(r,&tempr);
+        break;
+      case 3:
+        tempr.x=pMenuPos.x; tempr.y=pMenuPos.y+73;
+        tempr.w=106;        tempr.h=18;
+        SDL_RenderFillRect(r,&tempr);
+        break;
+      case 4:
+        tempr.x=pMenuPos.x; tempr.y=pMenuPos.y+93;
+        tempr.w=106;        tempr.h=18;
+        SDL_RenderFillRect(r,&tempr);
+        break;
+      case 5:
+        tempr.x=pMenuPos.x; tempr.y=pMenuPos.y+113;
+        tempr.w=106;        tempr.h=18;
+        SDL_RenderFillRect(r,&tempr);
+        break;
+    }
+    SDL_SetRenderDrawColor(r,192,192,192,255);
+    SDL_RenderDrawRect(r,&pMenuPos);
+    SDL_RenderDrawLine(r,pMenuPos.x+3,pMenuPos.y+25,pMenuPos.x+104,pMenuPos.y+25);
+    SDL_RenderDrawLine(r,pMenuPos.x+3,pMenuPos.y+50,pMenuPos.x+104,pMenuPos.y+50);
+    f->draw(pMenuPos.x+3,pMenuPos.y+3,tempc,0,0,0,"Delete");
+    f->draw(pMenuPos.x+3,pMenuPos.y+28,tempc,0,0,0,"Sustain");
+    f->draw(pMenuPos.x+3,pMenuPos.y+52,tempc,0,0,0,"Sustain Start");
+    f->draw(pMenuPos.x+3,pMenuPos.y+72,tempc,0,0,0,"Sustain End");
+    f->draw(pMenuPos.x+3,pMenuPos.y+92,tempc,0,0,0,"Loop Start");
+    f->draw(pMenuPos.x+3,pMenuPos.y+112,tempc,0,0,0,"Loop End");
+  }
+  
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }
 
@@ -1835,6 +1931,7 @@ bool Sampler::init(int inChannels, int outChannels) {
     windowed_fir_init(table);
     showHidden=false;
     selPoint=-1;
+    pMenuSel=-1;
     busy=false;
     return true;
   } else {

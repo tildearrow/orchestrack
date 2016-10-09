@@ -185,6 +185,11 @@ class Sampler: public OTrackInstrument {
   // envelope edit variables //
   int selPoint;
   bool selGrab;
+  // envpoint menu variables //
+  bool pMenuVis;
+  int pMenuTarget;
+  int pMenuSel;
+  SDL_Rect pMenuPos;
   // keypad variables //
   string kpCurVal;
   float* kpVar;
@@ -195,6 +200,7 @@ class Sampler: public OTrackInstrument {
   inline float intSinc(float* b, int n, float d);
   // vector-like functions //
   void pResize(envp** which, size_t* cursize, size_t newsize);
+  void pErase(envp** which, size_t* cursize, size_t which1);
   void sResize(size_t newsize);
   void vResize(size_t newsize);
   void vErase(size_t which);
