@@ -98,6 +98,7 @@ float* Sampler::getSample() {
       }
       v[thisv].f=pow(2.0f,((float)v[thisv].note-60.0f)/12.0f)*s[v[thisv].sample].rate/44100.0f;
       v[thisv].vol=(float)ev[2]/128.0f;
+      v[thisv].envVol=&e[0];
     }
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
@@ -125,34 +126,35 @@ float* Sampler::getSample() {
     ev=(unsigned char*)getEvent();
   }
   for (i=0; i<vSize; i++) {
-    //printf("%d %d\n",v[i].env,v[i].envpi);
-    val0=e[v[i].env].p[v[i].envpi].value;
-    val1=e[v[i].env].p[v[i].envpi+1].value;
-    timediff=e[v[i].env].p[v[i].envpi+1].time-e[v[i].env].p[v[i].envpi].time;
-    calc=v[i].vol*(val0+((val1-val0)*(1.0f-(timediff-(float)v[i].envposN)/timediff)));
-    if (s[v[i].sample].chan==1) {
-      element=intSinc(s[v[i].sample].data[0],v[i].periodN+8,v[i].periodD);
+    voice* object=&v[i];
+    //printf("%d %d\n",object->env,object->envpi);
+    val0=object->envVol->p[object->envpi].value;
+    val1=object->envVol->p[object->envpi+1].value;
+    timediff=object->envVol->p[object->envpi+1].time-object->envVol->p[object->envpi].time;
+    calc=object->vol*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envposN)/timediff)));
+    if (s[object->sample].chan==1) {
+      element=intSinc(s[object->sample].data[0],object->periodN+8,object->periodD);
       
       sample[0]+=element*calc;
       sample[1]+=element*calc;
-    } else for (j=0; j<(size_t)s[v[i].sample].chan; j++) {
-      element=intSinc(s[v[i].sample].data[j],v[i].periodN+8,v[i].periodD);
+    } else for (j=0; j<(size_t)s[object->sample].chan; j++) {
+      element=intSinc(s[object->sample].data[j],object->periodN+8,object->periodD);
       
       sample[j]+=element*calc;
     }
-    v[i].periodD+=v[i].f;
-    v[i].periodN+=(int)v[i].periodD;
-    if (s[v[i].sample].loopType==1 && v[i].periodN>s[v[i].sample].loopEnd) {
-      v[i].periodN=s[v[i].sample].loopStart+(v[i].periodN%(s[v[i].sample].loopEnd+1));
+    object->periodD+=object->f;
+    object->periodN+=(int)object->periodD;
+    if (s[object->sample].loopType==1 && object->periodN>s[object->sample].loopEnd) {
+      object->periodN=s[object->sample].loopStart+(object->periodN%(s[object->sample].loopEnd+1));
     }
-    v[i].periodD=fmod(v[i].periodD,1.0f);
-    v[i].envposD+=65536/44100;
-    v[i].envposN+=(int)v[i].envposD;
-    v[i].envposD=fmod(v[i].envposD,1.0f);
-    if ((v[i].envposN+e[v[i].env].p[v[i].envpi].time)>e[v[i].env].p[v[i].envpi+1].time) {
-      v[i].envpi++;
-      v[i].envposN=0;
-      if (v[i].envpi==(e[v[i].env].pSize-1)) {
+    object->periodD=fmod(object->periodD,1.0f);
+    object->envposD+=65536/44100;
+    object->envposN+=(int)object->envposD;
+    object->envposD=fmod(object->envposD,1.0f);
+    if ((object->envposN+object->envVol->p[object->envpi].time)>object->envVol->p[object->envpi+1].time) {
+      object->envpi++;
+      object->envposN=0;
+      if (object->envpi==(object->envVol->pSize-1)) {
         vErase(i); i--;
         printf("end of envelope.\n");
       }

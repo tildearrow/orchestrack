@@ -19,6 +19,26 @@ class Sampler: public OTrackInstrument {
     short ctrl[128];
     int pressure;
   };
+  // envelope point structure //
+  struct envp {
+    float time;
+    float value;
+    int type;
+  };
+  // envelope structure //
+  struct envl {
+    envp* p;
+    size_t pSize;
+    int start;
+    int attackEnd;
+    int decayEnd;
+    int sustainEnd;
+    int loopStart;
+    int loopEnd;
+    bool susLoop;
+    bool relMode;
+    bool sync;
+  };
   // voice structure //
   struct voice {
     int chan;
@@ -34,6 +54,11 @@ class Sampler: public OTrackInstrument {
     int envpi;
     int envposN;
     float envposD;
+    envl* envVol;
+    envl* envPan;
+    envl* envPitch;
+    envl* envCut;
+    envl* envRes;
   };
   // sample structure //
   struct smp {
@@ -65,26 +90,6 @@ class Sampler: public OTrackInstrument {
     string name;
     string rh;
     SDL_Color color;
-  };
-  // envelope point structure //
-  struct envp {
-    float time;
-    float value;
-    int type;
-  };
-  // envelope structure //
-  struct envl {
-    envp* p;
-    size_t pSize;
-    int start;
-    int attackEnd;
-    int decayEnd;
-    int sustainEnd;
-    int loopStart;
-    int loopEnd;
-    bool susLoop;
-    bool relMode;
-    bool sync;
   };
   font* f;
   channel c[16];
