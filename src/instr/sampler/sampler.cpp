@@ -786,20 +786,11 @@ void Sampler::envMouseUp(int button) {
 }
 
 void Sampler::vResize(size_t newsize) {
-  if (newsize>256) {
-    printf("trying to play more than 256 voices!\n");
+  if (newsize>255) {
+    printf("trying to play more than 255 voices!\n");
+    vErase(0);
     return;
   }
-  //printf("RESIZE! %zu\n",newsize);
-  /*
-  voice* t;
-  t=new voice[newsize];
-  for (size_t i=0; i<vSize, i<newsize; i++) {
-    memcpy(&t[i],&v[i],sizeof(voice));
-  }
-  vSize=newsize;
-  delete[] v;
-  v=t;*/
   if (newsize>vSize) {
     //printf("set\n");
     for (size_t i=vSize; i<newsize; i++) {
