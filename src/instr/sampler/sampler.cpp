@@ -725,7 +725,7 @@ void Sampler::envMouseMove(int button) {
   } else {
     selPoint=-1;
     for (size_t i=0; i<e[0].pSize; i++) {
-      if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-4,340-(e[0].p[i].value*300.0f)-4,10+(e[0].p[i].time/256)+4,340-(e[0].p[i].value*300.0f)+4)) {
+      if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-6,340-(e[0].p[i].value*300.0f)-6,10+(e[0].p[i].time/256)+6,340-(e[0].p[i].value*300.0f)+6)) {
         selPoint=i; break;
       }
     }
