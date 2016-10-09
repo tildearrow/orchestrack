@@ -30,9 +30,8 @@ class Sampler: public OTrackInstrument {
     envp* p;
     size_t pSize;
     int start;
-    int attackEnd;
-    int decayEnd;
-    int sustainEnd;
+    int susStart;
+    int susEnd;
     int loopStart;
     int loopEnd;
     bool susLoop;

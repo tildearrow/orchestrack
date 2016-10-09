@@ -759,11 +759,59 @@ void Sampler::envMouseDown(int button) {
       switch (pMenuSel) {
         case 0:
           if (pMenuTarget!=0) {
+            // slide loop points
+            if (e[0].susStart>=pMenuTarget) {
+              e[0].susStart--;
+            }
+            if (e[0].susEnd>=pMenuTarget) {
+              e[0].susEnd--;
+            }
+            if (e[0].loopStart>=pMenuTarget) {
+              e[0].loopStart--;
+            }
+            if (e[0].loopEnd>=pMenuTarget) {
+              e[0].loopEnd--;
+            }
             pErase(&e[0].p,&e[0].pSize,pMenuTarget);
           }
           break;
-        default:
-          printf("to be done.\n");
+        case 1:
+          if (e[0].susStart!=pMenuTarget || e[0].susEnd!=pMenuTarget) {
+            e[0].susStart=pMenuTarget;
+            e[0].susEnd=pMenuTarget;
+          } else {
+            e[0].susStart=-1;
+            e[0].susEnd=-1;
+          }
+          break;
+        case 2:
+          if (e[0].susStart!=pMenuTarget) {
+            e[0].susStart=pMenuTarget;
+          } else {
+            e[0].susStart=-1;
+          }
+          break;
+        case 3:
+          if (e[0].susEnd!=pMenuTarget) {
+            e[0].susEnd=pMenuTarget;
+          } else {
+            e[0].susEnd=-1;
+          }
+          break;
+        case 4:
+          if (e[0].loopStart!=pMenuTarget) {
+            e[0].loopStart=pMenuTarget;
+          } else {
+            e[0].loopStart=-1;
+          }
+          break;
+        case 5:
+          if (e[0].loopEnd!=pMenuTarget) {
+            e[0].loopEnd=pMenuTarget;
+          } else {
+            e[0].loopEnd=-1;
+          }
+          break;
       }
       pMenuTarget=-1;
       pMenuVis=false;
@@ -796,7 +844,20 @@ void Sampler::envMouseDown(int button) {
         selPoint=left+1;
         selGrab=true;
       } else {
-      // slide right points
+        // slide loop points
+        if (e[0].susStart>=right) {
+          e[0].susStart++;
+        }
+        if (e[0].susEnd>=right) {
+          e[0].susEnd++;
+        }
+        if (e[0].loopStart>=right) {
+          e[0].loopStart++;
+        }
+        if (e[0].loopEnd>=right) {
+          e[0].loopEnd++;
+        }
+        // slide right points
         for (int i=e[0].pSize-1; i>=right; i--) {
           memcpy(&e[0].p[i],&e[0].p[i-1],sizeof(envp));
         }
@@ -1747,6 +1808,53 @@ void Sampler::drawEnvEdit() {
   f->draw(93,10,tempc,0,0,0,"[insert name here]");
   SDL_SetRenderDrawColor(r,255,255,128,255);
   for (size_t i=0; i<e[0].pSize; i++) {
+    if (i==e[0].loopStart || i==e[0].loopEnd) {
+      SDL_SetRenderDrawColor(r,255,32,32,255);
+      SDL_RenderDrawLine(r,10+(e[0].p[i].time/256),40,10+(e[0].p[i].time/256),340);
+      SDL_SetRenderDrawColor(r,255,255,128,255);
+    }
+    // sustain checks //
+    if (i==e[0].susStart) {
+      vlineRGBA(r,3+(e[0].p[i].time/256),40,340,32,255,32,16);
+      vlineRGBA(r,4+(e[0].p[i].time/256),40,340,32,255,32,32);
+      vlineRGBA(r,5+(e[0].p[i].time/256),40,340,32,255,32,48);
+      vlineRGBA(r,6+(e[0].p[i].time/256),40,340,32,255,32,64);
+      vlineRGBA(r,7+(e[0].p[i].time/256),40,340,32,255,32,80);
+      vlineRGBA(r,8+(e[0].p[i].time/256),40,340,32,255,32,96);
+      vlineRGBA(r,9+(e[0].p[i].time/256),40,340,32,255,32,112);
+      vlineRGBA(r,10+(e[0].p[i].time/256),40,340,32,255,32,128);
+    }
+    if (i==e[0].susEnd) {
+      vlineRGBA(r,17+(e[0].p[i].time/256),40,340,32,255,32,16);
+      vlineRGBA(r,16+(e[0].p[i].time/256),40,340,32,255,32,32);
+      vlineRGBA(r,15+(e[0].p[i].time/256),40,340,32,255,32,48);
+      vlineRGBA(r,14+(e[0].p[i].time/256),40,340,32,255,32,64);
+      vlineRGBA(r,13+(e[0].p[i].time/256),40,340,32,255,32,80);
+      vlineRGBA(r,12+(e[0].p[i].time/256),40,340,32,255,32,96);
+      vlineRGBA(r,11+(e[0].p[i].time/256),40,340,32,255,32,112);
+      vlineRGBA(r,10+(e[0].p[i].time/256),40,340,32,255,32,128);
+    }
+    // loop checks //
+    if (i==e[0].loopStart) {
+      vlineRGBA(r,3+(e[0].p[i].time/256),40,340,255,32,32,16);
+      vlineRGBA(r,4+(e[0].p[i].time/256),40,340,255,32,32,32);
+      vlineRGBA(r,5+(e[0].p[i].time/256),40,340,255,32,32,48);
+      vlineRGBA(r,6+(e[0].p[i].time/256),40,340,255,32,32,64);
+      vlineRGBA(r,7+(e[0].p[i].time/256),40,340,255,32,32,80);
+      vlineRGBA(r,8+(e[0].p[i].time/256),40,340,255,32,32,96);
+      vlineRGBA(r,9+(e[0].p[i].time/256),40,340,255,32,32,112);
+      vlineRGBA(r,10+(e[0].p[i].time/256),40,340,255,32,32,128);
+    }
+    if (i==e[0].loopEnd) {
+      vlineRGBA(r,17+(e[0].p[i].time/256),40,340,255,32,32,16);
+      vlineRGBA(r,16+(e[0].p[i].time/256),40,340,255,32,32,32);
+      vlineRGBA(r,15+(e[0].p[i].time/256),40,340,255,32,32,48);
+      vlineRGBA(r,14+(e[0].p[i].time/256),40,340,255,32,32,64);
+      vlineRGBA(r,13+(e[0].p[i].time/256),40,340,255,32,32,80);
+      vlineRGBA(r,12+(e[0].p[i].time/256),40,340,255,32,32,96);
+      vlineRGBA(r,11+(e[0].p[i].time/256),40,340,255,32,32,112);
+      vlineRGBA(r,10+(e[0].p[i].time/256),40,340,255,32,32,128);
+    }
     aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),4,255,255,128,255);
     if (i==selPoint) {
       aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),5,255,255,0,255);
@@ -1911,6 +2019,10 @@ bool Sampler::init(int inChannels, int outChannels) {
     }
     sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);*/
     
+    e[0].susStart=-1;
+    e[0].susEnd=-1;
+    e[0].loopStart=-1;
+    e[0].loopEnd=-1;
     e[0].p=new envp[3];
     e[0].pSize=3;
     e[0].p[0].type=0;
