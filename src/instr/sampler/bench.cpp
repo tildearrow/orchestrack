@@ -35,6 +35,6 @@ int main() {
     pc2=SDL_GetPerformanceCounter();
     pc+=(double)(pc2-pc1)/(double)SDL_GetPerformanceFrequency();
   }
-  printf("total: %f seconds for 88200 samples (%fx realtime)\n",pc,2.0/pc);
+  printf("total: %f seconds for 88200 samples (%fx realtime, up to %d voices on 100%% load)\n",pc,2.0/pc,(int)(256.0/pc));
   return 0;
 }
