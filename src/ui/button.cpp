@@ -1,7 +1,7 @@
 #include "button.h"
 
 int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int y, int w, int h, int rr) {
-  float res[5]; // 2x sampling
+  float res[257]; // 16x sampling, period.
   unsigned char* bitmap;
   int where;
   // prepare bitmap
@@ -37,31 +37,40 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int 
     bitmap[(i*4)]=255;
     bitmap[(i*4)+1]=255;
     bitmap[(i*4)+2]=255;
-    bitmap[(i*4)+3]=192;
+    bitmap[(i*4)+3]=255;
     bitmap[((h-1)*w*4)+(i*4)]=255;
     bitmap[((h-1)*w*4)+(i*4)+1]=255;
     bitmap[((h-1)*w*4)+(i*4)+2]=255;
-    bitmap[((h-1)*w*4)+(i*4)+3]=192;
+    bitmap[((h-1)*w*4)+(i*4)+3]=255;
   }
   for (int i=rr; i<h-rr; i++) {
     bitmap[((i)*w*4)]=255;
     bitmap[((i)*w*4)+1]=255;
     bitmap[((i)*w*4)+2]=255;
-    bitmap[((i)*w*4)+3]=192;
+    bitmap[((i)*w*4)+3]=255;
     bitmap[((w-1)*4)+((i)*w*4)]=255;
     bitmap[((w-1)*4)+((i)*w*4)+1]=255;
     bitmap[((w-1)*4)+((i)*w*4)+2]=255;
-    bitmap[((w-1)*4)+((i)*w*4)+3]=192;
+    bitmap[((w-1)*4)+((i)*w*4)+3]=255;
   }
   
   // corners
   for (int i=0; i<rr; i++) {
     for (int j=0; j<rr; j++) {
+      res[0]=0;
+      for (int k=0; k<16; k++) {
+        for (int l=0; l<16; l++) {
+          if (pow(pow((float)rr-(float)i-((float)k/16.0),2.0)+pow((float)rr-(float)j-((float)l/16.0),2.0),0.5)<(rr)) {
+            res[0]++;
+          }
+        }
+      }
+      /*
       res[0]=pow(pow(rr*2-i*2,2)+pow(rr*2-j*2,2),0.5)<(rr*2);
       res[1]=pow(pow(rr*2-i*2-1,2)+pow(rr*2-j*2,2),0.5)<(rr*2);
       res[2]=pow(pow(rr*2-i*2-1,2)+pow(rr*2-j*2-1,2),0.5)<(rr*2);
       res[3]=pow(pow(rr*2-i*2,2)+pow(rr*2-j*2-1,2),0.5)<(rr*2);
-      res[4]=(res[0]+res[1]+res[2]+res[3])/4;
+      res[4]=(res[0]+res[1]+res[2]+res[3])/4;*/
       
       for (int k=0; k<4; k++) {
         switch (k) {
@@ -73,7 +82,7 @@ int roundRect(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int 
         bitmap[where]=255;
         bitmap[where+1]=255;
         bitmap[where+2]=255;
-        bitmap[where+3]=(unsigned char)(res[4]*255.0);
+        bitmap[where+3]=(unsigned char)(fmin(255,res[0]));
       }
     }
   }
