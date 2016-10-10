@@ -21,7 +21,7 @@ class Sampler: public OTrackInstrument {
   };
   // envelope point structure //
   struct envp {
-    float time;
+    int time;
     float value;
     int type;
   };
