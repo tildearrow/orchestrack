@@ -164,13 +164,11 @@ float* Sampler::getSample() {
         printf("end of envelope.\n");
       }
     }
-  }
-  
-  for (i=0; i<vSize; i++) {
-    if ((int)v[i].periodN>s[v[i].sample].len) {
+    if ((int)object->periodN>s[v[i].sample].len) {
       vErase(i); i--;
     }
   }
+  
   sample[0]=sample[0]/4;
   sample[1]=sample[1]/4;
   return sample;
