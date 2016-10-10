@@ -138,10 +138,12 @@ float* Sampler::getSample() {
     timediff=object->envVol->p[object->envpi+1].time-object->envVol->p[object->envpi].time;
     calc=object->vol*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envposN)/timediff)));
     if (object->sample->chan==1) {
+      float elcalc;
       element=intSinc(object->sample->data[0],object->periodN+8,object->periodD);
       
-      sample[0]+=element*calc;
-      sample[1]+=element*calc;
+      elcalc=element*calc;
+      sample[0]+=elcalc;
+      sample[1]+=elcalc;
     } else for (j=0; j<(size_t)object->sample->chan; j++) {
       element=intSinc(object->sample->data[j],object->periodN+8,object->periodD);
       
