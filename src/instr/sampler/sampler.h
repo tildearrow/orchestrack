@@ -38,13 +38,26 @@ class Sampler: public OTrackInstrument {
     bool relMode;
     bool sync;
   };
+  // sample structure //
+  struct smp {
+    string* path;
+    int len;
+    int chan;
+    char noteMin, noteMax;
+    char velMin, velMax;
+    float rate;
+    float** data;
+    int loopStart;
+    int loopEnd;
+    int loopType;
+  };
   // voice structure //
   struct voice {
     int chan;
     int note;
     int pos;
     int pressure;
-    int sample;
+    smp* sample;
     long periodN;
     float periodD;
     float f;
@@ -58,19 +71,6 @@ class Sampler: public OTrackInstrument {
     envl* envPitch;
     envl* envCut;
     envl* envRes;
-  };
-  // sample structure //
-  struct smp {
-    string* path;
-    int len;
-    int chan;
-    char noteMin, noteMax;
-    char velMin, velMax;
-    float rate;
-    float** data;
-    int loopStart;
-    int loopEnd;
-    int loopType;
   };
   // mouse structure //
   struct {

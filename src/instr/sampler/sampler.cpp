@@ -98,10 +98,10 @@ float* Sampler::getSample() {
       for (i=0; i<sSize; i++) {
         if (s[i].noteMin<=v[thisv].note && s[i].noteMax>=v[thisv].note &&
             s[i].velMin<=ev[2] && s[i].velMax>=ev[2]) {
-          v[thisv].sample=i; break;
+          v[thisv].sample=&s[i]; break;
         }
       }
-      v[thisv].f=pow(2.0f,((float)v[thisv].note-60.0f)/12.0f)*s[v[thisv].sample].rate/44100.0f;
+      v[thisv].f=pow(2.0f,((float)v[thisv].note-60.0f)/12.0f)*v[thisv].sample->rate/44100.0f;
       v[thisv].vol=(float)ev[2]/128.0f;
       v[thisv].envVol=&e[0];
     }
@@ -110,7 +110,7 @@ float* Sampler::getSample() {
       c[ev[0]&15].pitch=(ev[1]+(ev[2]<<7))-0x2000;
       for (i=0; i<vSize; i++) {
         if (v[i].chan==(ev[0]&15)) {
-          v[i].f=pow(2.0f,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0f))/12)*s[v[i].sample].rate/44100;
+          v[i].f=pow(2.0f,((float)v[i].note-60+((float)c[ev[0]&15].pitch/4096.0f))/12)*v[i].sample->rate/44100;
         }
       }
     }
@@ -137,20 +137,20 @@ float* Sampler::getSample() {
     val1=object->envVol->p[object->envpi+1].value;
     timediff=object->envVol->p[object->envpi+1].time-object->envVol->p[object->envpi].time;
     calc=object->vol*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envposN)/timediff)));
-    if (s[object->sample].chan==1) {
-      element=intSinc(s[object->sample].data[0],object->periodN+8,object->periodD);
+    if (object->sample->chan==1) {
+      element=intSinc(object->sample->data[0],object->periodN+8,object->periodD);
       
       sample[0]+=element*calc;
       sample[1]+=element*calc;
-    } else for (j=0; j<(size_t)s[object->sample].chan; j++) {
-      element=intSinc(s[object->sample].data[j],object->periodN+8,object->periodD);
+    } else for (j=0; j<(size_t)object->sample->chan; j++) {
+      element=intSinc(object->sample->data[j],object->periodN+8,object->periodD);
       
       sample[j]+=element*calc;
     }
     object->periodD+=object->f;
     object->periodN+=(int)object->periodD;
-    if (s[object->sample].loopType==1 && object->periodN>s[object->sample].loopEnd) {
-      object->periodN=s[object->sample].loopStart+(object->periodN%(s[object->sample].loopEnd+1));
+    if (object->sample->loopType==1 && object->periodN>object->sample->loopEnd) {
+      object->periodN=object->sample->loopStart+(object->periodN%(object->sample->loopEnd+1));
     }
     object->periodD=fmod(object->periodD,1.0f);
     object->envposD+=65536/44100;
@@ -164,7 +164,7 @@ float* Sampler::getSample() {
         printf("end of envelope.\n");
       }
     }
-    if ((int)object->periodN>s[v[i].sample].len) {
+    if ((int)object->periodN>object->sample->len) {
       vErase(i); i--;
     }
   }
