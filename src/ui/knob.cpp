@@ -68,7 +68,23 @@ void OTrackKnob::draw(int x, int y) {
   tr.x=x; tr.y=y; tr.w=w; tr.h=h;
   tp.x=w/2; tp.y=h/2;
   printf("value: %f\n",*val);
-  SDL_RenderCopyEx(rend,tex,NULL,&tr,225+((*val)*270),&tp,SDL_FLIP_NONE);
+  SDL_RenderCopy(rend,tex,NULL,&tr);
+
+  for (int i=0; i<(*val)*32; i++) {
+    tr.x=round((x+(w/2)+cos((0.75*pi)+(float)i*1.5*pi/(32.0))*(w-18)/2)-6);
+    tr.y=round((y+(h/2)+sin((0.75*pi)+(float)i*1.5*pi/(32.0))*(h-18)/2)-6);
+    
+    tr.w=12; tr.h=12;
+    if (i==(int)((*val)*32)) {
+      SDL_SetTextureAlphaMod(light,(unsigned char)(fmod((*val)*32,1)*255));
+    }
+    SDL_RenderCopy(rend,light,NULL,&tr);
+    SDL_SetTextureAlphaMod(light,255);
+  }
+  tr.x=x+8; tr.y=y+8; tr.w=w-16; tr.h=h-16;
+  tp.x=(w-16)/2; tp.y=(h-16)/2;
+  SDL_RenderCopyEx(rend,tex1,NULL,&tr,225+((*val)*270),&tp,SDL_FLIP_NONE);
+
 }
 
 void OTrackKnob::setOut(float* out) {
@@ -82,34 +98,93 @@ void OTrackKnob::setRange(float min, float max) {
 
 OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigned char g, unsigned char b) {
   unsigned char* ba;
+  unsigned char* bb;
+  unsigned char* bc;
   SDL_Color tc, tc1;
   rend=renderer;
   tex=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STATIC,rad*2,rad*2);
-  ba=new unsigned char[r*r*16];
-  memset(ba,0,r*r*16);
+  tex1=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STATIC,(rad-8)*2,(rad-8)*2);
+  light=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STATIC,12,12);
+  SDL_SetTextureBlendMode(tex,SDL_BLENDMODE_BLEND);
+  SDL_SetTextureBlendMode(tex1,SDL_BLENDMODE_BLEND);
+  SDL_SetTextureBlendMode(light,SDL_BLENDMODE_ADD);
+  ba=new unsigned char[rad*rad*16];
+  memset(ba,0,rad*rad*16);
+  bc=new unsigned char[((rad-8)*2)*((rad-8)*2)*4];
+  memset(bc,0,((rad-8)*2)*((rad-8)*2)*4);
+  bb=new unsigned char[12*12*4];
+  memset(bb,0,12*12*4);
+  
+  // knob
+  
   tc.r=64; tc.g=64; tc.b=64; tc.a=255;
   tc1.r=96; tc1.g=96; tc1.b=96; tc1.a=255;
-  circle(ba,r*2,tc,tc1,rad,rad,rad-1);
+  circle(ba,rad*2,tc,tc1,rad,rad,rad-1);
+  
   tc.r=192; tc.g=192; tc.b=192; tc.a=255;
   tc1.r=128; tc1.g=128; tc1.b=128; tc1.a=255;
-  circle(ba,r*2,tc,tc1,rad,rad,rad-2);
-  tc.r=128; tc.g=129; tc.b=128; tc.a=255;
-  tc1.r=96; tc1.g=96; tc1.b=96; tc1.a=255;
-  circle(ba,r*2,tc,tc1,rad,rad,rad-3);
-  tc.r=128; tc.g=128; tc.b=128; tc.a=255;
-  tc1.r=255; tc1.g=255; tc1.b=255; tc1.a=255;
-  circle(ba,r*2,tc,tc1,rad,rad,rad-4);
-  tc.r=128; tc.g=128; tc.b=128; tc.a=255;
+  circle(ba,rad*2,tc,tc1,rad,rad,rad-3);
+  
+  tc.r=32; tc.g=32; tc.b=32; tc.a=255;
+  tc1.r=16; tc1.g=16; tc1.b=16; tc1.a=255;
+  circle(ba,rad*2,tc,tc1,rad,rad,rad-4);
+  
+  // knob center
+  
+  tc.r=224; tc.g=224; tc.b=224; tc.a=255;
+  tc1.r=160; tc1.g=160; tc1.b=160; tc1.a=255;
+  circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-9);
+  
+  tc.r=64; tc.g=64; tc.b=64; tc.a=255;
   tc1.r=128; tc1.g=128; tc1.b=128; tc1.a=255;
-  circle(ba,r*2,tc,tc1,rad,rad,rad-5);
-  tc.r=200; tc.g=200; tc.b=200; tc.a=192;
-  tc1.r=150; tc1.g=150; tc1.b=150; tc1.a=0;
-  circle(ba,r*2,tc,tc1,rad,rad,rad-7);
-  tc.r=0; tc.g=255; tc.b=0; tc.a=255;
-  tc1.r=0; tc1.g=255; tc1.b=0; tc1.a=255;
-  circle(ba,r*2,tc,tc1,rad,6,3);
-  //ba[(r*16+r)*4+1]=0;
-  SDL_UpdateTexture(tex,NULL,ba,r*8);
+  circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-10);
+  
+  tc.r=255; tc.g=255; tc.b=255; tc.a=128;
+  tc1.r=0; tc1.g=0; tc1.b=0; tc1.a=0;
+  circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-12);
+  
+  // indicator
+  
+  tc.r=128; tc.g=128; tc.b=128; tc.a=255;
+  circle(bc,(rad-8)*2,tc,tc,rad-8,7,2);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,8,2);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,9,2);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,10,2);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,11,2);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,12,2);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,13,2);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,14,2);
+  
+  tc.r=255; tc.g=255; tc.b=255; tc.a=255;
+  circle(bc,(rad-8)*2,tc,tc,rad-8,6,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,7,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,8,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,9,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,10,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,11,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,12,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,13,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,14,1);
+  circle(bc,(rad-8)*2,tc,tc,rad-8,15,1);
+  
+  // light
+  
+  tc.r=r; tc.g=g; tc.b=b; tc.a=96;
+  circle(bb,12,tc,tc,6,6,5);
+  tc.r=r; tc.g=g; tc.b=b; tc.a=128;
+  circle(bb,12,tc,tc,6,6,4);
+  tc.r=r; tc.g=g; tc.b=b; tc.a=144;
+  circle(bb,12,tc,tc,6,6,3);
+  tc.r=r; tc.g=g; tc.b=b; tc.a=160;
+  circle(bb,12,tc,tc,6,6,2);
+  tc.r=r; tc.g=g; tc.b=b; tc.a=255;
+  circle(bb,12,tc,tc,6,6,1);
+  
+  SDL_UpdateTexture(tex,NULL,ba,rad*8);
+  SDL_UpdateTexture(tex1,NULL,bc,(rad-8)*8);
+  SDL_UpdateTexture(light,NULL,bb,12*4);
   delete[] ba;
+  delete[] bb;
+  delete[] bc;
   w=rad*2; h=rad*2;
 }

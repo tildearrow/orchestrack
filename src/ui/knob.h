@@ -8,6 +8,8 @@ class OTrackKnob {
   int w, h;
   SDL_Renderer* rend;
   SDL_Texture* tex;
+  SDL_Texture* tex1;
+  SDL_Texture* light;
   public:
     void draw(int x, int y);
     void setRange(float min, float max);
