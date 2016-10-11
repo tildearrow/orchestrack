@@ -2,6 +2,8 @@
 #include "../instr.h"
 #include "../../font/font.h"
 #include "../../ui/button.h"
+#include "../../ui/knob.h"
+
 #include "../../format/wave.h"
 #include "../../format/aiff.h"
 #include "../../engine/lutgen.h"
@@ -135,9 +137,11 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* srange;
   SDL_Texture* srangebutton;
   SDL_Texture* sselect; int sselectS;
+  OTrackKnob* testk;
   // eye candy //
   float aBBPos;
   int selRot;
+  float fc;
   // temporary SDL stuff //
   SDL_Rect tempr, tempr1;
   SDL_Color tempc;

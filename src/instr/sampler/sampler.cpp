@@ -1121,9 +1121,14 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.b=128;
   tempc.a=255;
   smodeactive=drawButton(r,0,0,175,20,tempc,4);
+  // knob //
+  testk=new OTrackKnob(r,32,255,255,255);
+  testk->setOut(&fc);
+  testk->setRange(0.0,1.0);
   showLoad=false;
   // init eye candy //
   aBBPos=-30;
+  fc=0;
 }
 
 void Sampler::loadSample() {
@@ -1984,7 +1989,11 @@ void Sampler::drawUI() {
   
   SDL_SetRenderDrawColor(r,255,255,255,255);
   
-  
+  fc+=0.005;
+  if (fc>1) {
+    fc=0;
+  }
+  testk->draw(32,32);
   
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }

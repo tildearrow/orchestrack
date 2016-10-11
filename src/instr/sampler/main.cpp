@@ -137,6 +137,7 @@ int main() {
   touch=false;
   e=new SDL_Event;
   SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO);
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,"1");
   TTF_Init();
   printf("initializing sampler...\n");
   if (!ins.init(0,2)) {
