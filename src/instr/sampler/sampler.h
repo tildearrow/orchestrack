@@ -197,10 +197,10 @@ class Sampler: public OTrackInstrument {
   string kpCurVal;
   float* kpVar;
   // interpolation methods //
-  inline float intNone(float* b, int n, float d);
-  inline float intLinear(float* b, int n, float d);
-  inline float intCubic(float* b, int n, float d);
-  inline float intSinc(float* b, int n, float d);
+  float intNone(float* b, int n, float d);
+  float intLinear(float* b, int n, float d);
+  float intCubic(float* b, int n, float d);
+  float intSinc(float* b, int n, float d);
   // vector-like functions //
   void pResize(envp** which, size_t* cursize, size_t newsize);
   void pErase(envp** which, size_t* cursize, size_t which1);

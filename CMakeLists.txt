@@ -38,15 +38,42 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
 else (CMAKE_GENERATOR MATCHES "Visual Studio")
   find_library(HAVE_JACK jack)
 endif (CMAKE_GENERATOR MATCHES "Visual Studio")
+add_library(gfx STATIC lib/gfx/SDL2_rotozoom.c lib/gfx/SDL2_gfxPrimitives.c)
+add_library(sampler STATIC
+  src/engine/lutgen.cpp
+  src/file/fextra.c
+  src/format/aiff.cpp
+  src/format/wave.cpp
+  src/format/iff.cpp
+  src/ui/button.cpp
+  src/ui/knob.cpp
+  src/instr/instr.cpp
+  src/font/font.cpp
+  src/instr/sampler/audio.cpp
+  src/instr/sampler/interp.cpp
+  src/instr/sampler/envedit.cpp
+  src/instr/sampler/grid.cpp
+  src/instr/sampler/smpedit.cpp
+  src/instr/sampler/state.cpp
+  src/instr/sampler/mouse.cpp
+  src/instr/sampler/resize.cpp
+  src/instr/sampler/erase.cpp
+  src/instr/sampler/error.cpp
+  src/instr/sampler/dir.cpp
+  src/instr/sampler/sload.cpp
+  src/instr/sampler/ssel.cpp
+  src/instr/sampler/list.cpp
+  src/instr/sampler/sampler.cpp)
 add_executable(orchestrack src/ui/application.cpp src/ui/main.cpp)
-add_executable(sampler lib/gfx/SDL2_rotozoom.c lib/gfx/SDL2_gfxPrimitives.c src/engine/lutgen.cpp src/file/fextra.c src/format/aiff.cpp src/format/wave.cpp src/format/iff.cpp src/ui/button.cpp src/ui/knob.cpp src/instr/instr.cpp src/font/font.cpp src/instr/sampler/sampler.cpp src/instr/sampler/main.cpp)
-add_executable(sampler-bench lib/gfx/SDL2_rotozoom.c lib/gfx/SDL2_gfxPrimitives.c src/engine/lutgen.cpp src/file/fextra.c src/format/aiff.cpp src/format/wave.cpp src/format/iff.cpp src/ui/button.cpp src/ui/knob.cpp src/instr/instr.cpp src/font/font.cpp src/instr/sampler/sampler.cpp src/instr/sampler/bench.cpp)
+add_executable(sampler-sa src/instr/sampler/main.cpp)
+add_executable(sampler-bench src/instr/sampler/bench.cpp)
 target_link_libraries(orchestrack SDL2)
+target_link_libraries(sampler SDL2 SDL2_ttf gfx sndfile)
 if (HAVE_JACK)
-target_compile_definitions(sampler PUBLIC HAVE_JACK)
-  target_link_libraries(sampler SDL2 SDL2_ttf sndfile jack)
+target_compile_definitions(sampler-sa PUBLIC HAVE_JACK)
+  target_link_libraries(sampler-sa SDL2 SDL2_ttf gfx sampler sndfile jack)
 else (HAVE_JACK)
-  target_link_libraries(sampler SDL2 SDL2_ttf sndfile)
+  target_link_libraries(sampler-sa SDL2 SDL2_ttf gfx sampler sndfile)
 endif (HAVE_JACK)
-target_link_libraries(sampler-bench SDL2 SDL2_ttf sndfile)
+target_link_libraries(sampler-bench SDL2 SDL2_ttf gfx sampler sndfile)
 install(TARGETS orchestrack RUNTIME DESTINATION bin)
