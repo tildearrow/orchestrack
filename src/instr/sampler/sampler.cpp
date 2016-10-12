@@ -979,6 +979,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (showLoad || showSampleSel) {
         loadMouseMove(button);
       }
+      testk->mouseMove(x,y);
       break;
     case 2: // down
       mouse.x=x; mouse.y=y;
@@ -1007,6 +1008,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (showLoad || showSampleSel) {
         loadMouseDown(button);
       }
+      testk->mouseDown(x,y,button);
       break;
     case 1: // up
       mouse.b[button]=0;
@@ -1046,6 +1048,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           showSampleSel=false;
         }
       }
+      testk->mouseUp(x,y,button);
       break;
     case 3:
       if (showLoad || showSampleSel) {
@@ -1122,9 +1125,9 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.a=255;
   smodeactive=drawButton(r,0,0,175,20,tempc,4);
   // knob //
-  testk=new OTrackKnob(r,32,255,255,255);
+  testk=new OTrackKnob(r,32,0,255,0);
   testk->setOut(&fc);
-  testk->setRange(0.0,1.0);
+  testk->setRange(0.0,1.0,0.0);
   showLoad=false;
   // init eye candy //
   aBBPos=-30;
@@ -1989,11 +1992,14 @@ void Sampler::drawUI() {
   
   SDL_SetRenderDrawColor(r,255,255,255,255);
   
+  /*
   fc+=0.005;
   if (fc>1) {
     fc=0;
   }
-  testk->draw(32,32);
+  */
+  testk->setPos(32,32);
+  testk->draw();
   
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }

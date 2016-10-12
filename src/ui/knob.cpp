@@ -62,17 +62,52 @@ int circle(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int y, 
   return 0;
 }
 
-void OTrackKnob::draw(int x, int y) {
+void OTrackKnob::mouseMove(int x, int y) {
+  if (drag) {
+    *val=fmax(rmin,fmin(rmax,dragVal+((float)(dragStart-y)/300.0)));
+  } else {
+    if (PointInRect(x,y,xx,yy,xx+w,yy+h)) {
+      hover=true;
+    } else {
+      hover=false;
+    }
+  }
+}
+
+void OTrackKnob::mouseDown(int x, int y, int button) {
+  if (hover && button==0) {
+    reset=false;
+    drag=true;
+    dragStart=y;
+    dragVal=*val;
+    SDL_CaptureMouse(SDL_TRUE);
+  } else if ((button==1 || button==2) && !drag) {
+    reset=true;
+  }
+}
+
+void OTrackKnob::mouseUp(int x, int y, int button) {
+  if (drag && button==0) {
+    drag=false;
+    SDL_CaptureMouse(SDL_FALSE);
+    if (!PointInRect(x,y,xx,yy,xx+w,yy+h)) {
+      hover=false;
+    }
+  }
+}
+
+void OTrackKnob::draw() {
   SDL_Rect tr;
   SDL_Point tp;
-  tr.x=x; tr.y=y; tr.w=w; tr.h=h;
+  tr.x=xx; tr.y=yy; tr.w=w; tr.h=h;
   tp.x=w/2; tp.y=h/2;
-  printf("value: %f\n",*val);
   SDL_RenderCopy(rend,tex,NULL,&tr);
+  
+  SDL_SetTextureColorMod(light,127+hoverTime*16,127+hoverTime*16,127+hoverTime*16);
 
   for (int i=0; i<(*val)*32; i++) {
-    tr.x=round((x+(w/2)+cos((0.75*pi)+(float)i*1.5*pi/(32.0))*(w-18)/2)-6);
-    tr.y=round((y+(h/2)+sin((0.75*pi)+(float)i*1.5*pi/(32.0))*(h-18)/2)-6);
+    tr.x=round((xx+(w/2)+cos((0.75*pi)+(float)i*1.5*pi/(32.0))*(w-18)/2)-6);
+    tr.y=round((yy+(h/2)+sin((0.75*pi)+(float)i*1.5*pi/(32.0))*(h-18)/2)-6);
     
     tr.w=12; tr.h=12;
     if (i==(int)((*val)*32)) {
@@ -81,19 +116,43 @@ void OTrackKnob::draw(int x, int y) {
     SDL_RenderCopy(rend,light,NULL,&tr);
     SDL_SetTextureAlphaMod(light,255);
   }
-  tr.x=x+8; tr.y=y+8; tr.w=w-16; tr.h=h-16;
+  tr.x=xx+8; tr.y=yy+8; tr.w=w-16; tr.h=h-16;
   tp.x=(w-16)/2; tp.y=(h-16)/2;
   SDL_RenderCopyEx(rend,tex1,NULL,&tr,225+((*val)*270),&tp,SDL_FLIP_NONE);
 
+  if (hover || drag) {
+    hoverTime++;
+    if (hoverTime>8) {
+      hoverTime=8;
+    }
+  } else {
+    hoverTime--;
+    if (hoverTime<0) {
+      hoverTime=0;
+    }
+  }
+  
+  if (reset) {
+    *val-=((*val)-rval)*0.2;
+    if (*val<(rval+0.005)) {
+      *val=rval;
+      reset=false;
+    }
+  }
 }
 
 void OTrackKnob::setOut(float* out) {
   val=out;
 }
 
-void OTrackKnob::setRange(float min, float max) {
+void OTrackKnob::setRange(float min, float max, float resetval) {
   rmin=min;
   rmax=max;
+  rval=resetval;
+}
+
+void OTrackKnob::setPos(int x, int y) {
+  xx=x; yy=y;
 }
 
 OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigned char g, unsigned char b) {
