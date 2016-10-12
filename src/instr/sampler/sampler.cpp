@@ -880,6 +880,7 @@ void Sampler::envMouseDown(int button) {
     } else {
       // show point menu
       pMenuVis=true;
+      pMenuSel=-1;
       pMenuTarget=selPoint;
       pMenuPos.x=mouse.x;
       pMenuPos.y=mouse.y;
