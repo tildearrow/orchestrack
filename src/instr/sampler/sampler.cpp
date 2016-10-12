@@ -1127,7 +1127,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   // knob //
   testk=new OTrackKnob(r,32,0,255,0);
   testk->setOut(&fc);
-  testk->setRange(0.0,1.0,0.0);
+  testk->setRange(0.0,1.0,0.5);
   showLoad=false;
   // init eye candy //
   aBBPos=-30;

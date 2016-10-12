@@ -134,7 +134,7 @@ void OTrackKnob::draw() {
   
   if (reset) {
     *val-=((*val)-rval)*0.2;
-    if (*val<(rval+0.005)) {
+    if (fabs(*val-rval)<0.005) {
       *val=rval;
       reset=false;
     }
