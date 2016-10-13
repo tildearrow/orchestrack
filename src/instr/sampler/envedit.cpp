@@ -104,6 +104,12 @@ void Sampler::envMouseDown(int button) {
       pMenuTarget=-1;
       pMenuVis=false;
     } else {
+      selPoint=-1;
+      for (size_t i=0; i<e[0].pSize; i++) {
+        if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-6,340-(e[0].p[i].value*300.0f)-6,10+(e[0].p[i].time/256)+6,340-(e[0].p[i].value*300.0f)+6)) {
+          selPoint=i; break;
+        }
+      }
       if (selPoint!=-1) {
         printf("grabbing!\n");
         selGrab=true;

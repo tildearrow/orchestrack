@@ -75,6 +75,11 @@ void OTrackKnob::mouseMove(int x, int y) {
 }
 
 void OTrackKnob::mouseDown(int x, int y, int button) {
+  if (PointInRect(x,y,xx,yy,xx+w,yy+h)) {
+    hover=true;
+  } else {
+    hover=false;
+  }
   if (hover && button==0) {
     reset=false;
     drag=true;
