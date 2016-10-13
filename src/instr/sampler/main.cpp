@@ -29,6 +29,9 @@ SDL_Event* e;
 bool q;
 bool touch;
 
+SDL_DisplayMode dd;
+int dw, dh;
+
 #ifdef HAVE_JACK
 int audio(jack_nframes_t len, void* arg) {
   float* s[2];
@@ -151,6 +154,14 @@ int main() {
   SDL_RenderClear(r);
   SDL_RenderPresent(r);
   ins.setRenderer(r);
+#ifdef __ANDROID__
+  SDL_GetCurrentDisplayMode(0,&dd);
+  dw=dd.w;
+  dh=dd.h;
+#else
+  dw=740;
+  dh=512;
+#endif
 
   printf("success.\n");
   letAudioRun();
@@ -179,17 +190,17 @@ int main() {
 #ifndef __APPLE__
         case SDL_FINGERUP:
 	  touch=true;
-	  printf("up %d %d %lld\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
-          ins.mouseEvent(1,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),(int)e->tfinger.fingerId);
+	  printf("up %d %d %lld\n",(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),e->tfinger.fingerId);
+          ins.mouseEvent(1,0,(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),(int)e->tfinger.fingerId);
           break;
         case SDL_FINGERDOWN:
 	  touch=true;
-	  printf("down %d %d %lld\n",(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),e->tfinger.fingerId);
-          ins.mouseEvent(2,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),(int)e->tfinger.fingerId);
+	  printf("down %d %d %lld\n",(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),e->tfinger.fingerId);
+          ins.mouseEvent(2,0,(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),(int)e->tfinger.fingerId);
           break;
         case SDL_FINGERMOTION:
 	  touch=true;
-          ins.mouseEvent(0,0,(int)(e->tfinger.x*740),(int)(e->tfinger.y*512),(int)e->tfinger.fingerId);
+          ins.mouseEvent(0,0,(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),(int)e->tfinger.fingerId);
           break;
 #endif
         case SDL_QUIT:
@@ -206,3 +217,9 @@ int main() {
   }
   return 0;
 }
+
+#ifdef __ANDROID__
+int SDL_main(int argc, char** argv) {
+  main();
+}
+#endif

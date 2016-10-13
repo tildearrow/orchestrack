@@ -20,7 +20,9 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   r=renderer;
   f=new font;
   f->setrenderer(r);
-  #ifdef __linux__
+  #ifdef __ANDROID__
+  f->load("/system/fonts/Roboto-Regular.ttf",16);
+  #elif __linux__
   f->load("/usr/share/fonts/TTF/Ubuntu-R.ttf",16);
   #elif __APPLE__
   f->load("/System/Library/Fonts/Helvetica.dfont",16);
