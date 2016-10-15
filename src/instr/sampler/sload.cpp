@@ -25,7 +25,7 @@ void Sampler::initSample(int which) {
     s[which].data[0][i]=0;
   }
   for (int i=8; i<128+8; i++) {
-    s[which].data[0][i]=((float)i/256)-1;
+    s[which].data[0][i]=sin((((float)i-8)/128)*2*pi);
   }
   s[which].volAmt=1;
   s[which].volCap=0;
