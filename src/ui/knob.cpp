@@ -64,7 +64,7 @@ int circle(unsigned char* ptr, int tw, SDL_Color c, SDL_Color c1, int x, int y, 
 
 void OTrackKnob::mouseMove(int x, int y) {
   if (drag) {
-    *val=fmax(rmin,fmin(rmax,dragVal+((float)(dragStart-y)/300.0)));
+    *val=fmax(rmin,fmin(rmax,dragVal+((float)(dragStart-y)/hardness)));
   } else {
     if (PointInRect(x,y,xx,yy,xx+w,yy+h)) {
       hover=true;
@@ -110,20 +110,21 @@ void OTrackKnob::draw() {
   
   SDL_SetTextureColorMod(light,127+hoverTime*16,127+hoverTime*16,127+hoverTime*16);
 
-  for (int i=0; i<(*val)*32; i++) {
+  float range=((*val-rmin)/(rmax-rmin))*32;
+  for (int i=0; i<range; i++) {
     tr.x=round((xx+(w/2)+cos((0.75*pi)+(float)i*1.5*pi/(32.0))*(w-18)/2)-6);
     tr.y=round((yy+(h/2)+sin((0.75*pi)+(float)i*1.5*pi/(32.0))*(h-18)/2)-6);
     
     tr.w=12; tr.h=12;
-    if (i==(int)((*val)*32)) {
-      SDL_SetTextureAlphaMod(light,(unsigned char)(fmod((*val)*32,1)*255));
+    if (i==(int)range) {
+      SDL_SetTextureAlphaMod(light,(unsigned char)(fmod((range),1)*255));
     }
     SDL_RenderCopy(rend,light,NULL,&tr);
     SDL_SetTextureAlphaMod(light,255);
   }
   tr.x=xx+8; tr.y=yy+8; tr.w=w-16; tr.h=h-16;
   tp.x=(w-16)/2; tp.y=(h-16)/2;
-  SDL_RenderCopyEx(rend,tex1,NULL,&tr,225+((*val)*270),&tp,SDL_FLIP_NONE);
+  SDL_RenderCopyEx(rend,tex1,NULL,&tr,225+((range/32.0)*270),&tp,SDL_FLIP_NONE);
 
   if (hover || drag) {
     hoverTime++;
@@ -154,6 +155,7 @@ void OTrackKnob::setRange(float min, float max, float resetval) {
   rmin=min;
   rmax=max;
   rval=resetval;
+  hardness=(max+min+1)*150;
 }
 
 void OTrackKnob::setPos(int x, int y) {

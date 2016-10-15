@@ -3,7 +3,7 @@
 
 class OTrackKnob {
   float* val;
-  float rmin, rmax, rval;
+  float rmin, rmax, rval, hardness;
   float target;
   int xx, yy, w, h;
   bool hover, drag, reset;
