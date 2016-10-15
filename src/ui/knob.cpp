@@ -179,7 +179,7 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
 #endif
   sprintf(cn,"kcache-%x-back",rad);
   sprintf(cn1,"kcache-%x-front",rad);
-  sprintf(cn2,"kcache-light-%x%x%x",rad,r,g,b);
+  sprintf(cn2,"kcache-light-%.2x%.2x%.2x",r,g,b);
   unsigned char* ba;
   unsigned char* bb;
   unsigned char* bc;
@@ -287,15 +287,15 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
     fread(bb,1,12*12*4,cl);
     fclose(cl);
   } else {
-    tc.r=b; tc.g=g; tc.b=r; tc.a=96;
+    tc.r=r; tc.g=g; tc.b=b; tc.a=96;
     circle(bb,12,tc,tc,6,6,5);
-    tc.r=b; tc.g=g; tc.b=r; tc.a=128;
+    tc.r=r; tc.g=g; tc.b=b; tc.a=128;
     circle(bb,12,tc,tc,6,6,4);
-    tc.r=b; tc.g=g; tc.b=r; tc.a=144;
+    tc.r=r; tc.g=g; tc.b=b; tc.a=144;
     circle(bb,12,tc,tc,6,6,3);
-    tc.r=b; tc.g=g; tc.b=r; tc.a=160;
+    tc.r=r; tc.g=g; tc.b=b; tc.a=160;
     circle(bb,12,tc,tc,6,6,2);
-    tc.r=b; tc.g=g; tc.b=r; tc.a=255;
+    tc.r=r; tc.g=g; tc.b=b; tc.a=255;
     circle(bb,12,tc,tc,6,6,1);
     
     // cache write

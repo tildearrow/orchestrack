@@ -136,6 +136,7 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* envbg;
   SDL_Texture* spath;
   SDL_Texture* spathlarge;
+  SDL_Texture* spathshort;
   SDL_Texture* senvsel;
   SDL_Texture* sload; int sloadS; int supS; int seupS; int sedownS;
   SDL_Texture* scancel; int scancelS;
@@ -154,6 +155,12 @@ class Sampler: public OTrackInstrument {
   OTrackKnob* kVolCap;
   OTrackKnob* kPanAmp;
   OTrackKnob* kPanCap;
+  OTrackKnob* kPitchAmp;
+  OTrackKnob* kPitchCap;
+  OTrackKnob* kCutAmp;
+  OTrackKnob* kCutCap;
+  OTrackKnob* kResAmp;
+  OTrackKnob* kResCap;
   // eye candy //
   float aBBPos;
   int selRot;

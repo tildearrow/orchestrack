@@ -14,6 +14,12 @@ void Sampler::seMouseMove(int button) {
   kVolCap->mouseMove(mouse.x,mouse.y);
   kPanAmp->mouseMove(mouse.x,mouse.y);
   kPanCap->mouseMove(mouse.x,mouse.y);
+  kPitchAmp->mouseMove(mouse.x,mouse.y);
+  kPitchCap->mouseMove(mouse.x,mouse.y);
+  kCutAmp->mouseMove(mouse.x,mouse.y);
+  kCutCap->mouseMove(mouse.x,mouse.y);
+  kResAmp->mouseMove(mouse.x,mouse.y);
+  kResCap->mouseMove(mouse.x,mouse.y);
 }
 
 void Sampler::seMouseDown(int button) {
@@ -49,6 +55,12 @@ void Sampler::seMouseDown(int button) {
   kVolCap->mouseDown(mouse.x,mouse.y,button);
   kPanAmp->mouseDown(mouse.x,mouse.y,button);
   kPanCap->mouseDown(mouse.x,mouse.y,button);
+  kPitchAmp->mouseDown(mouse.x,mouse.y,button);
+  kPitchCap->mouseDown(mouse.x,mouse.y,button);
+  kCutAmp->mouseDown(mouse.x,mouse.y,button);
+  kCutCap->mouseDown(mouse.x,mouse.y,button);
+  kResAmp->mouseDown(mouse.x,mouse.y,button);
+  kResCap->mouseDown(mouse.x,mouse.y,button);
 }
 
 void Sampler::seMouseUp(int button) {
@@ -85,6 +97,12 @@ void Sampler::seMouseUp(int button) {
   kVolCap->mouseUp(mouse.x,mouse.y,button);
   kPanAmp->mouseUp(mouse.x,mouse.y,button);
   kPanCap->mouseUp(mouse.x,mouse.y,button);
+  kPitchAmp->mouseUp(mouse.x,mouse.y,button);
+  kPitchCap->mouseUp(mouse.x,mouse.y,button);
+  kCutAmp->mouseUp(mouse.x,mouse.y,button);
+  kCutCap->mouseUp(mouse.x,mouse.y,button);
+  kResAmp->mouseUp(mouse.x,mouse.y,button);
+  kResCap->mouseUp(mouse.x,mouse.y,button);
 }
 
 void Sampler::drawSampleEdit() {
@@ -127,91 +145,114 @@ void Sampler::drawSampleEdit() {
   /// envelopes ///
   
   // volume //
-  /*
   tempr.x=90;  tempr1.x=0;
   tempr.y=70; tempr1.y=0;
-  tempr.w=640; tempr1.w=640;
+  tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
-  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
   
   tempr.x=10; tempr1.x=60*sselectS;
   tempr.y=70; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,70,tempc,1,0,0,"Volume");*/
+  f->draw(45,70,tempc,1,0,0,"Volume");
   
-  kVolAmp->setPos(32,32);
+  kVolAmp->setPos(10,100);
   kVolAmp->draw();
+  f->draw(42,170,tempc,1,0,0,"Amount");
   
-  kVolCap->setPos(128,32);
+  kVolCap->setPos(84,100);
   kVolCap->draw();
+  f->draw(116,170,tempc,1,0,0,"Handicap");
   
   // panning //
-  /*
-  tempr.x=90;  tempr1.x=0;
-  tempr.y=100; tempr1.y=0;
-  tempr.w=640; tempr1.w=640;
+  tempr.x=455;  tempr1.x=0;
+  tempr.y=70; tempr1.y=0;
+  tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
-  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
   
-  tempr.x=10; tempr1.x=60*sselectS;
-  tempr.y=100; tempr1.y=0;
+  tempr.x=375; tempr1.x=60*sselectS;
+  tempr.y=70; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,100,tempc,1,0,0,"Panning");*/
+  f->draw(410,70,tempc,1,0,0,"Panning");
   
-  kPanAmp->setPos(32,128);
+  kPanAmp->setPos(375,100);
   kPanAmp->draw();
+  f->draw(407,170,tempc,1,0,0,"Amount");
   
-  kPanCap->setPos(128,128);
+  kPanCap->setPos(449,100);
   kPanCap->draw();
+  f->draw(481,170,tempc,1,0,0,"Handicap");
   
   // pitch //
-  /*
   tempr.x=90;  tempr1.x=0;
-  tempr.y=130; tempr1.y=0;
-  tempr.w=640; tempr1.w=640;
+  tempr.y=200; tempr1.y=0;
+  tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
-  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
   
   tempr.x=10; tempr1.x=60*sselectS;
-  tempr.y=130; tempr1.y=0;
+  tempr.y=200; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,130,tempc,1,0,0,"Pitch");*/
+  f->draw(45,200,tempc,1,0,0,"Pitch");
+  
+  kPitchAmp->setPos(10,230);
+  kPitchAmp->draw();
+  f->draw(42,300,tempc,1,0,0,"Amount");
+  
+  kPitchCap->setPos(84,230);
+  kPitchCap->draw();
+  f->draw(116,300,tempc,1,0,0,"Handicap");
   
   // cutoff //
-  /*
-  tempr.x=90;  tempr1.x=0;
-  tempr.y=160; tempr1.y=0;
-  tempr.w=640; tempr1.w=640;
+  tempr.x=455;  tempr1.x=0;
+  tempr.y=200; tempr1.y=0;
+  tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
-  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
   
-  tempr.x=10; tempr1.x=60*sselectS;
-  tempr.y=160; tempr1.y=0;
+  tempr.x=375; tempr1.x=60*sselectS;
+  tempr.y=200; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,160,tempc,1,0,0,"Cutoff");*/
+  f->draw(410,200,tempc,1,0,0,"Cutoff");
+  
+  kCutAmp->setPos(375,230);
+  kCutAmp->draw();
+  f->draw(407,300,tempc,1,0,0,"Amount");
+  
+  kCutCap->setPos(449,230);
+  kCutCap->draw();
+  f->draw(481,300,tempc,1,0,0,"Handicap");
   
   // resonance //
-  /*
   tempr.x=90;  tempr1.x=0;
-  tempr.y=190; tempr1.y=0;
-  tempr.w=640; tempr1.w=640;
+  tempr.y=330; tempr1.y=0;
+  tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
-  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
   
   tempr.x=10; tempr1.x=60*sselectS;
-  tempr.y=190; tempr1.y=0;
+  tempr.y=330; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,190,tempc,1,0,0,"Resonan.");*/
+  f->draw(45,330,tempc,1,0,0,"Resonan.");
+  
+  kResAmp->setPos(10,360);
+  kResAmp->draw();
+  f->draw(42,430,tempc,1,0,0,"Amount");
+  
+  kResCap->setPos(84,360);
+  kResCap->draw();
+  f->draw(116,430,tempc,1,0,0,"Handicap");
   
   upDown();
 }

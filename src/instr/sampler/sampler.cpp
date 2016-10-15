@@ -51,6 +51,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.a=255;
   spath=drawButton(r,0,0,600,20,tempc,4);
   spathlarge=drawButton(r,0,0,640,20,tempc,4);
+  spathshort=drawButton(r,0,0,275,20,tempc,4);
   slfdir=drawButton(r,0,0,580,20,tempc,4);
   slfpath=drawButton(r,0,0,570,20,tempc,4);
   srange=drawButton(r,0,0,60,36,tempc,4);
@@ -96,12 +97,33 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   kVolCap->setOut(&s[0].volCap);
   kVolCap->setRange(-1.0,1.0,0.0);
   // panning knobs
-  kPanAmp=new OTrackKnob(r,32,255,255,0);
+  kPanAmp=new OTrackKnob(r,32,0,255,255);
   kPanAmp->setOut(&s[0].panAmt);
   kPanAmp->setRange(-1.0,1.0,0.0);
-  kPanCap=new OTrackKnob(r,32,255,255,0);
+  kPanCap=new OTrackKnob(r,32,0,255,255);
   kPanCap->setOut(&s[0].panCap);
   kPanCap->setRange(-1.0,1.0,0.0);
+  // pitch knobs
+  kPitchAmp=new OTrackKnob(r,32,255,255,0);
+  kPitchAmp->setOut(&s[0].pitchAmt);
+  kPitchAmp->setRange(0.0,1.0,0.5);
+  kPitchCap=new OTrackKnob(r,32,255,255,0);
+  kPitchCap->setOut(&s[0].pitchCap);
+  kPitchCap->setRange(-1.0,1.0,0.0);
+  // cutoff knobs
+  kCutAmp=new OTrackKnob(r,32,255,0,255);
+  kCutAmp->setOut(&s[0].cutAmt);
+  kCutAmp->setRange(0.0,1.0,1.0);
+  kCutCap=new OTrackKnob(r,32,255,0,255);
+  kCutCap->setOut(&s[0].cutCap);
+  kCutCap->setRange(-1.0,1.0,0.0);
+  // resonance knobs
+  kResAmp=new OTrackKnob(r,32,255,0,0);
+  kResAmp->setOut(&s[0].resAmt);
+  kResAmp->setRange(0.0,1.0,0.25);
+  kResCap=new OTrackKnob(r,32,255,0,0);
+  kResCap->setOut(&s[0].resCap);
+  kResCap->setRange(-1.0,1.0,0.0);
   
   showLoad=false;
   // init eye candy //
