@@ -52,6 +52,16 @@ class Sampler: public OTrackInstrument {
     int loopStart;
     int loopEnd;
     int loopType;
+    int envVol;
+    int envPan;
+    int envPitch;
+    int envCut;
+    int envRes;
+    float volAmt, volCap;
+    float panAmt, panCap;
+    float pitchAmt, pitchCap;
+    float cutAmt, cutCap;
+    float resAmt, resCap;
   };
   // voice structure //
   struct voice {

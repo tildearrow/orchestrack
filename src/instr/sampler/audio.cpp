@@ -71,7 +71,7 @@ float* Sampler::getSample() {
     val0=object->envVol->p[object->envpi].value;
     val1=object->envVol->p[object->envpi+1].value;
     timediff=object->envVol->p[object->envpi+1].time-object->envVol->p[object->envpi].time;
-    calc=object->vol*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envposN)/timediff)));
+    calc=object->vol*(object->sample->volAmt*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envposN)/timediff)))+object->sample->volCap);
     if (object->sample->chan==1) {
       float elcalc;
       element=intSinc(object->sample->data[0],object->periodN+8,object->periodD);
