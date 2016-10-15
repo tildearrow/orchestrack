@@ -163,6 +163,23 @@ void OTrackKnob::setPos(int x, int y) {
 }
 
 OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigned char g, unsigned char b) {
+  FILE* cl;
+  FILE* clw;
+  char* cn;
+  char* cn1;
+  char* cn2;
+#ifdef _WIN32
+  cn=new char[MAX_PATH];
+  cn1=new char[MAX_PATH];
+  cn2=new char[MAX_PATH];
+#else
+  cn=new char[PATH_MAX];
+  cn1=new char[PATH_MAX];
+  cn2=new char[PATH_MAX];
+#endif
+  sprintf(cn,"kcache-%x-back",rad);
+  sprintf(cn1,"kcache-%x-front",rad);
+  sprintf(cn2,"kcache-light-%x%x%x",rad,r,g,b);
   unsigned char* ba;
   unsigned char* bb;
   unsigned char* bc;
@@ -182,69 +199,116 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
   memset(bb,0,12*12*4);
   
   // knob
+  cl=fopen(cn,"rb");
+  if (cl) {
+    fread(ba,1,rad*rad*16,cl);
+    fclose(cl);
+  } else {
+    tc.r=64; tc.g=64; tc.b=64; tc.a=255;
+    tc1.r=96; tc1.g=96; tc1.b=96; tc1.a=255;
+    circle(ba,rad*2,tc,tc1,rad,rad,rad-1);
   
-  tc.r=64; tc.g=64; tc.b=64; tc.a=255;
-  tc1.r=96; tc1.g=96; tc1.b=96; tc1.a=255;
-  circle(ba,rad*2,tc,tc1,rad,rad,rad-1);
+    tc.r=192; tc.g=192; tc.b=192; tc.a=255;
+    tc1.r=128; tc1.g=128; tc1.b=128; tc1.a=255;
+    circle(ba,rad*2,tc,tc1,rad,rad,rad-3);
   
-  tc.r=192; tc.g=192; tc.b=192; tc.a=255;
-  tc1.r=128; tc1.g=128; tc1.b=128; tc1.a=255;
-  circle(ba,rad*2,tc,tc1,rad,rad,rad-3);
-  
-  tc.r=32; tc.g=32; tc.b=32; tc.a=255;
-  tc1.r=16; tc1.g=16; tc1.b=16; tc1.a=255;
-  circle(ba,rad*2,tc,tc1,rad,rad,rad-4);
+    tc.r=32; tc.g=32; tc.b=32; tc.a=255;
+    tc1.r=16; tc1.g=16; tc1.b=16; tc1.a=255;
+    circle(ba,rad*2,tc,tc1,rad,rad,rad-4);
+    
+    // cache write
+    clw=fopen(cn,"wb");
+    if (clw) {
+      for (int i=0; i<rad*rad*16; i++) {
+        fputc(ba[i],clw);
+      }
+      fclose(clw);
+    } else {
+      printf("can't cache knob back.\n");
+    }
+  }
   
   // knob center
+  cl=fopen(cn1,"rb");
+  if (cl) {
+    fread(bc,1,((rad-8)*2)*((rad-8)*2)*4,cl);
+    fclose(cl);
+  } else {
+    tc.r=224; tc.g=224; tc.b=224; tc.a=255;
+    tc1.r=160; tc1.g=160; tc1.b=160; tc1.a=255;
+    circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-9);
   
-  tc.r=224; tc.g=224; tc.b=224; tc.a=255;
-  tc1.r=160; tc1.g=160; tc1.b=160; tc1.a=255;
-  circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-9);
+    tc.r=64; tc.g=64; tc.b=64; tc.a=255;
+    tc1.r=128; tc1.g=128; tc1.b=128; tc1.a=255;
+    circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-10);
   
-  tc.r=64; tc.g=64; tc.b=64; tc.a=255;
-  tc1.r=128; tc1.g=128; tc1.b=128; tc1.a=255;
-  circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-10);
+    tc.r=255; tc.g=255; tc.b=255; tc.a=128;
+    tc1.r=0; tc1.g=0; tc1.b=0; tc1.a=0;
+    circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-12);
   
-  tc.r=255; tc.g=255; tc.b=255; tc.a=128;
-  tc1.r=0; tc1.g=0; tc1.b=0; tc1.a=0;
-  circle(bc,(rad-8)*2,tc,tc1,rad-8,rad-8,rad-12);
+    // indicator
+    tc.r=128; tc.g=128; tc.b=128; tc.a=255;
+    circle(bc,(rad-8)*2,tc,tc,rad-8,7,2);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,8,2);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,9,2);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,10,2);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,11,2);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,12,2);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,13,2);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,14,2);
   
-  // indicator
+    tc.r=255; tc.g=255; tc.b=255; tc.a=255;
+    circle(bc,(rad-8)*2,tc,tc,rad-8,6,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,7,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,8,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,9,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,10,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,11,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,12,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,13,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,14,1);
+    circle(bc,(rad-8)*2,tc,tc,rad-8,15,1);
   
-  tc.r=128; tc.g=128; tc.b=128; tc.a=255;
-  circle(bc,(rad-8)*2,tc,tc,rad-8,7,2);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,8,2);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,9,2);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,10,2);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,11,2);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,12,2);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,13,2);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,14,2);
-  
-  tc.r=255; tc.g=255; tc.b=255; tc.a=255;
-  circle(bc,(rad-8)*2,tc,tc,rad-8,6,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,7,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,8,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,9,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,10,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,11,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,12,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,13,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,14,1);
-  circle(bc,(rad-8)*2,tc,tc,rad-8,15,1);
+    // cache write
+    clw=fopen(cn1,"wb");
+    if (clw) {
+      for (int i=0; i<((rad-8)*2)*((rad-8)*2)*4; i++) {
+        fputc(bc[i],clw);
+      }
+      fclose(clw);
+    } else {
+      printf("can't cache knob front.\n");
+    }
+  }
   
   // light
-  
-  tc.r=b; tc.g=g; tc.b=r; tc.a=96;
-  circle(bb,12,tc,tc,6,6,5);
-  tc.r=b; tc.g=g; tc.b=r; tc.a=128;
-  circle(bb,12,tc,tc,6,6,4);
-  tc.r=b; tc.g=g; tc.b=r; tc.a=144;
-  circle(bb,12,tc,tc,6,6,3);
-  tc.r=b; tc.g=g; tc.b=r; tc.a=160;
-  circle(bb,12,tc,tc,6,6,2);
-  tc.r=b; tc.g=g; tc.b=r; tc.a=255;
-  circle(bb,12,tc,tc,6,6,1);
+  cl=fopen(cn2,"rb");
+  if (cl) {
+    fread(bb,1,12*12*4,cl);
+    fclose(cl);
+  } else {
+    tc.r=b; tc.g=g; tc.b=r; tc.a=96;
+    circle(bb,12,tc,tc,6,6,5);
+    tc.r=b; tc.g=g; tc.b=r; tc.a=128;
+    circle(bb,12,tc,tc,6,6,4);
+    tc.r=b; tc.g=g; tc.b=r; tc.a=144;
+    circle(bb,12,tc,tc,6,6,3);
+    tc.r=b; tc.g=g; tc.b=r; tc.a=160;
+    circle(bb,12,tc,tc,6,6,2);
+    tc.r=b; tc.g=g; tc.b=r; tc.a=255;
+    circle(bb,12,tc,tc,6,6,1);
+    
+    // cache write
+    clw=fopen(cn2,"wb");
+    if (clw) {
+      for (int i=0; i<12*12*4; i++) {
+        fputc(bb[i],clw);
+      }
+      fclose(clw);
+    } else {
+      printf("can't cache knob front.\n");
+    }
+  }
   
   SDL_UpdateTexture(tex,NULL,ba,rad*8);
   SDL_UpdateTexture(tex1,NULL,bc,(rad-8)*8);
@@ -252,5 +316,10 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
   delete[] ba;
   delete[] bb;
   delete[] bc;
+  
+  delete[] cn;
+  delete[] cn1;
+  delete[] cn2;
+
   w=rad*2; h=rad*2;
 }
