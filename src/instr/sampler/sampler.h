@@ -70,6 +70,7 @@ class Sampler: public OTrackInstrument {
     int note;
     int pos;
     int pressure;
+    int samplen;
     smp* sample;
     long periodN;
     float periodD;
@@ -174,6 +175,7 @@ class Sampler: public OTrackInstrument {
   bool showHidden;
   // busy indicator //
   bool busy;
+  bool abusy;
   // list variables //
   float listPos;
   float fingerS;

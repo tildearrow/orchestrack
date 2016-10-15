@@ -1,6 +1,7 @@
 #include "sampler.h"
 
 float* Sampler::getSample() {
+  abusy=true;
   size_t i, j;
   float calc;
   if (busy) {vResize(0); return sample;}
@@ -38,7 +39,7 @@ float* Sampler::getSample() {
       for (i=0; i<sSize; i++) {
         if (s[i].noteMin<=v[thisv].note && s[i].noteMax>=v[thisv].note &&
             s[i].velMin<=ev[2] && s[i].velMax>=ev[2]) {
-          v[thisv].sample=&s[i]; break;
+          v[thisv].sample=&s[i]; v[thisv].samplen=i; break;
         }
       }
       if (v[thisv].sample==NULL) {
@@ -119,5 +120,6 @@ float* Sampler::getSample() {
   
   sample[0]=sample[0]/4;
   sample[1]=sample[1]/4;
+  abusy=false;
   return sample;
 }

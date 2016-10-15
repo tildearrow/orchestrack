@@ -17,14 +17,23 @@ void Sampler::vResize(size_t newsize) {
 }
 
 void Sampler::sResize(size_t newsize) {
+  while (abusy) {
+    printf("audio is busy. waiting.\n");
+    SDL_Delay(1);
+  }
+  busy=true;
   smp* t;
   t=new smp[newsize];
-  for (size_t i=0; i<sSize, i<newsize; i++) {
+  for (size_t i=0; i<sSize && i<newsize; i++) {
     memcpy(&t[i],&s[i],sizeof(smp));
   }
   sSize=newsize;
   delete[] s;
   s=t;
+  for (int i=0; i<vSize; i++) {
+    v[i].sample=&s[i];
+  }
+  busy=false;
 }
 
 void Sampler::pResize(envp** which, size_t* cursize, size_t newsize) {
