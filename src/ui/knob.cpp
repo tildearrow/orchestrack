@@ -233,15 +233,15 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
   
   // light
   
-  tc.r=r; tc.g=g; tc.b=b; tc.a=96;
+  tc.r=b; tc.g=g; tc.b=r; tc.a=96;
   circle(bb,12,tc,tc,6,6,5);
-  tc.r=r; tc.g=g; tc.b=b; tc.a=128;
+  tc.r=b; tc.g=g; tc.b=r; tc.a=128;
   circle(bb,12,tc,tc,6,6,4);
-  tc.r=r; tc.g=g; tc.b=b; tc.a=144;
+  tc.r=b; tc.g=g; tc.b=r; tc.a=144;
   circle(bb,12,tc,tc,6,6,3);
-  tc.r=r; tc.g=g; tc.b=b; tc.a=160;
+  tc.r=b; tc.g=g; tc.b=r; tc.a=160;
   circle(bb,12,tc,tc,6,6,2);
-  tc.r=r; tc.g=g; tc.b=b; tc.a=255;
+  tc.r=b; tc.g=g; tc.b=r; tc.a=255;
   circle(bb,12,tc,tc,6,6,1);
   
   SDL_UpdateTexture(tex,NULL,ba,rad*8);
