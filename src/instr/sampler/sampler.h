@@ -65,6 +65,7 @@ class Sampler: public OTrackInstrument {
   };
   // voice structure //
   struct voice {
+    bool released;
     int chan;
     int note;
     int pos;

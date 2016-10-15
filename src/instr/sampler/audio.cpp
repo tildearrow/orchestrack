@@ -15,7 +15,11 @@ float* Sampler::getSample() {
       for (i=0; i<vSize; i++) {
         if (v[i].chan==(ev[0]&15)) {
           if (v[i].note==ev[1]) {
-            vErase(i); i--;
+            if (v[i].envVol->susStart==-1) {
+              vErase(i); i--;
+            } else {
+              v[i].released=true;
+            }
           }
         }
       }
@@ -25,6 +29,7 @@ float* Sampler::getSample() {
       vResize(vSize+1);
       int thisv;
       thisv=vSize-1;
+      v[thisv].released=false;
       v[thisv].chan=ev[0]&15;
       v[thisv].note=ev[1];
       v[thisv].periodN=0;
@@ -95,7 +100,9 @@ float* Sampler::getSample() {
     }
     object->periodD=fmod(object->periodD,1.0f);
     object->envposD+=65536/44100;
-    object->envposN+=(int)object->envposD;
+    if (object->envVol->susStart!=object->envpi || object->released) {
+      object->envposN+=(int)object->envposD;
+    }
     object->envposD=fmod(object->envposD,1.0f);
     if ((object->envposN+object->envVol->p[object->envpi].time)>object->envVol->p[object->envpi+1].time) {
       object->envpi++;
