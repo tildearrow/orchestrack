@@ -83,10 +83,26 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.b=128;
   tempc.a=255;
   smodeactive=drawButton(r,0,0,175,20,tempc,4);
-  // knob //
+  // knobs //
+  // test knob
   testk=new OTrackKnob(r,32,0,255,0);
   testk->setOut(&s[0].volAmt);
   testk->setRange(0.0,1.0,1.0);
+  // volume knobs
+  kVolAmp=new OTrackKnob(r,32,0,255,0);
+  kVolAmp->setOut(&s[0].volAmt);
+  kVolAmp->setRange(0.0,1.0,1.0);
+  kVolCap=new OTrackKnob(r,32,0,255,0);
+  kVolCap->setOut(&s[0].volCap);
+  kVolCap->setRange(-1.0,1.0,0.0);
+  // panning knobs
+  kPanAmp=new OTrackKnob(r,32,255,255,0);
+  kPanAmp->setOut(&s[0].panAmt);
+  kPanAmp->setRange(-1.0,1.0,0.0);
+  kPanCap=new OTrackKnob(r,32,255,255,0);
+  kPanCap->setOut(&s[0].panCap);
+  kPanCap->setRange(-1.0,1.0,0.0);
+  
   showLoad=false;
   // init eye candy //
   aBBPos=-30;
@@ -152,15 +168,6 @@ void Sampler::drawUI() {
   ***/
   
   SDL_SetRenderDrawColor(r,255,255,255,255);
-  
-  /*
-  fc+=0.005;
-  if (fc>1) {
-    fc=0;
-  }
-  */
-  testk->setPos(32,32);
-  testk->draw();
   
   SDL_SetRenderDrawColor(r,0,0,0,255);
 }

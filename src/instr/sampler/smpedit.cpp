@@ -9,6 +9,11 @@ void Sampler::seMouseMove(int button) {
   hover(580,40,580+40,40+20,&sedownS);
   
   hover(10,10,10+60,10+20,&sselectS);
+  
+  kVolAmp->mouseMove(mouse.x,mouse.y);
+  kVolCap->mouseMove(mouse.x,mouse.y);
+  kPanAmp->mouseMove(mouse.x,mouse.y);
+  kPanCap->mouseMove(mouse.x,mouse.y);
 }
 
 void Sampler::seMouseDown(int button) {
@@ -40,6 +45,10 @@ void Sampler::seMouseDown(int button) {
       s[curSample].rate/=2;
     }
   }
+  kVolAmp->mouseDown(mouse.x,mouse.y,button);
+  kVolCap->mouseDown(mouse.x,mouse.y,button);
+  kPanAmp->mouseDown(mouse.x,mouse.y,button);
+  kPanCap->mouseDown(mouse.x,mouse.y,button);
 }
 
 void Sampler::seMouseUp(int button) {
@@ -72,6 +81,10 @@ void Sampler::seMouseUp(int button) {
     sedownS=PointInRect(mouse.x,mouse.y,580,40,580+40,40+20);
     doDown=false;
   }
+  kVolAmp->mouseUp(mouse.x,mouse.y,button);
+  kVolCap->mouseUp(mouse.x,mouse.y,button);
+  kPanAmp->mouseUp(mouse.x,mouse.y,button);
+  kPanCap->mouseUp(mouse.x,mouse.y,button);
 }
 
 void Sampler::drawSampleEdit() {
@@ -114,6 +127,7 @@ void Sampler::drawSampleEdit() {
   /// envelopes ///
   
   // volume //
+  /*
   tempr.x=90;  tempr1.x=0;
   tempr.y=70; tempr1.y=0;
   tempr.w=640; tempr1.w=640;
@@ -125,9 +139,16 @@ void Sampler::drawSampleEdit() {
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,70,tempc,1,0,0,"Volume");
+  f->draw(45,70,tempc,1,0,0,"Volume");*/
+  
+  kVolAmp->setPos(32,32);
+  kVolAmp->draw();
+  
+  kVolCap->setPos(128,32);
+  kVolCap->draw();
   
   // panning //
+  /*
   tempr.x=90;  tempr1.x=0;
   tempr.y=100; tempr1.y=0;
   tempr.w=640; tempr1.w=640;
@@ -139,9 +160,16 @@ void Sampler::drawSampleEdit() {
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,100,tempc,1,0,0,"Panning");
+  f->draw(45,100,tempc,1,0,0,"Panning");*/
+  
+  kPanAmp->setPos(32,128);
+  kPanAmp->draw();
+  
+  kPanCap->setPos(128,128);
+  kPanCap->draw();
   
   // pitch //
+  /*
   tempr.x=90;  tempr1.x=0;
   tempr.y=130; tempr1.y=0;
   tempr.w=640; tempr1.w=640;
@@ -153,9 +181,10 @@ void Sampler::drawSampleEdit() {
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,130,tempc,1,0,0,"Pitch");
+  f->draw(45,130,tempc,1,0,0,"Pitch");*/
   
   // cutoff //
+  /*
   tempr.x=90;  tempr1.x=0;
   tempr.y=160; tempr1.y=0;
   tempr.w=640; tempr1.w=640;
@@ -167,9 +196,10 @@ void Sampler::drawSampleEdit() {
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,160,tempc,1,0,0,"Cutoff");
+  f->draw(45,160,tempc,1,0,0,"Cutoff");*/
   
   // resonance //
+  /*
   tempr.x=90;  tempr1.x=0;
   tempr.y=190; tempr1.y=0;
   tempr.w=640; tempr1.w=640;
@@ -181,7 +211,7 @@ void Sampler::drawSampleEdit() {
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
-  f->draw(45,190,tempc,1,0,0,"Resonan.");
+  f->draw(45,190,tempc,1,0,0,"Resonan.");*/
   
   upDown();
 }

@@ -148,7 +148,12 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* srange;
   SDL_Texture* srangebutton;
   SDL_Texture* sselect; int sselectS;
+  // knobs //
   OTrackKnob* testk;
+  OTrackKnob* kVolAmp;
+  OTrackKnob* kVolCap;
+  OTrackKnob* kPanAmp;
+  OTrackKnob* kPanCap;
   // eye candy //
   float aBBPos;
   int selRot;
