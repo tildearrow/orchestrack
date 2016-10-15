@@ -85,8 +85,8 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   smodeactive=drawButton(r,0,0,175,20,tempc,4);
   // knob //
   testk=new OTrackKnob(r,32,0,255,0);
-  testk->setOut(&fc);
-  testk->setRange(0.0,1.0,0.5);
+  testk->setOut(&s[0].volAmt);
+  testk->setRange(0.0,1.0,1.0);
   showLoad=false;
   // init eye candy //
   aBBPos=-30;

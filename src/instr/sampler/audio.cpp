@@ -29,16 +29,20 @@ float* Sampler::getSample() {
       v[thisv].note=ev[1];
       v[thisv].periodN=0;
       v[thisv].periodD=0;
-      v[thisv].sample=0;
+      v[thisv].sample=NULL;
       for (i=0; i<sSize; i++) {
         if (s[i].noteMin<=v[thisv].note && s[i].noteMax>=v[thisv].note &&
             s[i].velMin<=ev[2] && s[i].velMax>=ev[2]) {
           v[thisv].sample=&s[i]; break;
         }
       }
+      if (v[thisv].sample==NULL) {
+        vErase(thisv);
+      } else {
       v[thisv].f=pow(2.0f,((float)v[thisv].note-60.0f)/12.0f)*v[thisv].sample->rate/44100.0f;
       v[thisv].vol=(float)ev[2]/128.0f;
       v[thisv].envVol=&e[0];
+      }
     }
     if ((ev[0]>>4)==0xe) {
       // pitch bend.
