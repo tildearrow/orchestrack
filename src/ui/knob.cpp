@@ -86,7 +86,7 @@ void OTrackKnob::mouseDown(int x, int y, int button) {
     dragStart=y;
     dragVal=*val;
     SDL_CaptureMouse(SDL_TRUE);
-  } else if ((button==1 || button==2) && !drag) {
+  } else if ((button==1 || button==2) && !drag && hover) {
     reset=true;
   }
 }
