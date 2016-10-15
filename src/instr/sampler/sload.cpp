@@ -11,7 +11,7 @@ void Sampler::initSample(int which) {
   delete[] sl;
   s[which].len=128;
   s[which].chan=1;
-  s[which].rate=44100;
+  s[which].rate=33452;
   s[which].noteMin=0;
   s[which].noteMax=127;
   s[which].velMin=0;
