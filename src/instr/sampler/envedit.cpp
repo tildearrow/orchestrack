@@ -124,6 +124,7 @@ void Sampler::envMouseDown(int button) {
   if (button==2) {
     if (selPoint==-1) {
       int left, right;
+      left=0; right=e[curEnv].pSize-1;
       printf("creating point!!!\n");
       for (int i=(e[curEnv].pSize-1); i>=0; i--) {
         if (e[curEnv].p[i].time<(mouse.x-10)*256) {
@@ -161,6 +162,7 @@ void Sampler::envMouseDown(int button) {
           memcpy(&e[curEnv].p[i],&e[curEnv].p[i-1],sizeof(envp));
         }
         // clean up point
+        printf("clean.\n");
         memset(&e[curEnv].p[right],0,sizeof(envp));
         selPoint=right;
         selGrab=true;
