@@ -106,7 +106,7 @@ void OTrackKnob::draw() {
   SDL_Point tp;
   tr.x=xx; tr.y=yy; tr.w=w; tr.h=h;
   tp.x=w/2; tp.y=h/2;
-  SDL_RenderCopy(rend,tex,NULL,&tr);
+  SDL_RenderCopyEx(rend,tex,NULL,&tr,45,&tp,SDL_FLIP_NONE);
   
   SDL_SetTextureColorMod(light,127+hoverTime*16,127+hoverTime*16,127+hoverTime*16);
 
