@@ -10,6 +10,7 @@ void Sampler::listMouseMove(int button) {
 void Sampler::listMouseDown(int button) {
   if (PointInRect(mouse.x,mouse.y,33,63,33+674,63+392)) {
     // swipe code
+    SDL_CaptureMouse(SDL_TRUE);
     touching=true;
     scrolling=false;
     touchSPos=listPos+mouse.y;
@@ -20,6 +21,7 @@ void Sampler::listMouseDown(int button) {
 void Sampler::listMouseUp(int button) {
   if (touching) {
     touching=false;
+    SDL_CaptureMouse(SDL_FALSE);
     listSpeed=fabs(polledMY-oldPolledMY);
     listDir=(polledMY-oldPolledMY)>0;
     if (listPos<0 || (listPos+382)>20*(listelem.size())) {
