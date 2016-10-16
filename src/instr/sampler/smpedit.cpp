@@ -1,7 +1,7 @@
 #include "sampler.h"
 
 void Sampler::seMouseMove(int button) {
-  if (showLoad || showSampleSel) {
+  if (showLoad || showSampleSel || showEnvSel) {
     return;
   }
   hover(690,10,690+40,10+20,&sloadS);
@@ -9,6 +9,12 @@ void Sampler::seMouseMove(int button) {
   hover(580,40,580+40,40+20,&sedownS);
   
   hover(10,10,10+60,10+20,&sselectS);
+  
+  hover(10,70,10+70,70+20,&sevolS);
+  hover(375,70,375+70,70+20,&sepanS);
+  hover(10,200,10+70,200+20,&sepitchS);
+  hover(375,200,375+70,200+20,&secutS);
+  hover(10,330,10+70,330+20,&seresS);
   
   kVolAmp->mouseMove(mouse.x,mouse.y);
   kVolCap->mouseMove(mouse.x,mouse.y);
@@ -23,7 +29,7 @@ void Sampler::seMouseMove(int button) {
 }
 
 void Sampler::seMouseDown(int button) {
-  if (showLoad || showSampleSel) {
+  if (showLoad || showSampleSel || showEnvSel) {
     return;
   }
   if (PointInRect(mouse.x,mouse.y,690,10,690+40,10+20)) {
@@ -51,6 +57,23 @@ void Sampler::seMouseDown(int button) {
       s[curSample].rate/=2;
     }
   }
+  
+  if (PointInRect(mouse.x,mouse.y,10,70,10+70,70+20)) {
+    sevolS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,375,70,375+70,70+20)) {
+    sepanS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,10,200,10+70,200+20)) {
+    sepitchS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,375,200,375+70,200+20)) {
+    secutS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,10,330,10+70,330+20)) {
+    seresS=2;
+  }
+  
   kVolAmp->mouseDown(mouse.x,mouse.y,button);
   kVolCap->mouseDown(mouse.x,mouse.y,button);
   kPanAmp->mouseDown(mouse.x,mouse.y,button);
@@ -64,7 +87,7 @@ void Sampler::seMouseDown(int button) {
 }
 
 void Sampler::seMouseUp(int button) {
-  if (showLoad || showSampleSel) {
+  if (showLoad || showSampleSel || showEnvSel) {
     return;
   }
   if (sloadS!=1) {
@@ -93,6 +116,53 @@ void Sampler::seMouseUp(int button) {
     sedownS=PointInRect(mouse.x,mouse.y,580,40,580+40,40+20);
     doDown=false;
   }
+  
+  if (sevolS!=1) {
+    sevolS=PointInRect(mouse.x,mouse.y,10,70,10+70,70+20);
+    if (sevolS) {
+      prepareEnvSel(true);
+      showEnvSel=true;
+      envSTarget=1;
+      loadHIndex=s[curSample].envVol+1;
+    }
+  }
+  if (sepanS!=1) {
+    sepanS=PointInRect(mouse.x,mouse.y,375,70,375+70,70+20);
+    if (sepanS) {
+      prepareEnvSel(true);
+      showEnvSel=true;
+      envSTarget=2;
+      loadHIndex=s[curSample].envPan+1;
+    }
+  }
+  if (sepitchS!=1) {
+    sepitchS=PointInRect(mouse.x,mouse.y,10,200,10+70,200+20);
+    if (sepitchS) {
+      prepareEnvSel(true);
+      showEnvSel=true;
+      envSTarget=3;
+      loadHIndex=s[curSample].envPitch+1;
+    }
+  }
+  if (secutS!=1) {
+    secutS=PointInRect(mouse.x,mouse.y,375,200,375+70,200+20);
+    if (secutS) {
+      prepareEnvSel(true);
+      showEnvSel=true;
+      envSTarget=4;
+      loadHIndex=s[curSample].envCut+1;
+    }
+  }
+  if (seresS!=1) {
+    seresS=PointInRect(mouse.x,mouse.y,10,330,10+70,330+20);
+    if (seresS) {
+      prepareEnvSel(true);
+      showEnvSel=true;
+      envSTarget=5;
+      loadHIndex=s[curSample].envRes+1;
+    }
+  }
+  
   kVolAmp->mouseUp(mouse.x,mouse.y,button);
   kVolCap->mouseUp(mouse.x,mouse.y,button);
   kPanAmp->mouseUp(mouse.x,mouse.y,button);

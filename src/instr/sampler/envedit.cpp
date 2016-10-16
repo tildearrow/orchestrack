@@ -194,8 +194,9 @@ void Sampler::envMouseUp(int button) {
     sselectS=PointInRect(mouse.x,mouse.y,10,10,10+70,10+20);
     if (sselectS) {
       printf("select?\n");
-      prepareEnvSel();
+      prepareEnvSel(false);
       showEnvSel=true;
+      envSTarget=0;
       loadHIndex=-1;
     }
   }

@@ -1,7 +1,10 @@
 #include "sampler.h"
 
-void Sampler::prepareEnvSel() {
+void Sampler::prepareEnvSel(bool addNone) {
   clearList();
+  if (addNone) {
+    feedList("<-off->","",192,192,192,255);
+  }
   for (size_t i=0; i<eSize; i++) {
     feedList(e[i].name[0],"",255,255,255,255);
   }

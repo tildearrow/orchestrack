@@ -33,8 +33,15 @@ void Sampler::listMouseUp(int button) {
           curSample=loadHIndex;
           showSampleSel=false;
         } else if (showEnvSel) {
-          printf("envelope code here.\n");
-          curEnv=loadHIndex;
+          switch (envSTarget) {
+            case 0: curEnv=loadHIndex; break;
+            case 1: s[curSample].envVol=loadHIndex-1; break;
+            case 2: s[curSample].envPan=loadHIndex-1; break;
+            case 3: s[curSample].envPitch=loadHIndex-1; break;
+            case 4: s[curSample].envCut=loadHIndex-1; break;
+            case 5: s[curSample].envRes=loadHIndex-1; break;
+            default: printf("huh?\n");
+          }
           showEnvSel=false;
         } else {
           loadSample();

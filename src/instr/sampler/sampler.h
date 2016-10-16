@@ -214,6 +214,14 @@ class Sampler: public OTrackInstrument {
   int curView;
   // sample edit variables //
   int curSample;
+  // envSTarget:
+  // 0: envelope
+  // 1: volume
+  // 2: panning
+  // 3: pitch
+  // 4: cutoff
+  // 5: resonance
+  int envSTarget;
   // envelope edit variables //
   int selPoint;
   bool selGrab;
@@ -278,7 +286,7 @@ class Sampler: public OTrackInstrument {
   void drawList();
   void drawLoadUI();
   void prepareSampleSel();
-  void prepareEnvSel();
+  void prepareEnvSel(bool addNone);
   // draw UI functions //
   void drawSampleSel();
   void drawEnvSel();

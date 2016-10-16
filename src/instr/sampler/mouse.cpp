@@ -73,7 +73,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
             eResize(eSize+1);
             int esize1=eSize-1;
             initEnv(esize1);
-            prepareEnvSel();
+            prepareEnvSel(false);
           } else {
             printf("goes up\n");
             wd=topLevel(wd);
