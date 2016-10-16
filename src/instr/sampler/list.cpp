@@ -32,6 +32,10 @@ void Sampler::listMouseUp(int button) {
         if (showSampleSel) {
           curSample=loadHIndex;
           showSampleSel=false;
+        } else if (showEnvSel) {
+          printf("envelope code here.\n");
+          curEnv=loadHIndex;
+          showEnvSel=false;
         } else {
           loadSample();
         }

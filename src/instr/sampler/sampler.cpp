@@ -184,6 +184,10 @@ void Sampler::drawUI() {
     drawSampleSel();
   }
   
+  if (showEnvSel) {
+    drawEnvSel();
+  }
+  
   /***
   SDL_SetRenderDrawColor(r,(mouse.b[0])?(0):(255),(mouse.b[1])?(0):(255),(mouse.b[2])?(0):(255),255);
   SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);
@@ -226,21 +230,8 @@ bool Sampler::init(int inChannels, int outChannels) {
     }
     sndf=sf_open("../share/orchestrack/testsmp.wav",SFM_READ,&si);*/
     
-    e[0].susStart=-1;
-    e[0].susEnd=-1;
-    e[0].loopStart=-1;
-    e[0].loopEnd=-1;
-    e[0].p=new envp[3];
-    e[0].pSize=3;
-    e[0].p[0].type=0;
-    e[0].p[1].type=0;
-    e[0].p[2].type=0;
-    e[0].p[0].value=1;
-    e[0].p[1].value=0.3;
-    e[0].p[2].value=0;
-    e[0].p[0].time=0;
-    e[0].p[1].time=5000;
-    e[0].p[2].time=150000;
+    eSize=1;
+    initEnv(0);
     //tbuf=new float[si.channels];
     /*
     sf_close(sndf);

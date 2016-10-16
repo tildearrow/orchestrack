@@ -13,7 +13,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (curView==3) {
         envMouseMove(button);
       }
-      if (showLoad || showSampleSel) {
+      if (showLoad || showSampleSel || showEnvSel) {
         loadMouseMove(button);
       }
       testk->mouseMove(x,y);
@@ -42,14 +42,14 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       if (curView==3) {
         envMouseDown(button);
       }
-      if (showLoad || showSampleSel) {
+      if (showLoad || showSampleSel || showEnvSel) {
         loadMouseDown(button);
       }
       testk->mouseDown(x,y,button);
       break;
     case 1: // up
       mouse.b[button]=0;
-      if (showLoad || showSampleSel) {
+      if (showLoad || showSampleSel || showEnvSel) {
         loadMouseUp(button);
       }
       if (curView==1) {
@@ -63,12 +63,17 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (supS!=1) {
         supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
-        if (supS && (showLoad || showSampleSel)) {
+        if (supS && (showLoad || showSampleSel || showEnvSel)) {
           if (showSampleSel) {
             sResize(sSize+1);
             int ssize1=sSize-1;
             initSample(ssize1);
             prepareSampleSel();
+          } else if (showEnvSel) {
+            eResize(eSize+1);
+            int esize1=eSize-1;
+            initEnv(esize1);
+            prepareEnvSel();
           } else {
             printf("goes up\n");
             wd=topLevel(wd);
@@ -83,12 +88,13 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           printf("cancel\n");
           showLoad=false;
           showSampleSel=false;
+          showEnvSel=false;
         }
       }
       testk->mouseUp(x,y,button);
       break;
     case 3:
-      if (showLoad || showSampleSel) {
+      if (showLoad || showSampleSel || showEnvSel) {
         listMouseWheel(x,y);
       }
       break;

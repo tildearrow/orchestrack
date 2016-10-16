@@ -1,19 +1,21 @@
 #include "sampler.h"
 
 void Sampler::envMouseMove(int button) {
+  hover(10,10,10+70,10+20,&sselectS);
+  
   if (selGrab) {
-    e[0].p[selPoint].value=fmin(1,fmax(0,(340.0f-(float)mouse.y)/300.0f));
+    e[curEnv].p[selPoint].value=fmin(1,fmax(0,(340.0f-(float)mouse.y)/300.0f));
     if (selPoint!=0) {
-      if (selPoint==e[0].pSize-1) {
-        e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,(mouse.x-10)*256);
+      if (selPoint==e[curEnv].pSize-1) {
+        e[curEnv].p[selPoint].time=fmax(e[curEnv].p[selPoint-1].time+1,(mouse.x-10)*256);
       } else {
-        e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time-1));
+        e[curEnv].p[selPoint].time=fmax(e[curEnv].p[selPoint-1].time+1,fmin((mouse.x-10)*256,e[curEnv].p[selPoint+1].time-1));
       }
     }
   } else {
     selPoint=-1;
-    for (size_t i=0; i<e[0].pSize; i++) {
-      if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-6,340-(e[0].p[i].value*300.0f)-6,10+(e[0].p[i].time/256)+6,340-(e[0].p[i].value*300.0f)+6)) {
+    for (size_t i=0; i<e[curEnv].pSize; i++) {
+      if (PointInRect(mouse.x,mouse.y,10+(e[curEnv].p[i].time/256)-6,340-(e[curEnv].p[i].value*300.0f)-6,10+(e[curEnv].p[i].time/256)+6,340-(e[curEnv].p[i].value*300.0f)+6)) {
         selPoint=i; break;
       }
     }
@@ -42,62 +44,65 @@ void Sampler::envMouseMove(int button) {
 }
 
 void Sampler::envMouseDown(int button) {
+  if (PointInRect(mouse.x,mouse.y,10,10,10+70,10+20)) {
+    sselectS=2;
+  }
   if (button==0) {
     if (pMenuVis) {
       switch (pMenuSel) {
         case 0:
           if (pMenuTarget!=0) {
             // slide loop points
-            if (e[0].susStart>=pMenuTarget) {
-              e[0].susStart--;
+            if (e[curEnv].susStart>=pMenuTarget) {
+              e[curEnv].susStart--;
             }
-            if (e[0].susEnd>=pMenuTarget) {
-              e[0].susEnd--;
+            if (e[curEnv].susEnd>=pMenuTarget) {
+              e[curEnv].susEnd--;
             }
-            if (e[0].loopStart>=pMenuTarget) {
-              e[0].loopStart--;
+            if (e[curEnv].loopStart>=pMenuTarget) {
+              e[curEnv].loopStart--;
             }
-            if (e[0].loopEnd>=pMenuTarget) {
-              e[0].loopEnd--;
+            if (e[curEnv].loopEnd>=pMenuTarget) {
+              e[curEnv].loopEnd--;
             }
-            pErase(&e[0].p,&e[0].pSize,pMenuTarget);
+            pErase(&e[curEnv].p,&e[curEnv].pSize,pMenuTarget);
           }
           break;
         case 1:
-          if (e[0].susStart!=pMenuTarget || e[0].susEnd!=pMenuTarget) {
-            e[0].susStart=pMenuTarget;
-            e[0].susEnd=pMenuTarget;
+          if (e[curEnv].susStart!=pMenuTarget || e[curEnv].susEnd!=pMenuTarget) {
+            e[curEnv].susStart=pMenuTarget;
+            e[curEnv].susEnd=pMenuTarget;
           } else {
-            e[0].susStart=-1;
-            e[0].susEnd=-1;
+            e[curEnv].susStart=-1;
+            e[curEnv].susEnd=-1;
           }
           break;
         case 2:
-          if (e[0].susStart!=pMenuTarget) {
-            e[0].susStart=pMenuTarget;
+          if (e[curEnv].susStart!=pMenuTarget) {
+            e[curEnv].susStart=pMenuTarget;
           } else {
-            e[0].susStart=-1;
+            e[curEnv].susStart=-1;
           }
           break;
         case 3:
-          if (e[0].susEnd!=pMenuTarget) {
-            e[0].susEnd=pMenuTarget;
+          if (e[curEnv].susEnd!=pMenuTarget) {
+            e[curEnv].susEnd=pMenuTarget;
           } else {
-            e[0].susEnd=-1;
+            e[curEnv].susEnd=-1;
           }
           break;
         case 4:
-          if (e[0].loopStart!=pMenuTarget) {
-            e[0].loopStart=pMenuTarget;
+          if (e[curEnv].loopStart!=pMenuTarget) {
+            e[curEnv].loopStart=pMenuTarget;
           } else {
-            e[0].loopStart=-1;
+            e[curEnv].loopStart=-1;
           }
           break;
         case 5:
-          if (e[0].loopEnd!=pMenuTarget) {
-            e[0].loopEnd=pMenuTarget;
+          if (e[curEnv].loopEnd!=pMenuTarget) {
+            e[curEnv].loopEnd=pMenuTarget;
           } else {
-            e[0].loopEnd=-1;
+            e[curEnv].loopEnd=-1;
           }
           break;
       }
@@ -105,8 +110,8 @@ void Sampler::envMouseDown(int button) {
       pMenuVis=false;
     } else {
       selPoint=-1;
-      for (size_t i=0; i<e[0].pSize; i++) {
-        if (PointInRect(mouse.x,mouse.y,10+(e[0].p[i].time/256)-6,340-(e[0].p[i].value*300.0f)-6,10+(e[0].p[i].time/256)+6,340-(e[0].p[i].value*300.0f)+6)) {
+      for (size_t i=0; i<e[curEnv].pSize; i++) {
+        if (PointInRect(mouse.x,mouse.y,10+(e[curEnv].p[i].time/256)-6,340-(e[curEnv].p[i].value*300.0f)-6,10+(e[curEnv].p[i].time/256)+6,340-(e[curEnv].p[i].value*300.0f)+6)) {
           selPoint=i; break;
         }
       }
@@ -120,53 +125,53 @@ void Sampler::envMouseDown(int button) {
     if (selPoint==-1) {
       int left, right;
       printf("creating point!!!\n");
-      for (int i=(e[0].pSize-1); i>=0; i--) {
-        if (e[0].p[i].time<(mouse.x-10)*256) {
+      for (int i=(e[curEnv].pSize-1); i>=0; i--) {
+        if (e[curEnv].p[i].time<(mouse.x-10)*256) {
           left=i; break;
         }
       }
-      for (int i=0; i<e[0].pSize; i++) {
-        if (e[0].p[i].time>(mouse.x-10)*256) {
+      for (int i=0; i<e[curEnv].pSize; i++) {
+        if (e[curEnv].p[i].time>(mouse.x-10)*256) {
           right=i; break;
         }
       }
       printf("left %d right %d\n",left,right);
-      pResize(&e[0].p,&e[0].pSize,e[0].pSize+1);
+      pResize(&e[curEnv].p,&e[curEnv].pSize,e[curEnv].pSize+1);
       // special case: end of envelope
-      if (left==e[0].pSize-2) {
-        memset(&e[0].p[left+1],0,sizeof(envp));
+      if (left==e[curEnv].pSize-2) {
+        memset(&e[curEnv].p[left+1],0,sizeof(envp));
         selPoint=left+1;
         selGrab=true;
       } else {
         // slide loop points
-        if (e[0].susStart>=right) {
-          e[0].susStart++;
+        if (e[curEnv].susStart>=right) {
+          e[curEnv].susStart++;
         }
-        if (e[0].susEnd>=right) {
-          e[0].susEnd++;
+        if (e[curEnv].susEnd>=right) {
+          e[curEnv].susEnd++;
         }
-        if (e[0].loopStart>=right) {
-          e[0].loopStart++;
+        if (e[curEnv].loopStart>=right) {
+          e[curEnv].loopStart++;
         }
-        if (e[0].loopEnd>=right) {
-          e[0].loopEnd++;
+        if (e[curEnv].loopEnd>=right) {
+          e[curEnv].loopEnd++;
         }
         // slide right points
-        for (int i=e[0].pSize-1; i>=right; i--) {
-          memcpy(&e[0].p[i],&e[0].p[i-1],sizeof(envp));
+        for (int i=e[curEnv].pSize-1; i>=right; i--) {
+          memcpy(&e[curEnv].p[i],&e[curEnv].p[i-1],sizeof(envp));
         }
         // clean up point
-        memset(&e[0].p[right],0,sizeof(envp));
+        memset(&e[curEnv].p[right],0,sizeof(envp));
         selPoint=right;
         selGrab=true;
       }
       // modify point
-      e[0].p[selPoint].value=fmin(1,fmax(0,(340.0f-(float)mouse.y)/300.0f));
+      e[curEnv].p[selPoint].value=fmin(1,fmax(0,(340.0f-(float)mouse.y)/300.0f));
       if (selPoint!=0) {
-        if (selPoint==e[0].pSize-1) {
-          e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,(mouse.x-10)*256);
+        if (selPoint==e[curEnv].pSize-1) {
+          e[curEnv].p[selPoint].time=fmax(e[curEnv].p[selPoint-1].time+1,(mouse.x-10)*256);
         } else {
-          e[0].p[selPoint].time=fmax(e[0].p[selPoint-1].time+1,fmin((mouse.x-10)*256,e[0].p[selPoint+1].time-1));
+          e[curEnv].p[selPoint].time=fmax(e[curEnv].p[selPoint-1].time+1,fmin((mouse.x-10)*256,e[curEnv].p[selPoint+1].time-1));
         }
       }
     } else {
@@ -183,6 +188,15 @@ void Sampler::envMouseDown(int button) {
 }
 
 void Sampler::envMouseUp(int button) {
+  if (sselectS!=1) {
+    sselectS=PointInRect(mouse.x,mouse.y,10,10,10+70,10+20);
+    if (sselectS) {
+      printf("select?\n");
+      prepareEnvSel();
+      showEnvSel=true;
+      loadHIndex=-1;
+    }
+  }
   if (selGrab) {
     selGrab=false;
     printf("end of grab\n");
@@ -201,81 +215,81 @@ void Sampler::drawEnvEdit() {
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
   
-  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.x=10; tempr1.x=70*sselectS;
   tempr.y=10; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
   f->draw(45,10,tempc,1,0,0,"Envelope");
   
-  f->draw(93,10,tempc,0,0,0,"[insert name here]");
+  f->draw(93,10,tempc,0,0,0,e[curEnv].name[0]);
   SDL_SetRenderDrawColor(r,255,255,128,255);
-  for (size_t i=0; i<e[0].pSize; i++) {
-    if (i==e[0].loopStart || i==e[0].loopEnd) {
+  for (size_t i=0; i<e[curEnv].pSize; i++) {
+    if (i==e[curEnv].loopStart || i==e[curEnv].loopEnd) {
       SDL_SetRenderDrawColor(r,255,32,32,255);
-      SDL_RenderDrawLine(r,10+(e[0].p[i].time/256),40,10+(e[0].p[i].time/256),340);
+      SDL_RenderDrawLine(r,10+(e[curEnv].p[i].time/256),40,10+(e[curEnv].p[i].time/256),340);
       SDL_SetRenderDrawColor(r,255,255,128,255);
     }
     // sustain checks //
-    if (i==e[0].susStart) {
-      vlineRGBA(r,3+(e[0].p[i].time/256),40,340,32,255,32,16);
-      vlineRGBA(r,4+(e[0].p[i].time/256),40,340,32,255,32,32);
-      vlineRGBA(r,5+(e[0].p[i].time/256),40,340,32,255,32,48);
-      vlineRGBA(r,6+(e[0].p[i].time/256),40,340,32,255,32,64);
-      vlineRGBA(r,7+(e[0].p[i].time/256),40,340,32,255,32,80);
-      vlineRGBA(r,8+(e[0].p[i].time/256),40,340,32,255,32,96);
-      vlineRGBA(r,9+(e[0].p[i].time/256),40,340,32,255,32,112);
-      vlineRGBA(r,10+(e[0].p[i].time/256),40,340,32,255,32,128);
+    if (i==e[curEnv].susStart) {
+      vlineRGBA(r,3+(e[curEnv].p[i].time/256),40,340,32,255,32,16);
+      vlineRGBA(r,4+(e[curEnv].p[i].time/256),40,340,32,255,32,32);
+      vlineRGBA(r,5+(e[curEnv].p[i].time/256),40,340,32,255,32,48);
+      vlineRGBA(r,6+(e[curEnv].p[i].time/256),40,340,32,255,32,64);
+      vlineRGBA(r,7+(e[curEnv].p[i].time/256),40,340,32,255,32,80);
+      vlineRGBA(r,8+(e[curEnv].p[i].time/256),40,340,32,255,32,96);
+      vlineRGBA(r,9+(e[curEnv].p[i].time/256),40,340,32,255,32,112);
+      vlineRGBA(r,10+(e[curEnv].p[i].time/256),40,340,32,255,32,128);
     }
-    if (i==e[0].susEnd) {
-      vlineRGBA(r,17+(e[0].p[i].time/256),40,340,32,255,32,16);
-      vlineRGBA(r,16+(e[0].p[i].time/256),40,340,32,255,32,32);
-      vlineRGBA(r,15+(e[0].p[i].time/256),40,340,32,255,32,48);
-      vlineRGBA(r,14+(e[0].p[i].time/256),40,340,32,255,32,64);
-      vlineRGBA(r,13+(e[0].p[i].time/256),40,340,32,255,32,80);
-      vlineRGBA(r,12+(e[0].p[i].time/256),40,340,32,255,32,96);
-      vlineRGBA(r,11+(e[0].p[i].time/256),40,340,32,255,32,112);
-      vlineRGBA(r,10+(e[0].p[i].time/256),40,340,32,255,32,128);
+    if (i==e[curEnv].susEnd) {
+      vlineRGBA(r,17+(e[curEnv].p[i].time/256),40,340,32,255,32,16);
+      vlineRGBA(r,16+(e[curEnv].p[i].time/256),40,340,32,255,32,32);
+      vlineRGBA(r,15+(e[curEnv].p[i].time/256),40,340,32,255,32,48);
+      vlineRGBA(r,14+(e[curEnv].p[i].time/256),40,340,32,255,32,64);
+      vlineRGBA(r,13+(e[curEnv].p[i].time/256),40,340,32,255,32,80);
+      vlineRGBA(r,12+(e[curEnv].p[i].time/256),40,340,32,255,32,96);
+      vlineRGBA(r,11+(e[curEnv].p[i].time/256),40,340,32,255,32,112);
+      vlineRGBA(r,10+(e[curEnv].p[i].time/256),40,340,32,255,32,128);
     }
     // loop checks //
-    if (i==e[0].loopStart) {
-      vlineRGBA(r,3+(e[0].p[i].time/256),40,340,255,32,32,16);
-      vlineRGBA(r,4+(e[0].p[i].time/256),40,340,255,32,32,32);
-      vlineRGBA(r,5+(e[0].p[i].time/256),40,340,255,32,32,48);
-      vlineRGBA(r,6+(e[0].p[i].time/256),40,340,255,32,32,64);
-      vlineRGBA(r,7+(e[0].p[i].time/256),40,340,255,32,32,80);
-      vlineRGBA(r,8+(e[0].p[i].time/256),40,340,255,32,32,96);
-      vlineRGBA(r,9+(e[0].p[i].time/256),40,340,255,32,32,112);
-      vlineRGBA(r,10+(e[0].p[i].time/256),40,340,255,32,32,128);
+    if (i==e[curEnv].loopStart) {
+      vlineRGBA(r,3+(e[curEnv].p[i].time/256),40,340,255,32,32,16);
+      vlineRGBA(r,4+(e[curEnv].p[i].time/256),40,340,255,32,32,32);
+      vlineRGBA(r,5+(e[curEnv].p[i].time/256),40,340,255,32,32,48);
+      vlineRGBA(r,6+(e[curEnv].p[i].time/256),40,340,255,32,32,64);
+      vlineRGBA(r,7+(e[curEnv].p[i].time/256),40,340,255,32,32,80);
+      vlineRGBA(r,8+(e[curEnv].p[i].time/256),40,340,255,32,32,96);
+      vlineRGBA(r,9+(e[curEnv].p[i].time/256),40,340,255,32,32,112);
+      vlineRGBA(r,10+(e[curEnv].p[i].time/256),40,340,255,32,32,128);
     }
-    if (i==e[0].loopEnd) {
-      vlineRGBA(r,17+(e[0].p[i].time/256),40,340,255,32,32,16);
-      vlineRGBA(r,16+(e[0].p[i].time/256),40,340,255,32,32,32);
-      vlineRGBA(r,15+(e[0].p[i].time/256),40,340,255,32,32,48);
-      vlineRGBA(r,14+(e[0].p[i].time/256),40,340,255,32,32,64);
-      vlineRGBA(r,13+(e[0].p[i].time/256),40,340,255,32,32,80);
-      vlineRGBA(r,12+(e[0].p[i].time/256),40,340,255,32,32,96);
-      vlineRGBA(r,11+(e[0].p[i].time/256),40,340,255,32,32,112);
-      vlineRGBA(r,10+(e[0].p[i].time/256),40,340,255,32,32,128);
+    if (i==e[curEnv].loopEnd) {
+      vlineRGBA(r,17+(e[curEnv].p[i].time/256),40,340,255,32,32,16);
+      vlineRGBA(r,16+(e[curEnv].p[i].time/256),40,340,255,32,32,32);
+      vlineRGBA(r,15+(e[curEnv].p[i].time/256),40,340,255,32,32,48);
+      vlineRGBA(r,14+(e[curEnv].p[i].time/256),40,340,255,32,32,64);
+      vlineRGBA(r,13+(e[curEnv].p[i].time/256),40,340,255,32,32,80);
+      vlineRGBA(r,12+(e[curEnv].p[i].time/256),40,340,255,32,32,96);
+      vlineRGBA(r,11+(e[curEnv].p[i].time/256),40,340,255,32,32,112);
+      vlineRGBA(r,10+(e[curEnv].p[i].time/256),40,340,255,32,32,128);
     }
-    aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),4,255,255,128,255);
+    aacircleRGBA(r,10+(e[curEnv].p[i].time/256),340-(e[curEnv].p[i].value*300.0f),4,255,255,128,255);
     if (i==selPoint) {
-      aacircleRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),5,255,255,0,255);
+      aacircleRGBA(r,10+(e[curEnv].p[i].time/256),340-(e[curEnv].p[i].value*300.0f),5,255,255,0,255);
       if (selGrab) {
         selRot=(selRot+4)%360;
-        arcRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),8,selRot,selRot+90,255,255,0,255);
-        arcRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),8,selRot+180,selRot+270,255,255,0,255);
+        arcRGBA(r,10+(e[curEnv].p[i].time/256),340-(e[curEnv].p[i].value*300.0f),8,selRot,selRot+90,255,255,0,255);
+        arcRGBA(r,10+(e[curEnv].p[i].time/256),340-(e[curEnv].p[i].value*300.0f),8,selRot+180,selRot+270,255,255,0,255);
       }
     }
-    if (i<e[0].pSize-1) {
-      aalineRGBA(r,10+(e[0].p[i].time/256),340-(e[0].p[i].value*300.0f),
-      10+(e[0].p[i+1].time/256),340-(e[0].p[i+1].value*300.0f),255,255,128,255);
+    if (i<e[curEnv].pSize-1) {
+      aalineRGBA(r,10+(e[curEnv].p[i].time/256),340-(e[curEnv].p[i].value*300.0f),
+      10+(e[curEnv].p[i+1].time/256),340-(e[curEnv].p[i+1].value*300.0f),255,255,128,255);
     }
   }
   
   for (size_t i=0; i<vSize; i++) {
-    SDL_RenderDrawLine(r,10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),40,10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),340);
-    f->drawf(10+(v[i].envposN/256)+(e[0].p[v[i].envpi].time/256),340,tempc,0,0,"%d: %d",i,v[i].envpi);
+    SDL_RenderDrawLine(r,10+(v[i].envposN/256)+(e[curEnv].p[v[i].envpi].time/256),40,10+(v[i].envposN/256)+(e[curEnv].p[v[i].envpi].time/256),340);
+    f->drawf(10+(v[i].envposN/256)+(e[curEnv].p[v[i].envpi].time/256),340,tempc,0,0,"%d: %d",i,v[i].envpi);
   }
   
   if (pMenuVis) {

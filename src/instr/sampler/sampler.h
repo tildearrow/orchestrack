@@ -39,6 +39,7 @@ class Sampler: public OTrackInstrument {
     bool susLoop;
     bool relMode;
     bool sync;
+    string* name;
   };
   // sample structure //
   struct smp {
@@ -112,6 +113,7 @@ class Sampler: public OTrackInstrument {
   smp* s;
   size_t sSize;
   size_t vSize;
+  size_t eSize;
   std::vector<dentry> listings;
   std::vector<listentry> listelem;
   // list stuff //
@@ -172,6 +174,7 @@ class Sampler: public OTrackInstrument {
   // internal switches //
   bool showLoad;
   bool showSampleSel;
+  bool showEnvSel;
   bool showHidden;
   // busy indicator //
   bool busy;
@@ -213,6 +216,7 @@ class Sampler: public OTrackInstrument {
   // envelope edit variables //
   int selPoint;
   bool selGrab;
+  int curEnv;
   // envpoint menu variables //
   bool pMenuVis;
   int pMenuTarget;
@@ -229,6 +233,7 @@ class Sampler: public OTrackInstrument {
   // vector-like functions //
   void pResize(envp** which, size_t* cursize, size_t newsize);
   void pErase(envp** which, size_t* cursize, size_t which1);
+  void eResize(size_t newsize);
   void sResize(size_t newsize);
   void vResize(size_t newsize);
   void vErase(size_t which);
@@ -263,6 +268,7 @@ class Sampler: public OTrackInstrument {
   void envMouseUp(int button);
   void envMouseMove(int button);
   // loading functions //
+  void initEnv(int which);
   void initSample(int which);
   void loadSample();
   // list functions //
@@ -271,8 +277,10 @@ class Sampler: public OTrackInstrument {
   void drawList();
   void drawLoadUI();
   void prepareSampleSel();
+  void prepareEnvSel();
   // draw UI functions //
   void drawSampleSel();
+  void drawEnvSel();
   void drawSummary();
   void drawGrid();
   void drawEnvEdit();

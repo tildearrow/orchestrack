@@ -62,6 +62,7 @@ add_library(sampler STATIC
   src/instr/sampler/dir.cpp
   src/instr/sampler/sload.cpp
   src/instr/sampler/ssel.cpp
+  src/instr/sampler/envsel.cpp
   src/instr/sampler/list.cpp
   src/instr/sampler/sampler.cpp)
 add_executable(orchestrack src/ui/application.cpp src/ui/main.cpp)

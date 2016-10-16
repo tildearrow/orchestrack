@@ -16,6 +16,20 @@ void Sampler::vResize(size_t newsize) {
   vSize=newsize;
 }
 
+void Sampler::eResize(size_t newsize) {
+  if (newsize>1023) {
+    return;
+  }
+  if (newsize>eSize) {
+    //printf("set\n");
+    for (size_t i=eSize; i<newsize; i++) {
+      //printf("seeet\n");
+      memset(&e[i],0,sizeof(envl));
+    }
+  }
+  eSize=newsize;
+}
+
 void Sampler::sResize(size_t newsize) {
   while (abusy) {
     printf("audio is busy. waiting.\n");
