@@ -150,8 +150,13 @@ void Sampler::drawSampleEdit() {
   tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
+  if (s[curSample].envVol==-1) {
+    f->draw((180+275)/2,70,tempc,1,0,0,"<-off->");
+  } else {
+    f->draw(93,70,tempc,0,0,0,e[s[curSample].envVol].name[0]);
+  }
   
-  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.x=10; tempr1.x=70*sevolS;
   tempr.y=70; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
@@ -172,8 +177,13 @@ void Sampler::drawSampleEdit() {
   tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
+  if (s[curSample].envPan==-1) {
+    f->draw((455+455+275)/2,70,tempc,1,0,0,"<-off->");
+  } else {
+    f->draw(458,70,tempc,0,0,0,e[s[curSample].envPan].name[0]);
+  }
   
-  tempr.x=375; tempr1.x=60*sselectS;
+  tempr.x=375; tempr1.x=70*sepanS;
   tempr.y=70; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
@@ -194,8 +204,13 @@ void Sampler::drawSampleEdit() {
   tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
+  if (s[curSample].envPitch==-1) {
+    f->draw((180+275)/2,200,tempc,1,0,0,"<-off->");
+  } else {
+    f->draw(93,200,tempc,0,0,0,e[s[curSample].envPitch].name[0]);
+  }
   
-  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.x=10; tempr1.x=70*sepitchS;
   tempr.y=200; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
@@ -216,8 +231,13 @@ void Sampler::drawSampleEdit() {
   tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
+  if (s[curSample].envCut==-1) {
+    f->draw((455+455+275)/2,200,tempc,1,0,0,"<-off->");
+  } else {
+    f->draw(458,200,tempc,0,0,0,e[s[curSample].envCut].name[0]);
+  }
   
-  tempr.x=375; tempr1.x=60*sselectS;
+  tempr.x=375; tempr1.x=70*secutS;
   tempr.y=200; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
@@ -238,8 +258,13 @@ void Sampler::drawSampleEdit() {
   tempr.w=275; tempr1.w=275;
   tempr.h=20;  tempr1.h=20;
   SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
+  if (s[curSample].envRes==-1) {
+    f->draw((180+275)/2,330,tempc,1,0,0,"<-off->");
+  } else {
+    f->draw(93,330,tempc,0,0,0,e[s[curSample].envRes].name[0]);
+  }
   
-  tempr.x=10; tempr1.x=60*sselectS;
+  tempr.x=10; tempr1.x=70*seresS;
   tempr.y=330; tempr1.y=0;
   tempr.w=70;  tempr1.w=70;
   tempr.h=20;  tempr1.h=20;
