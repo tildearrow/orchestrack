@@ -1,6 +1,18 @@
 #include "sampler.h"
 
 void Sampler::grMouseMove(int button) {
+  selRegion=-1;
+  for (int i=0; i<sSize; i++) {
+    if (PointInRect(mouse.x,mouse.y,
+      12+s[i].noteMin*5,
+      (int)(12+336.0f*((float)s[i].velMin/127.0f)),
+      12+5*(s[i].noteMax),
+      (int)(12+336.0f*((float)(s[i].velMax)/127.0f)))) {
+      selRegion=i;
+      break;
+    }
+  }
+  
   hover(72-52,124+256,72-52+40,124+24+256,&smupS[0]);
   hover(72-52,192+256,72-52+40,192+24+256,&smdownS[0]);
   hover(72+52,124+256,72+52+40,124+24+256,&smupS[1]);
@@ -157,9 +169,9 @@ void Sampler::drawGrid() {
     SDL_RenderFillRect(r,&tempr);
   }
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
-  SDL_SetRenderDrawColor(r,64,255,40,64);
   // draw sample regions
   for (size_t i=0; i<sSize; i++) {
+    SDL_SetRenderDrawColor(r,40,128,255,(i==selRegion)?(72):(48));
     tempr.x=10+2+s[i].noteMin*5;
     tempr.y=(int)(12+336.0f*((float)s[i].velMin/127.0f));
     tempr.w=5*(s[i].noteMax-s[i].noteMin);

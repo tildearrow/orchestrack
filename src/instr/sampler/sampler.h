@@ -212,6 +212,8 @@ class Sampler: public OTrackInstrument {
   // 3: drawEnvEdit
   // main UI variables //
   int curView;
+  // grid variables //
+  int selRegion;
   // sample edit variables //
   int curSample;
   // envSTarget:
