@@ -49,6 +49,9 @@ float* OTrackInstrument::getSample() {
 void OTrackInstrument::drawUI() {
 }
 
+void OTrackInstrument::keyEvent(int type, int time, bool repeat, int keycode, int vkeycode, int keymod) {
+}
+
 void OTrackInstrument::mouseEvent(int type, int button, int x, int y, int finger) {
 }
 
