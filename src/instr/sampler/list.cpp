@@ -33,6 +33,21 @@ void Sampler::listMouseUp(int button) {
       if (loadHIndex==(int)((mouse.y-63+listPos)/20) && loadHIndex<(int)listelem.size()) {
         if (showSampleSel) {
           curSample=loadHIndex;
+          // volume knobs
+          kVolAmp->setOut(&s[curSample].volAmt);
+          kVolCap->setOut(&s[curSample].volCap);
+          // panning knobs
+          kPanAmp->setOut(&s[curSample].panAmt);
+          kPanCap->setOut(&s[curSample].panCap);
+          // pitch knobs
+          kPitchAmp->setOut(&s[curSample].pitchAmt);
+          kPitchCap->setOut(&s[curSample].pitchCap);
+          // cutoff knobs
+          kCutAmp->setOut(&s[curSample].cutAmt);
+          kCutCap->setOut(&s[curSample].cutCap);
+          // resonance knobs
+          kResAmp->setOut(&s[curSample].resAmt);
+          kResCap->setOut(&s[curSample].resCap);
           showSampleSel=false;
         } else if (showEnvSel) {
           switch (envSTarget) {
