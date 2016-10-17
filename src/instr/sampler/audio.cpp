@@ -109,14 +109,14 @@ float* Sampler::getSample() {
     if (object->sample->loopType==1 && object->periodN>object->sample->loopEnd) {
       object->periodN=object->sample->loopStart+(object->periodN%(object->sample->loopEnd+1));
     }
-    object->periodD=fmod(object->periodD,1.0f);
+    object->periodD-=(int)object->periodD;
     
     if (object->envVol!=NULL) {
       object->envposD+=65536/44100;
       if (object->envVol->susStart!=object->envpi || object->released) {
         object->envposN+=(int)object->envposD;
       }
-      object->envposD=fmod(object->envposD,1.0f);
+      object->envposD-=(int)object->envposD;
       if ((object->envposN+object->envVol->p[object->envpi].time)>object->envVol->p[object->envpi+1].time) {
         object->envpi++;
         object->envposN=0;
