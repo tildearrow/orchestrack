@@ -110,7 +110,7 @@ void OTrackKnob::draw() {
   
   SDL_SetTextureColorMod(light,127+hoverTime*16,127+hoverTime*16,127+hoverTime*16);
 
-  float range=((*val-rmin)/(rmax-rmin))*32;
+  float range=fmin(32,((*val-rmin)/(rmax-rmin))*32);
   for (int i=0; i<range; i++) {
     tr.x=round((xx+(w/2)+cos((0.75*pi)+(float)i*1.5*pi/(32.0))*(w-18)/2)-6);
     tr.y=round((yy+(h/2)+sin((0.75*pi)+(float)i*1.5*pi/(32.0))*(h-18)/2)-6);
