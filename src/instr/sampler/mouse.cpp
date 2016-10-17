@@ -49,9 +49,6 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       break;
     case 1: // up
       mouse.b[button]=0;
-      if (showLoad || showSampleSel || showEnvSel) {
-        loadMouseUp(button);
-      }
       if (curView==1) {
         grMouseUp(button);
       }
@@ -60,6 +57,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (curView==3) {
         envMouseUp(button);
+      }
+      if (showLoad || showSampleSel || showEnvSel) {
+        loadMouseUp(button);
       }
       if (supS!=1) {
         supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
