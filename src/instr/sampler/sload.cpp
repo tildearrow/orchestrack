@@ -251,19 +251,7 @@ void Sampler::drawLoadUI() {
   f->draw(33,462,tempc,0,0,0,sfname);
   drawList();
   
-  tempc.r=255; tempc.g=255; tempc.b=255; tempc.a=erra*2;
-  
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
-  
-  if (erra>0) {
-    f->draw(370,236,tempc,1,1,0,errl[0]);
-    f->draw(370,256,tempc,1,1,0,errl[1]);
-    f->draw(370,276,tempc,1,1,0,errl[2]);
-    erra--;
-    if (erra<0) {
-      erra=0;
-    }
-  }
   
   if (sx>564) {
     if (wddir) {

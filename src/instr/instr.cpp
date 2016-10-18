@@ -15,7 +15,7 @@ void* OTrackInstrument::getEvent() {
   }
 }
 
-bool OTrackInstrument::loadState(unsigned char* data, int size) {
+bool OTrackInstrument::loadState(FILE* data) {
   return false;
 }
 

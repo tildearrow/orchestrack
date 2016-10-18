@@ -203,6 +203,18 @@ int main() {
           ins.mouseEvent(0,0,(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),(int)e->tfinger.fingerId);
           break;
 #endif
+        case SDL_DROPFILE:
+          printf("dropped file!\n");
+          FILE* df;
+          df=fopen(e->drop.file,"rb");
+          if (df) {
+            ins.loadState(df);
+            fclose(df);
+          } else {
+            printf("what?\n");
+          }
+          SDL_free(e->drop.file);
+          break;
         case SDL_QUIT:
           q=true;
           break;

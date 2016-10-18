@@ -193,6 +193,17 @@ void Sampler::drawUI() {
   SDL_RenderDrawLine(r,mouse.x,mouse.y,0,0);
   ***/
   
+  if (erra>0) {
+    tempc.r=255; tempc.g=255; tempc.b=255; tempc.a=erra*2;
+    f->draw(370,236,tempc,1,1,0,errl[0]);
+    f->draw(370,256,tempc,1,1,0,errl[1]);
+    f->draw(370,276,tempc,1,1,0,errl[2]);
+    erra--;
+    if (erra<0) {
+      erra=0;
+    }
+  }
+  
   SDL_SetRenderDrawColor(r,255,255,255,255);
   
   SDL_SetRenderDrawColor(r,0,0,0,255);

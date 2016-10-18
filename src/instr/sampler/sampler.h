@@ -305,7 +305,7 @@ class Sampler: public OTrackInstrument {
     OTrackInsSpec* getspec();
     float* getSample();
     unsigned char* saveState(int* size);
-    bool loadState(unsigned char* data, int size);
+    bool loadState(FILE* data);
     void setRenderer(SDL_Renderer* renderer);
     void mouseEvent(int type, int button, int x, int y, int finger);
     void drawUI();
