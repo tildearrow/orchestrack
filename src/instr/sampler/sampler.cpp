@@ -252,6 +252,8 @@ bool Sampler::init(int inChannels, int outChannels) {
     windowed_fir_init(table);
     showHidden=false;
     selPoint=-1;
+    selRegion=-1;
+    gridGrab=0;
     pMenuSel=-1;
     busy=false;
     return true;
