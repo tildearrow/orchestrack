@@ -39,7 +39,7 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.g=68;
   tempc.b=98;
   tempc.a=255;
-  grid=drawButton(r,0,0,720,340,tempc,4);
+  grid=drawButton(r,0,0,639,340,tempc,4);
   tempc.r=64;
   tempc.g=56;
   tempc.b=6;

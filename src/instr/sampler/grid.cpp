@@ -90,7 +90,7 @@ void Sampler::grMouseUp(int button) {
 void Sampler::drawGrid() {
   tempr.x=10;  tempr1.x=0;
   tempr.y=10;  tempr1.y=0;
-  tempr.w=720; tempr1.w=720;
+  tempr.w=639; tempr1.w=639;
   tempr.h=340; tempr1.h=340;
   SDL_RenderCopy(r,grid,&tempr1,&tempr);
   tempr.x=0;
