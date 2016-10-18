@@ -47,6 +47,7 @@ add_library(sampler STATIC
   src/format/iff.cpp
   src/ui/button.cpp
   src/ui/knob.cpp
+  src/ui/text.cpp
   src/instr/instr.cpp
   src/font/font.cpp
   src/instr/sampler/audio.cpp
