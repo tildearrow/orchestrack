@@ -322,4 +322,8 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
   delete[] cn2;
 
   w=rad*2; h=rad*2;
+  hover=false;
+  drag=false;
+  reset=false;
+  hoverTime=0;
 }

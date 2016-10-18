@@ -34,6 +34,14 @@ void Sampler::initSample(int which) {
   s[which].envRes=-1;
   s[which].volAmt=1;
   s[which].volCap=0;
+  s[which].panAmt=0;
+  s[which].panCap=0;
+  s[which].pitchAmt=0.5;
+  s[which].pitchCap=0;
+  s[which].cutAmt=1;
+  s[which].cutCap=0;
+  s[which].resAmt=0.25;
+  s[which].resCap=0;
 }
 
 void Sampler::loadSample() {
