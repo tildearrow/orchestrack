@@ -49,6 +49,40 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       break;
     case 1: // up
       mouse.b[button]=0;
+      if (showLoad || showSampleSel || showEnvSel) {
+        loadMouseUp(button);
+        if (supS!=1) {
+          supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
+          if (supS && (showLoad || showSampleSel || showEnvSel)) {
+            if (showSampleSel) {
+              sResize(sSize+1);
+              int ssize1=sSize-1;
+              initSample(ssize1);
+              prepareSampleSel();
+            } else if (showEnvSel) {
+              eResize(eSize+1);
+              int esize1=eSize-1;
+              initEnv(esize1);
+              prepareEnvSel(false);
+            } else {
+              printf("goes up\n");
+              wd=topLevel(wd);
+              readDir(wd.c_str());
+              listPos=0;
+            }
+          }
+          if (scancelS!=1) {
+            scancelS=PointInRect(mouse.x,mouse.y,660,462,660+50,462+20);
+            if (scancelS) {
+              printf("cancel\n");
+              showLoad=false;
+              showSampleSel=false;
+              showEnvSel=false;
+            }
+          }
+        }
+        break;
+      }
       if (curView==1) {
         grMouseUp(button);
       }
@@ -57,39 +91,6 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (curView==3) {
         envMouseUp(button);
-      }
-      if (showLoad || showSampleSel || showEnvSel) {
-        loadMouseUp(button);
-      }
-      if (supS!=1) {
-        supS=PointInRect(mouse.x,mouse.y,30,30,30+40,30+20);
-        if (supS && (showLoad || showSampleSel || showEnvSel)) {
-          if (showSampleSel) {
-            sResize(sSize+1);
-            int ssize1=sSize-1;
-            initSample(ssize1);
-            prepareSampleSel();
-          } else if (showEnvSel) {
-            eResize(eSize+1);
-            int esize1=eSize-1;
-            initEnv(esize1);
-            prepareEnvSel(false);
-          } else {
-            printf("goes up\n");
-            wd=topLevel(wd);
-            readDir(wd.c_str());
-            listPos=0;
-          }
-        }
-      }
-      if (scancelS!=1) {
-        scancelS=PointInRect(mouse.x,mouse.y,660,462,660+50,462+20);
-        if (scancelS) {
-          printf("cancel\n");
-          showLoad=false;
-          showSampleSel=false;
-          showEnvSel=false;
-        }
       }
       testk->mouseUp(x,y,button);
       break;
