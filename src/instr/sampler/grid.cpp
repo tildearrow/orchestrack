@@ -1,150 +1,89 @@
 #include "sampler.h"
 
 void Sampler::grMouseMove(int button) {
-  selRegion=-1;
-  for (int i=0; i<sSize; i++) {
-    if (PointInRect(mouse.x,mouse.y,
-      12+s[i].noteMin*5,
-      (int)(12+336.0f*((float)s[i].velMin/127.0f)),
-      12+5*(s[i].noteMax),
-      (int)(12+336.0f*((float)(s[i].velMax)/127.0f)))) {
-      selRegion=i;
-      break;
+  if (!gridGrab) {
+    selRegion=-1;
+    for (int i=0; i<sSize; i++) {
+      if (PointInRect(mouse.x,mouse.y,
+                      8+(s[i].noteMin*5),
+                      (int)(8+336.0f*((float)s[i].velMin/127.0f)),
+                      16+(5*(s[i].noteMax)),
+                      (int)(16+336.0f*((float)(s[i].velMax)/127.0f)))) {
+        selRegion=i;
+        break;
+      }
     }
+  } else {
+    // move point.
+    if (grabWhat==1 || grabWhat==4 || grabWhat==7) {
+      s[selRegion].noteMin=fmax(0,fmin(s[selRegion].noteMax,(mouse.x-8)/5));
+    }
+    if (grabWhat==3 || grabWhat==6 || grabWhat==9) {
+      s[selRegion].noteMax=fmax(s[selRegion].noteMin,fmin(127,(mouse.x-8)/5));
+    }
+    if (grabWhat==1 || grabWhat==2 || grabWhat==3) {
+      s[selRegion].velMin=fmax(0,fmin(s[selRegion].velMax,((mouse.y-8)*127)/336));
+    }
+    if (grabWhat==7 || grabWhat==8 || grabWhat==9) {
+      s[selRegion].velMax=fmax(s[selRegion].velMin,fmin(127,((mouse.y-8)*127)/336));
+    }
+    // TODO: special case for center
   }
-  
-  hover(72-52,124+256,72-52+40,124+24+256,&smupS[0]);
-  hover(72-52,192+256,72-52+40,192+24+256,&smdownS[0]);
-  hover(72+52,124+256,72+52+40,124+24+256,&smupS[1]);
-  hover(72+52,192+256,72+52+40,192+24+256,&smdownS[1]);
-  hover(257-52,124+256,257-52+40,124+24+256,&smupS[2]);
-  hover(257-52,192+256,257-52+40,192+24+256,&smdownS[2]);
-  hover(257+52,124+256,257+52+40,124+24+256,&smupS[3]);
-  hover(257+52,192+256,257+52+40,192+24+256,&smdownS[3]);
 }
 
 void Sampler::grMouseDown(int button) {
-  /// target ///
-  
-  // note min
-  if (PointInRect(mouse.x,mouse.y,72-52,124+256,72-52+40,124+24+256)) {
-    smupS[0]=2;
-    if (button!=1) {
-      doUp=true;
-      doXTarget=1;
+  if (selRegion!=-1) {
+    // check what did we grab
+    gridGrab=true;
+    SDL_CaptureMouse(SDL_TRUE);
+    if (mouse.y>=(int)(8+336.0f*((float)s[selRegion].velMin/127.0f)) &&
+        mouse.y<=(int)(16+336.0f*((float)s[selRegion].velMin/127.0f))) {
+      // up
+      if (mouse.x<16+(s[selRegion].noteMin*5)) {
+        printf("upper left\n");
+        grabWhat=1;
+      } else if (mouse.x>8+(s[selRegion].noteMax*5)) {
+        printf("upper right\n");
+        grabWhat=3;
+      } else {
+        printf("up\n");
+        grabWhat=2;
+      }
+    } else if (mouse.y>=(int)(8+336.0f*((float)s[selRegion].velMax/127.0f)) &&
+               mouse.y<=(int)(16+336.0f*((float)s[selRegion].velMax/127.0f))) {
+      // down
+      if (mouse.x<16+(s[selRegion].noteMin*5)) {
+        printf("lower left\n");
+        grabWhat=7;
+      } else if (mouse.x>8+(s[selRegion].noteMax*5)) {
+        printf("lower right\n");
+        grabWhat=9;
+      } else {
+        printf("down\n");
+        grabWhat=8;
+      }
     } else {
-      s[curSample].noteMin+=12;
+      // middle
+      if (mouse.x<16+(s[selRegion].noteMin*5)) {
+        printf("left\n");
+        grabWhat=4;
+      } else if (mouse.x>8+(s[selRegion].noteMax*5)) {
+        printf("right\n");
+        grabWhat=6;
+      } else {
+        printf("center\n");
+        grabWhat=0;
+      }
     }
+    printf("grid grab.\n");
   }
-  if (PointInRect(mouse.x,mouse.y,72-52,192+256,72-52+40,192+24+256)) {
-    smdownS[0]=2;
-    if (button!=1) {
-      doDown=true;
-      doXTarget=1;
-    } else {
-      s[curSample].noteMin-=12;
-    }
-  }
-  
-  // note max
-  if (PointInRect(mouse.x,mouse.y,72+52,124+256,72+52+40,124+24+256)) {
-    smupS[1]=2;
-    if (button!=1) {
-      doUp=true;
-      doXTarget=2;
-    } else {
-      s[curSample].noteMax+=12;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,72+52,192+256,72+52+40,192+24+256)) {
-    smdownS[1]=2;
-    if (button!=1) {
-      doDown=true;
-      doXTarget=2;
-    } else {
-      s[curSample].noteMax-=12;
-    }
-  }
-  
-  // vol min
-  if (PointInRect(mouse.x,mouse.y,257-52,124+256,257-52+40,124+24+256)) {
-    smupS[2]=2;
-    if (button!=1) {
-      doUp=true;
-      doXTarget=3;
-    } else {
-      s[curSample].velMin*=2;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,257-52,192+256,257-52+40,192+24+256)) {
-    smdownS[2]=2;
-    if (button!=1) {
-      doDown=true;
-      doXTarget=3;
-    } else {
-      s[curSample].velMin/=2;
-    }
-  }
-  
-  // vol max
-  if (PointInRect(mouse.x,mouse.y,257+52,124+256,257+52+40,124+24+256)) {
-    smupS[3]=2;
-    if (button!=1) {
-      doUp=true;
-      doXTarget=4;
-    } else {
-      s[curSample].velMax*=2;
-    }
-  }
-  if (PointInRect(mouse.x,mouse.y,257+52,192+256,257+52+40,192+24+256)) {
-    smdownS[3]=2;
-    if (button!=1) {
-      doDown=true;
-      doXTarget=4;
-    } else {
-      s[curSample].velMax/=2;
-    }
-  }
-
 }
 
 void Sampler::grMouseUp(int button) {
-  /// range ///
-  
-  if (smupS[0]!=1) {
-    smupS[0]=PointInRect(mouse.x,mouse.y,72-52,124+256,72-52+40,124+24+256);
-    doUp=false;
-  }
-  if (smdownS[0]!=1) {
-    smdownS[0]=PointInRect(mouse.x,mouse.y,72-52,192+256,72-52+40,192+24+256);
-    doDown=false;
-  }
-  
-  if (smupS[1]!=1) {
-    smupS[1]=PointInRect(mouse.x,mouse.y,72+52,124+256,72+52+40,124+24+256);
-    doUp=false;
-  }
-  if (smdownS[1]!=1) {
-    smdownS[1]=PointInRect(mouse.x,mouse.y,72+52,192+256,72+52+40,192+24+256);
-    doDown=false;
-  }
-  
-  if (smupS[2]!=1) {
-    smupS[2]=PointInRect(mouse.x,mouse.y,257-52,124+256,257-52+40,124+24+256);
-    doUp=false;
-  }
-  if (smdownS[2]!=1) {
-    smdownS[2]=PointInRect(mouse.x,mouse.y,257-52,192+256,257-52+40,192+24+256);
-    doDown=false;
-  }
-  
-  if (smupS[3]!=1) {
-    smupS[3]=PointInRect(mouse.x,mouse.y,257+52,124+256,257+52+40,124+24+256);
-    doUp=false;
-  }
-  if (smdownS[3]!=1) {
-    smdownS[3]=PointInRect(mouse.x,mouse.y,257+52,192+256,257+52+40,192+24+256);
-    doDown=false;
+  if (gridGrab) {
+    gridGrab=false;
+    SDL_CaptureMouse(SDL_FALSE);
+    printf("grid ungrab.\n");
   }
 }
 
@@ -171,7 +110,7 @@ void Sampler::drawGrid() {
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
   // draw sample regions
   for (size_t i=0; i<sSize; i++) {
-    SDL_SetRenderDrawColor(r,40,128,255,(i==selRegion)?(72):(48));
+    SDL_SetRenderDrawColor(r,40,128,255,(i==selRegion && gridGrab)?(72):(48));
     tempr.x=10+2+s[i].noteMin*5;
     tempr.y=(int)(12+336.0f*((float)s[i].velMin/127.0f));
     tempr.w=5*(s[i].noteMax-s[i].noteMin);
@@ -179,103 +118,43 @@ void Sampler::drawGrid() {
     SDL_RenderFillRect(r,&tempr);
     SDL_RenderDrawRect(r,&tempr);
   }
+  // if hovering over region, draw grab points
+  if (selRegion!=-1) {
+    SDL_SetRenderDrawColor(r,128,192,255,255);
+    tempr.w=8;
+    tempr.h=8;
+    tempr.x=10+2+s[selRegion].noteMin*5-4;
+    tempr.y=(int)(12+336.0f*((float)s[selRegion].velMin/127.0f))-4;
+    SDL_RenderDrawRect(r,&tempr);
+    tempr.x=10+2+s[selRegion].noteMax*5-4;
+    tempr.y=(int)(12+336.0f*((float)s[selRegion].velMin/127.0f))-4;
+    SDL_RenderDrawRect(r,&tempr);
+    tempr.x=10+2+s[selRegion].noteMin*5-4;
+    tempr.y=(int)(12+336.0f*((float)s[selRegion].velMax/127.0f))-4;
+    SDL_RenderDrawRect(r,&tempr);
+    tempr.x=10+2+s[selRegion].noteMax*5-4;
+    tempr.y=(int)(12+336.0f*((float)s[selRegion].velMax/127.0f))-4;
+    SDL_RenderDrawRect(r,&tempr);
+    f->drawf(12+((s[selRegion].noteMin+s[selRegion].noteMax)/2)*5
+             ,(int)(12+336.0f*((float)s[selRegion].velMin/127.0f))
+             ,tempc,1,2,"%d",s[selRegion].velMin);
+    f->drawf(12+((s[selRegion].noteMin+s[selRegion].noteMax)/2)*5
+             ,(int)(12+336.0f*((float)s[selRegion].velMax/127.0f))
+             ,tempc,1,0,"%d",s[selRegion].velMax);
+    f->drawf(12+(s[selRegion].noteMin*5)
+             ,(int)(12+336.0f*((float)(s[selRegion].velMin+s[selRegion].velMax)/255.0f))
+             ,tempc,2,1,"%c%c%d",sChromaNote[s[selRegion].noteMin%12]
+                                ,sChromaSemitone[s[selRegion].noteMin%12]
+                                ,(s[selRegion].noteMin/12)-2);
+    f->drawf(12+(s[selRegion].noteMax*5)
+             ,(int)(12+336.0f*((float)(s[selRegion].velMin+s[selRegion].velMax)/255.0f))
+             ,tempc,0,1,"%c%c%d",sChromaNote[s[selRegion].noteMax%12]
+                                ,sChromaSemitone[s[selRegion].noteMax%12]
+                                ,(s[selRegion].noteMax/12)-2);
+  }
+  /* TODO: fix this.
   f->draw(370,16,tempc,1,0,0,"Note");
   f->draw(0,200,tempc,1,1,0,"NoteVol");
   f->drawf(83,400,tempc,0,0,"%d %d %d %d",tick/96,(tick/24)%4,(tick/6)%4,tick%6);
-  
-  f->draw(370,70+256,tempc,1,0,0,"Range");
-  f->draw(92,100+256,tempc,1,0,0,"Note");
-  f->draw(277,100+256,tempc,1,0,0,"NoteVol");
-  f->draw(462,100+256,tempc,1,0,0,"Param1");
-  f->draw(647,100+256,tempc,1,0,0,"Param2");
-  f->draw(92,170+256,tempc,1,1,0,"to");
-  f->draw(277,170+256,tempc,1,1,0,"to");
-  f->draw(462,170+256,tempc,1,1,0,"to");
-  f->draw(647,170+256,tempc,1,1,0,"to");
-  
-  /// note
-  
-  // left
-  tempr.x=62-52; tempr1.x=0;
-  tempr.y=152+256; tempr1.y=0;
-  tempr.w=60;  tempr1.w=60;
-  tempr.h=36;  tempr1.h=36;
-  SDL_RenderCopy(r,srange,&tempr1,&tempr);
-  tempr.x=72-52; tempr1.x=40*smupS[0];
-  tempr.y=124+256; tempr1.y=0;
-  tempr.w=40;  tempr1.w=40;
-  tempr.h=24;  tempr1.h=24;
-  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  tempr.x=72-52; tempr1.x=40*smdownS[0];
-  tempr.y=192+256; tempr1.y=0;
-  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  f->draw(92-52,126+256,tempc,1,0,0,"Up");
-  f->draw(92-52,194+256,tempc,1,0,0,"Down");
-  f->drawf(92-52,170+256,tempc,1,1,
-           "%c%c%d",sChromaNote[s[curSample].noteMin%12]
-                   ,sChromaSemitone[s[curSample].noteMin%12]
-                   ,(s[curSample].noteMin/12)-2);
-  
-  // right
-  tempr.x=62+52; tempr1.x=0;
-  tempr.y=152+256; tempr1.y=0;
-  tempr.w=60;  tempr1.w=60;
-  tempr.h=36;  tempr1.h=36;
-  SDL_RenderCopy(r,srange,&tempr1,&tempr);
-  tempr.x=72+52; tempr1.x=40*smupS[1];
-  tempr.y=124+256; tempr1.y=0;
-  tempr.w=40;  tempr1.w=40;
-  tempr.h=24;  tempr1.h=24;
-  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  tempr.x=72+52; tempr1.x=40*smdownS[1];
-  tempr.y=192+256; tempr1.y=0;
-  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  f->draw(92+52,126+256,tempc,1,0,0,"Up");
-  f->draw(92+52,194+256,tempc,1,0,0,"Down");
-  f->drawf(92+52,170+256,tempc,1,1,
-           "%c%c%d",sChromaNote[s[curSample].noteMax%12]
-                   ,sChromaSemitone[s[curSample].noteMax%12]
-                   ,(s[curSample].noteMax/12)-2);
-  
-  /// notevol
-  
-  // left
-  tempr.x=247-52; tempr1.x=0;
-  tempr.y=152+256; tempr1.y=0;
-  tempr.w=60;  tempr1.w=60;
-  tempr.h=36;  tempr1.h=36;
-  SDL_RenderCopy(r,srange,&tempr1,&tempr);
-  tempr.x=257-52; tempr1.x=40*smupS[2];
-  tempr.y=124+256; tempr1.y=0;
-  tempr.w=40;  tempr1.w=40;
-  tempr.h=24;  tempr1.h=24;
-  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  tempr.x=257-52; tempr1.x=40*smdownS[2];
-  tempr.y=192+256; tempr1.y=0;
-  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  f->draw(277-52,126+256,tempc,1,0,0,"Up");
-  f->draw(277-52,194+256,tempc,1,0,0,"Down");
-  f->drawf(277-52,170+256,tempc,1,1,
-           "%d",s[curSample].velMin);
-  
-  // right
-  tempr.x=247+52; tempr1.x=0;
-  tempr.y=152+256; tempr1.y=0;
-  tempr.w=60;  tempr1.w=60;
-  tempr.h=36;  tempr1.h=36;
-  SDL_RenderCopy(r,srange,&tempr1,&tempr);
-  tempr.x=257+52; tempr1.x=40*smupS[3];
-  tempr.y=124+256; tempr1.y=0;
-  tempr.w=40;  tempr1.w=40;
-  tempr.h=24;  tempr1.h=24;
-  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  tempr.x=257+52; tempr1.x=40*smdownS[3];
-  tempr.y=192+256; tempr1.y=0;
-  SDL_RenderCopy(r,srangebutton,&tempr1,&tempr);
-  f->draw(277+52,126+256,tempc,1,0,0,"Up");
-  f->draw(277+52,194+256,tempc,1,0,0,"Down");
-  f->drawf(277+52,170+256,tempc,1,1,
-           "%d",s[curSample].velMax);
-
-  upDown();
+  */
 }
