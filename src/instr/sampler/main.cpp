@@ -215,6 +215,13 @@ int main() {
           }
           SDL_free(e->drop.file);
           break;
+        case SDL_KEYDOWN:
+          ins.keyEvent(1,e->key.timestamp,e->key.repeat,e->key.keysym.scancode,e->key.keysym.sym,e->key.keysym.mod);
+          break;
+        case SDL_TEXTINPUT:
+          printf("input\n");
+          ins.textEvent(e->text.text);
+          break;
         case SDL_QUIT:
           q=true;
           break;

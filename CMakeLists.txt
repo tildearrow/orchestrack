@@ -57,6 +57,7 @@ add_library(sampler STATIC
   src/instr/sampler/smpedit.cpp
   src/instr/sampler/state.cpp
   src/instr/sampler/mouse.cpp
+  src/instr/sampler/kb.cpp
   src/instr/sampler/resize.cpp
   src/instr/sampler/erase.cpp
   src/instr/sampler/error.cpp

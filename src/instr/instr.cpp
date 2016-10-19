@@ -55,6 +55,9 @@ void OTrackInstrument::keyEvent(int type, int time, bool repeat, int keycode, in
 void OTrackInstrument::mouseEvent(int type, int button, int x, int y, int finger) {
 }
 
+void OTrackInstrument::textEvent(char* data) {
+}
+
 bool OTrackInstrument::init(int inChannels, int outChannels) {
   if (inChannels==0) {
     sample=new float[outChannels];

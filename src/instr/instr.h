@@ -29,5 +29,6 @@ class OTrackInstrument {
     virtual void setRenderer(SDL_Renderer* renderer);
     virtual void mouseEvent(int type, int button, int x, int y, int finger);
     virtual void keyEvent(int type, int time, bool repeat, int keycode, int vkeycode, int keymod);
+    virtual void textEvent(char* data);
     virtual bool init(int inChannels, int outChannels);
 };

@@ -3,7 +3,7 @@
 #include "../../font/font.h"
 #include "../../ui/button.h"
 #include "../../ui/knob.h"
-
+#include "../../ui/text.h"
 #include "../../format/wave.h"
 #include "../../format/aiff.h"
 #include "../../engine/lutgen.h"
@@ -165,6 +165,9 @@ class Sampler: public OTrackInstrument {
   OTrackKnob* kCutCap;
   OTrackKnob* kResAmp;
   OTrackKnob* kResCap;
+  // text fields //
+  OTrackText* testt;
+  string stri;
   // eye candy //
   float aBBPos;
   int selRot;
@@ -308,6 +311,8 @@ class Sampler: public OTrackInstrument {
     bool loadState(FILE* data);
     void setRenderer(SDL_Renderer* renderer);
     void mouseEvent(int type, int button, int x, int y, int finger);
+    void keyEvent(int type, int time, bool repeat, int keycode, int vkeycode, int keymod);
+    void textEvent(char* data);
     void drawUI();
     void reset();
     bool init(int inChannels, int outChannels);

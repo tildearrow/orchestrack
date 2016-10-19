@@ -126,6 +126,10 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   kResCap->setRange(-1.0,1.0,0.0);
   
   showLoad=false;
+  
+  /// text fields
+  testt=new OTrackText(r,f,320,20,16,16,16);
+  testt->setOut(&stri);
   // init eye candy //
   aBBPos=-30;
   fc=0;
@@ -203,6 +207,9 @@ void Sampler::drawUI() {
       erra=0;
     }
   }
+  
+  testt->setPos(10,10);
+  testt->draw();
   
   SDL_SetRenderDrawColor(r,255,255,255,255);
   
