@@ -1,4 +1,4 @@
-#include "application.h"
+#include "app.h"
 
 int OTrackApp::init() {
   quit=false;
