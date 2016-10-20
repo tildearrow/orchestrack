@@ -37,7 +37,7 @@ int Sampler::readDir(const char* path) {
             dede.name=de->cFileName;
             dede.type=(de->dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)?(4):(8);
             listings.push_back(dede);
-	    dede.size=de->nFileSizeLow;//+((de->nFileSizeHigh)<<32);
+            dede.size=de->nFileSizeLow;//+((de->nFileSizeHigh)<<32);
           }
         }
       }

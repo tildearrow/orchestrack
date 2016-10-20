@@ -24,8 +24,8 @@ int OTrackApp::loop() {
   while (1) {
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
-	case SDL_QUIT:
-	  quit=true;
+        case SDL_QUIT:
+        quit=true;
       }
     }
     SDL_RenderClear(r);

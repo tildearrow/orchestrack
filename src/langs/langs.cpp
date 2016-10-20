@@ -37,10 +37,10 @@ std::string* lsLoad(const char* dir, const char* lang) {
     switch (c) {
       case '\t':
         s=1;
-	break;
+        break;
       case '\n':
         s=0; ci++;
-	break;
+        break;
       default:
         if (s) ret[ci]+=c;
         break;

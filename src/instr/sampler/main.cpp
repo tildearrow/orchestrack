@@ -63,7 +63,7 @@ int audio(jack_nframes_t len, void* arg) {
       if (cei<ec) {
         nep=me[cei].time;
       } else {
-	nep=-1;
+        nep=-1;
       }
     }
     pt=ins.getSample();
@@ -173,33 +173,33 @@ int main() {
           ins.mouseEvent(3,0,e->wheel.x,e->wheel.y,0);
           break;
         case SDL_MOUSEBUTTONUP:
-	  if (!touch) {
+          if (!touch) {
             ins.mouseEvent(1,e->button.button-1,e->button.x,e->button.y,0);
-	  }
+          }
           break;
         case SDL_MOUSEBUTTONDOWN:
           if (!touch) {
-	     ins.mouseEvent(2,e->button.button-1,e->button.x,e->button.y,0);
-	  }
+             ins.mouseEvent(2,e->button.button-1,e->button.x,e->button.y,0);
+          }
           break;
         case SDL_MOUSEMOTION:
           if (!touch) {
-	    ins.mouseEvent(0,0,e->button.x,e->button.y,0);
-	  }
+            ins.mouseEvent(0,0,e->button.x,e->button.y,0);
+          }
           break;
 #ifndef __APPLE__
         case SDL_FINGERUP:
-	  touch=true;
-	  printf("up %d %d %lld\n",(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),e->tfinger.fingerId);
+          touch=true;
+          printf("up %d %d %lld\n",(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),e->tfinger.fingerId);
           ins.mouseEvent(1,0,(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),(int)e->tfinger.fingerId);
           break;
         case SDL_FINGERDOWN:
-	  touch=true;
-	  printf("down %d %d %lld\n",(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),e->tfinger.fingerId);
+          touch=true;
+          printf("down %d %d %lld\n",(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),e->tfinger.fingerId);
           ins.mouseEvent(2,0,(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),(int)e->tfinger.fingerId);
           break;
         case SDL_FINGERMOTION:
-	  touch=true;
+          touch=true;
           ins.mouseEvent(0,0,(int)(e->tfinger.x*dw),(int)(e->tfinger.y*dh),(int)e->tfinger.fingerId);
           break;
 #endif

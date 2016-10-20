@@ -35,57 +35,57 @@ rwave* readWAVE(iff* f) {
       switch ((r->fmt.bps-1)/8) {
         case 0: // char
           char* buf8;
-	  buf8=(char*)data;
-	  printf("8 bit:");
+          buf8=(char*)data;
+          printf("8 bit:");
           for (int j=0; j<r->data.size; j++) {
              buf8[j]=f->s[i].data[j]>>(8-(1+(r->fmt.bps-1%8)));
-	     r->data.data[j]=(float)buf8[j]/128.0;
-	     printf(" %.2x",buf8[j]);
-	  }
-	  printf("\n");
+             r->data.data[j]=(float)buf8[j]/128.0;
+             printf(" %.2x",buf8[j]);
+          }
+          printf("\n");
           break;
         case 1: // short
           short* buf16, *data16;
-	  buf16=(short*)data;
-	  data16=(short*)f->s[i].data;
-	  printf("16 bit:");
+          buf16=(short*)data;
+          data16=(short*)f->s[i].data;
+          printf("16 bit:");
           for (int j=0; j<r->data.size; j++) {
              buf16[j]=data16[j]>>(8-(1+(r->fmt.bps-1%8)));
-	     r->data.data[j]=(float)buf16[j]/32768.0;
-	     printf(" %.4x",buf16[j]);
-	  }
-	  printf("\n");
+             r->data.data[j]=(float)buf16[j]/32768.0;
+             printf(" %.4x",buf16[j]);
+          }
+          printf("\n");
           break;
         case 3: // int
           int* buf32, *data32, *floathack;
-	  buf32=(int*)data;
-	  floathack=(int*)r->data.data;
-	  data32=(int*)f->s[i].data;
-	  printf("32 bit:");
+          buf32=(int*)data;
+          floathack=(int*)r->data.data;
+          data32=(int*)f->s[i].data;
+          printf("32 bit:");
           for (int j=0; j<r->data.size; j++) {
              buf32[j]=data32[j]>>(8-(1+(r->fmt.bps-1%8)));
-	     if (r->fmt.aformat==3) {
-	       floathack[j]=buf32[j];
-	     } else {
-	       r->data.data[j]=(float)buf16[j]/2147483648.0;
-	     }
-	     printf(" %.8x",buf32[j]);
-	  }
-	  printf("\n");
+             if (r->fmt.aformat==3) {
+               floathack[j]=buf32[j];
+             } else {
+               r->data.data[j]=(float)buf16[j]/2147483648.0;
+             }
+             printf(" %.8x",buf32[j]);
+          }
+          printf("\n");
           break;
         case 7: // long long
           long long* buf64, *data64;
-	  buf64=(long long*)data;
-	  data64=(long long*)f->s[i].data;
-	  printf("64 bit:");
+          buf64=(long long*)data;
+          data64=(long long*)f->s[i].data;
+          printf("64 bit:");
           for (int j=0; j<r->data.size; j++) {
              buf64[j]=data64[j]>>(8-(1+(r->fmt.bps-1%8)));
-	     printf(" %.16x",buf64[j]);
-	  }
-	  printf("\n");
+             printf(" %.16x",buf64[j]);
+          }
+          printf("\n");
           break;
         default:
-	  printf("to be implemented later! %d\n",(r->fmt.bps-1)/8);
+          printf("to be implemented later! %d\n",(r->fmt.bps-1)/8);
       }
       printf("converted to float:\n"); 
       for (int j=0; j<r->data.size; j++) {
