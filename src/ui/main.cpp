@@ -1,5 +1,5 @@
 #include "../includes.h"
-#include "application.h"
+#include "app.h"
 
 OTrackApp* app;
 
