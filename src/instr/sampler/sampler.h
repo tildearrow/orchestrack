@@ -167,6 +167,7 @@ class Sampler: public OTrackInstrument {
   OTrackKnob* kResCap;
   // text fields //
   OTrackText* testt;
+  OTrackText* tSName;
   string stri;
   // eye candy //
   float aBBPos;

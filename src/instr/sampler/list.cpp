@@ -48,6 +48,8 @@ void Sampler::listMouseUp(int button) {
           // resonance knobs
           kResAmp->setOut(&s[curSample].resAmt);
           kResCap->setOut(&s[curSample].resCap);
+          // text fields
+          tSName->setOut(s[curSample].path);
           showSampleSel=false;
         } else if (showEnvSel) {
           switch (envSTarget) {

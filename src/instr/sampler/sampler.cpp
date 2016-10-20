@@ -130,6 +130,10 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   /// text fields
   testt=new OTrackText(r,f,320,20,16,16,16);
   testt->setOut(&stri);
+  
+  tSName=new OTrackText(r,f,600,20,16,16,16);
+  tSName->setOut(s[0].path);
+  
   // init eye candy //
   aBBPos=-30;
   fc=0;
@@ -207,9 +211,6 @@ void Sampler::drawUI() {
       erra=0;
     }
   }
-  
-  testt->setPos(10,10);
-  testt->draw();
   
   SDL_SetRenderDrawColor(r,255,255,255,255);
   

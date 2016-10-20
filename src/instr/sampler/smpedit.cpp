@@ -26,6 +26,8 @@ void Sampler::seMouseMove(int button) {
   kCutCap->mouseMove(mouse.x,mouse.y);
   kResAmp->mouseMove(mouse.x,mouse.y);
   kResCap->mouseMove(mouse.x,mouse.y);
+  
+  tSName->mouseMove(mouse.x,mouse.y);
 }
 
 void Sampler::seMouseDown(int button) {
@@ -84,6 +86,8 @@ void Sampler::seMouseDown(int button) {
   kCutCap->mouseDown(mouse.x,mouse.y,button);
   kResAmp->mouseDown(mouse.x,mouse.y,button);
   kResCap->mouseDown(mouse.x,mouse.y,button);
+  
+  tSName->mouseDown(mouse.x,mouse.y,button);
 }
 
 void Sampler::seMouseUp(int button) {
@@ -173,15 +177,20 @@ void Sampler::seMouseUp(int button) {
   kCutCap->mouseUp(mouse.x,mouse.y,button);
   kResAmp->mouseUp(mouse.x,mouse.y,button);
   kResCap->mouseUp(mouse.x,mouse.y,button);
+  
+  tSName->mouseUp(mouse.x,mouse.y,button);
 }
 
 void Sampler::drawSampleEdit() {
   f->draw(10,40,tempc,0,0,0,"Rate");
+  /*
   tempr.x=80;  tempr1.x=0;
   tempr.y=10; tempr1.y=0;
   tempr.w=600; tempr1.w=600;
   tempr.h=20;  tempr1.h=20;
-  SDL_RenderCopy(r,spath,&tempr1,&tempr);
+  SDL_RenderCopy(r,spath,&tempr1,&tempr);*/
+  tSName->setPos(80,10);
+  tSName->draw();
   tempr.x=690; tempr1.x=40*sloadS;
   tempr.y=10; tempr1.y=0;
   tempr.w=40;  tempr1.w=40;
@@ -205,7 +214,6 @@ void Sampler::drawSampleEdit() {
   SDL_RenderCopy(r,sselect,&tempr1,&tempr);
   f->draw(40,10,tempc,1,0,0,"Sample");
   
-  f->draw(83,10,tempc,0,0,0,s[curSample].path[0]);
   f->drawf(83,40,tempc,0,0,"%f",s[curSample].rate);
   f->draw(710,10,tempc,1,0,0,"Load");
   f->draw(705,40,tempc,1,0,0,"Keypad");
