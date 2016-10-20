@@ -97,7 +97,7 @@ void OTrackText::draw() {
   f->draw(pos.x+3,pos.y,fcolor,0,0,0,val[0]);
   TTF_SizeUTF8(f->f,val->substr(0,curpos).c_str(),&sx,&sy);
   if (input) {
-    SDL_SetRenderDrawColor(rend,255,255,255,(sin((float)blink*pi/30)>0)?(255):(0));
+    SDL_SetRenderDrawColor(rend,255,255,255,(blink<30)?(255):(0));
     SDL_RenderDrawLine(rend,pos.x+3+sx,pos.y+3,pos.x+3+sx,pos.y+pos.h-4);
     blink++;
     blink=blink%60;
