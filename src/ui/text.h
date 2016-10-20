@@ -13,6 +13,7 @@ class OTrackText {
   font* f;
   SDL_Color fcolor;
   int blink;
+  bool input, hover;
   public:
     void draw();
     void setMaxLength(size_t max);

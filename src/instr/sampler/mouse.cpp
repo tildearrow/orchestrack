@@ -17,6 +17,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         loadMouseMove(button);
       }
       testk->mouseMove(x,y);
+      testt->mouseMove(x,y);
       break;
     case 2: // down
       mouse.x=x; mouse.y=y;
@@ -46,6 +47,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         loadMouseDown(button);
       }
       testk->mouseDown(x,y,button);
+      testt->mouseDown(x,y,button);
       break;
     case 1: // up
       mouse.b[button]=0;
@@ -93,6 +95,7 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
         envMouseUp(button);
       }
       testk->mouseUp(x,y,button);
+      testt->mouseUp(x,y,button);
       break;
     case 3:
       if (showLoad || showSampleSel || showEnvSel) {
