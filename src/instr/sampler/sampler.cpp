@@ -134,6 +134,9 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tSName=new OTrackText(r,f,600,20,16,16,16);
   tSName->setOut(s[0].path);
   
+  tEName=new OTrackText(r,f,640,20,16,16,16);
+  tEName->setOut(e[0].name);
+  
   // init eye candy //
   aBBPos=-30;
   fc=0;

@@ -41,6 +41,8 @@ void Sampler::envMouseMove(int button) {
       }
     }
   }
+  
+  tEName->mouseMove(mouse.x,mouse.y);
 }
 
 void Sampler::envMouseDown(int button) {
@@ -187,6 +189,8 @@ void Sampler::envMouseDown(int button) {
       pMenuPos.h=134;
     }
   }
+  
+  tEName->mouseDown(mouse.x,mouse.y,button);
 }
 
 void Sampler::envMouseUp(int button) {
@@ -204,6 +208,8 @@ void Sampler::envMouseUp(int button) {
     selGrab=false;
     printf("end of grab\n");
   }
+    
+  tEName->mouseUp(mouse.x,mouse.y,button);
 }
 
 void Sampler::drawEnvEdit() {
@@ -212,11 +218,9 @@ void Sampler::drawEnvEdit() {
   tempr.w=720; tempr1.w=720;
   tempr.h=300; tempr1.h=300;
   SDL_RenderCopy(r,envbg,&tempr1,&tempr);
-  tempr.x=90;  tempr1.x=0;
-  tempr.y=10; tempr1.y=0;
-  tempr.w=640; tempr1.w=640;
-  tempr.h=20;  tempr1.h=20;
-  SDL_RenderCopy(r,spathlarge,&tempr1,&tempr);
+  
+  tEName->setPos(90,10);
+  tEName->draw();
   
   tempr.x=10; tempr1.x=70*sselectS;
   tempr.y=10; tempr1.y=0;
@@ -225,7 +229,6 @@ void Sampler::drawEnvEdit() {
   SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
   f->draw(45,10,tempc,1,0,0,"Envelope");
   
-  f->draw(93,10,tempc,0,0,0,e[curEnv].name[0]);
   SDL_SetRenderDrawColor(r,255,255,128,255);
   for (size_t i=0; i<e[curEnv].pSize; i++) {
     if (i==e[curEnv].loopStart || i==e[curEnv].loopEnd) {

@@ -53,7 +53,10 @@ void Sampler::listMouseUp(int button) {
           showSampleSel=false;
         } else if (showEnvSel) {
           switch (envSTarget) {
-            case 0: curEnv=loadHIndex; break;
+            case 0:
+              curEnv=loadHIndex;
+              tEName->setOut(e[curEnv].name);
+              break;
             case 1: s[curSample].envVol=loadHIndex-1; break;
             case 2: s[curSample].envPan=loadHIndex-1; break;
             case 3: s[curSample].envPitch=loadHIndex-1; break;
