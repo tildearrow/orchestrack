@@ -12,6 +12,7 @@ class OTrackKnob {
   SDL_Renderer* rend;
   SDL_Texture* tex;
   SDL_Texture* tex1;
+  SDL_Texture* tex2;
   SDL_Texture* light;
   public:
     void draw();
