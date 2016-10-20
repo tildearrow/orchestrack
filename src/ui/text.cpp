@@ -3,16 +3,25 @@
 void OTrackText::mouseMove(int x, int y) {
   if (PointInRect(x,y,pos.x,pos.y,pos.x+pos.w,pos.y+pos.h)) {
     hover=true;
-    printf("hover\n");
   } else {
     hover=false;
   }
 }
 
 void OTrackText::mouseDown(int x, int y, int button) {
+  int sx, sy;
   if (PointInRect(x,y,pos.x,pos.y,pos.x+pos.w,pos.y+pos.h)) {
     input=true;
     SDL_StartTextInput();
+    // set cursor to mouse position
+    for (int i=val->size(); i>=0; i--) {
+      TTF_SizeUTF8(f->f,val->substr(0,i).c_str(),&sx,&sy);
+      if (sx<x-pos.x) {
+        curpos=i;
+        break;
+      }
+    }
+    blink=0;
   } else {
     input=false;
     SDL_StopTextInput();
