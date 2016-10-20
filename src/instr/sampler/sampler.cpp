@@ -147,6 +147,8 @@ void Sampler::drawSummary() {
 }
 
 void Sampler::drawUI() {
+  int ftime;
+  ftime=SDL_GetPerformanceCounter();
   tempc.r=255;
   tempc.g=255;
   tempc.b=255;
@@ -218,6 +220,9 @@ void Sampler::drawUI() {
   SDL_SetRenderDrawColor(r,255,255,255,255);
   
   SDL_SetRenderDrawColor(r,0,0,0,255);
+  
+  ftime=SDL_GetPerformanceCounter()-ftime;
+  f->drawf(0,0,tempc,0,0,"frame time: %.2fms",(double)ftime/((double)SDL_GetPerformanceFrequency()/1000));
 }
 
 bool Sampler::init(int inChannels, int outChannels) {
