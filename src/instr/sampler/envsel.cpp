@@ -25,6 +25,7 @@ void Sampler::initEnv(int which) {
   e[which].loopEnd=-1;
   e[which].p=new envp[3];
   e[which].pSize=3;
+  e[which].relMode=1;
   e[which].p[0].type=0;
   e[which].p[1].type=0;
   e[which].p[2].type=0;

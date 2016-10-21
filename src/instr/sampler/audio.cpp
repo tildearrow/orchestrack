@@ -1,4 +1,7 @@
 #include "sampler.h"
+// TODO: "magic" release mode:
+//       scale envelope content past sustain to match current volume on
+//       note off
 
 float* Sampler::getSample() {
   abusy=true;
@@ -22,6 +25,11 @@ float* Sampler::getSample() {
               vErase(i); i--;
             } else {
               v[i].released=true;
+              if (v[i].envVol->relMode) {
+                // jump, or "magic" mode
+                v[i].envpi=v[i].envVol->susEnd;
+                v[i].envposN=0;
+              }
             }
           }
         }

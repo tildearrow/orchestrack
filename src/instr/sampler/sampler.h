@@ -37,7 +37,7 @@ class Sampler: public OTrackInstrument {
     int loopStart;
     int loopEnd;
     bool susLoop;
-    bool relMode;
+    char relMode;
     bool sync;
     string* name;
   };
