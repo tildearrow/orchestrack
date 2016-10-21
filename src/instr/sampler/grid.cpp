@@ -3,7 +3,7 @@
 void Sampler::grMouseMove(int button) {
   if (!gridGrab) {
     selRegion=-1;
-    for (int i=0; i<sSize; i++) {
+    for (int i=sSize-1; i>=0; i--) {
       if (PointInRect(mouse.x,mouse.y,
                       48+(s[i].noteMin*5),
                       (int)(28+336.0f*((float)s[i].velMin/127.0f)),
