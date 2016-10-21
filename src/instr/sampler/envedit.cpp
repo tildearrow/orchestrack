@@ -294,8 +294,8 @@ void Sampler::drawEnvEdit() {
   }
   
   for (size_t i=0; i<vSize; i++) {
-    SDL_RenderDrawLine(r,10+(v[i].envposN/256)+(e[curEnv].p[v[i].envpi].time/256),40,10+(v[i].envposN/256)+(e[curEnv].p[v[i].envpi].time/256),340);
-    f->drawf(10+(v[i].envposN/256)+(e[curEnv].p[v[i].envpi].time/256),340,tempc,0,0,"%d: %d",i,v[i].envpi);
+    SDL_RenderDrawLine(r,10+(v[i].envVposN/256)+(e[curEnv].p[v[i].envVpi].time/256),40,10+(v[i].envVposN/256)+(e[curEnv].p[v[i].envVpi].time/256),340);
+    f->drawf(10+(v[i].envVposN/256)+(e[curEnv].p[v[i].envVpi].time/256),340,tempc,0,0,"%d: %d",i,v[i].envVpi);
   }
   
   if (pMenuVis) {

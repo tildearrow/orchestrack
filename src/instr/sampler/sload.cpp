@@ -36,7 +36,7 @@ void Sampler::initSample(int which) {
   s[which].volCap=0;
   s[which].panAmt=0;
   s[which].panCap=0;
-  s[which].pitchAmt=0.5;
+  s[which].pitchAmt=1;
   s[which].pitchCap=0;
   s[which].cutAmt=1;
   s[which].cutCap=0;

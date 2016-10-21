@@ -3,10 +3,28 @@
 //       scale envelope content past sustain to match current volume on
 //       note off
 
+void Sampler::updateEnv(envl* envel, int* posN, float* posD, int* envpi, voice* object) {
+  if (envel!=NULL) {
+    posD[0]+=65536/44100;
+    if (envel->susStart!=envpi[0] || envel->susStart!=envel->susEnd || envel->susEnd==-1 || object->released) {
+      posN[0]+=(int)posD[0];
+    }
+    posD[0]-=(int)posD[0];
+    if ((posN[0]+envel->p[envpi[0]].time)>envel->p[envpi[0]+1].time) {
+      if (envpi[0]==envel->susEnd-1 && !object->released) {
+        envpi[0]=envel->susStart;
+      } else {
+        envpi[0]++;
+      }
+      posN[0]=0;
+    }
+  }
+}
+
 float* Sampler::getSample() {
   abusy=true;
   size_t i, j;
-  float calc;
+  float calc, pitchcalc;
   if (busy) {vResize(0); return sample;}
   float element;
   float val0, val1, timediff;
@@ -27,8 +45,8 @@ float* Sampler::getSample() {
               v[i].released=true;
               if (v[i].envVol->relMode) {
                 // jump, or "magic" mode
-                v[i].envpi=v[i].envVol->susEnd;
-                v[i].envposN=0;
+                v[i].envVpi=v[i].envVol->susEnd;
+                v[i].envVposN=0;
               }
             }
           }
@@ -62,6 +80,11 @@ float* Sampler::getSample() {
         } else {
           v[thisv].envVol=&e[v[thisv].sample->envVol];
         }
+        if (v[thisv].sample->envPitch==-1) {
+          v[thisv].envPitch=NULL;
+        } else {
+          v[thisv].envPitch=&e[v[thisv].sample->envPitch];
+        }
       }
     }
     if ((ev[0]>>4)==0xe) {
@@ -91,14 +114,24 @@ float* Sampler::getSample() {
   }
   for (i=0; i<vSize; i++) {
     voice* object=&v[i];
-    //printf("%d %d\n",object->env,object->envpi);
+    //printf("%d %d\n",object->env,object->envVpi);
+    // volume
     if (object->envVol==NULL) {
       calc=object->vol*(object->sample->volAmt+object->sample->volCap);
     } else {
-      val0=object->envVol->p[object->envpi].value;
-      val1=object->envVol->p[object->envpi+1].value;
-      timediff=object->envVol->p[object->envpi+1].time-object->envVol->p[object->envpi].time;
-      calc=object->vol*(object->sample->volAmt*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envposN)/timediff)))+object->sample->volCap);
+      val0=object->envVol->p[object->envVpi].value;
+      val1=object->envVol->p[object->envVpi+1].value;
+      timediff=object->envVol->p[object->envVpi+1].time-object->envVol->p[object->envVpi].time;
+      calc=object->vol*(object->sample->volAmt*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envVposN)/timediff)))+object->sample->volCap);
+    }
+    // pitch
+    if (object->envPitch==NULL) {
+      pitchcalc=object->f*(object->sample->pitchAmt+object->sample->pitchCap);
+    } else {
+      val0=object->envPitch->p[object->envPipi].value;
+      val1=object->envPitch->p[object->envPipi+1].value;
+      timediff=object->envPitch->p[object->envPipi+1].time-object->envPitch->p[object->envPipi].time;
+      pitchcalc=object->vol*(object->sample->pitchAmt*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envPiposN)/timediff)))+object->sample->pitchCap);
     }
     if (object->sample->chan==1) {
       float elcalc;
@@ -112,31 +145,18 @@ float* Sampler::getSample() {
       
       sample[j]+=element*calc;
     }
-    object->periodD+=object->f;
+    object->periodD+=pitchcalc;
     object->periodN+=(int)object->periodD;
     if (object->sample->loopType==1 && object->periodN>object->sample->loopEnd) {
       object->periodN=object->sample->loopStart+(object->periodN%(object->sample->loopEnd+1));
     }
     object->periodD-=(int)object->periodD;
     
-    if (object->envVol!=NULL) {
-      object->envposD+=65536/44100;
-      if (object->envVol->susStart!=object->envpi || object->envVol->susStart!=object->envVol->susEnd || object->envVol->susEnd==-1 || object->released) {
-        object->envposN+=(int)object->envposD;
-      }
-      object->envposD-=(int)object->envposD;
-      if ((object->envposN+object->envVol->p[object->envpi].time)>object->envVol->p[object->envpi+1].time) {
-        if (object->envpi==object->envVol->susEnd-1 && !object->released) {
-          object->envpi=object->envVol->susStart;
-        } else {
-          object->envpi++;
-        }
-        object->envposN=0;
-        if (object->envpi==(object->envVol->pSize-1)) {
-          vErase(i); i--;
-          printf("end of envelope.\n");
-        }
-      }
+    updateEnv(object->envVol,&object->envVposN,&object->envVposD,&object->envVpi,object);
+    updateEnv(object->envPitch,&object->envPiposN,&object->envPiposD,&object->envPipi,object);
+    if (object->envVpi==(object->envVol->pSize-1)) {
+      vErase(i); i--;
+      printf("end of envelope.\n");
     }
     if ((int)object->periodN>object->sample->len) {
       vErase(i); i--;

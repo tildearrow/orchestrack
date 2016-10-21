@@ -78,9 +78,9 @@ class Sampler: public OTrackInstrument {
     float f;
     float vol;
     int env;
-    int envpi;
-    int envposN;
-    float envposD;
+    int envVpi, envPpi, envPipi, envCpi, envRpi;
+    int envVposN, envPposN, envPiposN, envCposN, envRposN;
+    float envVposD, envPposD, envPiposD, envCposD, envRposD;
     envl* envVol;
     envl* envPan;
     envl* envPitch;
@@ -306,6 +306,8 @@ class Sampler: public OTrackInstrument {
   // directory functions //
   string topLevel(string path);
   int readDir(const char* path);
+  // update envelopes //
+  void updateEnv(envl* envel, int* posN, float* posD, int* envpi, voice* object);
   public:
     OTrackInsSpec* getspec();
     float* getSample();
