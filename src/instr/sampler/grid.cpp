@@ -151,10 +151,13 @@ void Sampler::drawGrid() {
              ,tempc,0,1,"%c%c%d",sChromaNote[s[selRegion].noteMax%12]
                                 ,sChromaSemitone[s[selRegion].noteMax%12]
                                 ,(s[selRegion].noteMax/12)-2);
+    f->draw(52+((s[selRegion].noteMin+s[selRegion].noteMax)/2)*5
+             ,(int)(32+336.0f*((float)(s[selRegion].velMin+s[selRegion].velMax)/255.0f))
+             ,tempc,1,1,0,s[selRegion].path[0]);
+  } else {
+    f->draw(370,12,tempc,1,0,0,"Note");
+    f->draw(48,200,tempc,2,1,0,"Vol");
   }
-  /* TODO: fix this.
-  f->draw(370,16,tempc,1,0,0,"Note");
-  f->draw(0,200,tempc,1,1,0,"NoteVol");
-  f->drawf(83,400,tempc,0,0,"%d %d %d %d",tick/96,(tick/24)%4,(tick/6)%4,tick%6);
-  */
+  
+  //f->drawf(83,400,tempc,0,0,"%d %d %d %d",tick/96,(tick/24)%4,(tick/6)%4,tick%6);
 }
