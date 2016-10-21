@@ -113,12 +113,16 @@ float* Sampler::getSample() {
     
     if (object->envVol!=NULL) {
       object->envposD+=65536/44100;
-      if (object->envVol->susStart!=object->envpi || object->released) {
+      if (object->envVol->susStart!=object->envpi || object->envVol->susStart!=object->envVol->susEnd || object->envVol->susEnd==-1 || object->released) {
         object->envposN+=(int)object->envposD;
       }
       object->envposD-=(int)object->envposD;
       if ((object->envposN+object->envVol->p[object->envpi].time)>object->envVol->p[object->envpi+1].time) {
-        object->envpi++;
+        if (object->envpi==object->envVol->susEnd-1 && !object->released) {
+          object->envpi=object->envVol->susStart;
+        } else {
+          object->envpi++;
+        }
         object->envposN=0;
         if (object->envpi==(object->envVol->pSize-1)) {
           vErase(i); i--;
