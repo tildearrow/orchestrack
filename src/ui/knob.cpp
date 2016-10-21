@@ -102,20 +102,26 @@ void OTrackKnob::mouseUp(int x, int y, int button) {
 }
 
 void OTrackKnob::draw() {
-  SDL_Rect tr, tr1;
+  SDL_Rect tr;
   SDL_Point tp;
   tr.x=xx; tr.y=yy; tr.w=w; tr.h=h;
-  
+  tp.x=w/2; tp.y=h/2;
+  SDL_RenderCopyEx(rend,tex,NULL,&tr,45,&tp,SDL_FLIP_NONE);
   
   SDL_SetTextureColorMod(light,127+hoverTime*16,127+hoverTime*16,127+hoverTime*16);
 
-  float range=fmin(31,((*val-rmin)/(rmax-rmin))*32);
-  tr1.x=((int)range%8)*w; tr1.y=((int)range/8)*h;
-  tr1.w=w; tr1.h=h;
-  tp.x=w/2; tp.y=h/2;
-  //SDL_RenderCopyEx(rend,tex,NULL,&tr,45,&tp,SDL_FLIP_NONE);
-  SDL_RenderCopy(rend,tex,&tr1,&tr);
-  
+  float range=fmin(32,((*val-rmin)/(rmax-rmin))*32);
+  for (int i=0; i<range; i++) {
+    tr.x=round((xx+(w/2)+cos((0.75*pi)+(float)i*1.5*pi/(32.0))*(w-18)/2)-6);
+    tr.y=round((yy+(h/2)+sin((0.75*pi)+(float)i*1.5*pi/(32.0))*(h-18)/2)-6);
+    
+    tr.w=12; tr.h=12;
+    if (i==(int)range) {
+      SDL_SetTextureAlphaMod(light,(unsigned char)(fmod((range),1)*255));
+    }
+    SDL_RenderCopy(rend,light,NULL,&tr);
+    SDL_SetTextureAlphaMod(light,255);
+  }
   tr.x=xx+8; tr.y=yy+8; tr.w=w-16; tr.h=h-16;
   tp.x=(w-16)/2; tp.y=(h-16)/2;
   SDL_RenderCopyEx(rend,tex1,NULL,&tr,225+((range/32.0)*270),&tp,SDL_FLIP_NONE);
@@ -157,10 +163,6 @@ void OTrackKnob::setPos(int x, int y) {
 }
 
 OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigned char g, unsigned char b) {
-  SDL_Rect tr;
-  SDL_Surface* lights;
-  SDL_Surface* kback;
-  SDL_Surface* compos;
   FILE* cl;
   FILE* clw;
   char* cn;
@@ -183,10 +185,10 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
   unsigned char* bc;
   SDL_Color tc, tc1;
   rend=renderer;
-  //tex=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STATIC,rad*2*8,rad*2*4);
+  tex=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STATIC,rad*2,rad*2);
   tex1=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STATIC,(rad-8)*2,(rad-8)*2);
   light=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STATIC,12,12);
-  //SDL_SetTextureBlendMode(tex,SDL_BLENDMODE_BLEND);
+  SDL_SetTextureBlendMode(tex,SDL_BLENDMODE_BLEND);
   SDL_SetTextureBlendMode(tex1,SDL_BLENDMODE_BLEND);
   SDL_SetTextureBlendMode(light,SDL_BLENDMODE_ADD);
   ba=new unsigned char[rad*rad*16];
@@ -308,32 +310,9 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
     }
   }
   
-  //SDL_UpdateTexture(tex,NULL,ba,rad*8);
+  SDL_UpdateTexture(tex,NULL,ba,rad*8);
   SDL_UpdateTexture(tex1,NULL,bc,(rad-8)*8);
-  kback=SDL_CreateRGBSurfaceFrom(ba,rad*2,rad*2,32,rad*8,0xff0000,0xff00,0xff,0xff000000);
-  lights=SDL_CreateRGBSurfaceFrom(bb,12,12,32,48,0xff0000,0xff00,0xff,0xff000000);
-  compos=SDL_CreateRGBSurface(0,rad*2*8,rad*2*4,32,0xff0000,0xff00,0xff,0xff000000);
-  SDL_SetSurfaceBlendMode(lights,SDL_BLENDMODE_ADD);
-  SDL_SetSurfaceBlendMode(compos,SDL_BLENDMODE_BLEND);
-  printf("copy begin\n");
-  for (int j=0; j<32; j++) {
-    tr.x=(j%8)*rad*2; tr.y=(j/8)*rad*2;
-    tr.w=rad*2; tr.h=rad*2;
-    SDL_BlitSurface(kback,NULL,compos,&tr);
-    for (int i=0; i<j; i++) {
-      tr.x=((j%8)*rad*2)+round(((rad)+(cos((0.75*pi)+(float)i*1.5*pi/(32.0))*(rad-9)))-6);
-      tr.y=((j/8)*rad*2)+round(((rad)+(sin((0.75*pi)+(float)i*1.5*pi/(32.0))*(rad-9)))-6);
-
-      tr.w=12; tr.h=12;
-      
-      SDL_BlitSurface(lights,NULL,compos,&tr);
-    }
-  }
   SDL_UpdateTexture(light,NULL,bb,12*4);
-  
-  printf("ctfs\n");
-  tex=SDL_CreateTextureFromSurface(renderer,compos);
-  printf("end\n");
   delete[] ba;
   delete[] bb;
   delete[] bc;
@@ -341,15 +320,10 @@ OTrackKnob::OTrackKnob(SDL_Renderer* renderer, int rad, unsigned char r, unsigne
   delete[] cn;
   delete[] cn1;
   delete[] cn2;
-  printf("delete\n");
 
   w=rad*2; h=rad*2;
   hover=false;
   drag=false;
   reset=false;
   hoverTime=0;
-  
-  SDL_FreeSurface(kback);
-  SDL_FreeSurface(lights);
-  SDL_FreeSurface(compos);
 }
