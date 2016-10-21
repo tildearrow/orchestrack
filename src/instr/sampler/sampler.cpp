@@ -221,8 +221,10 @@ void Sampler::drawUI() {
   
   SDL_SetRenderDrawColor(r,0,0,0,255);
   
+  /***
   ftime=SDL_GetPerformanceCounter()-ftime;
   f->drawf(0,0,tempc,0,0,"frame time: %.2fms",(double)ftime/((double)SDL_GetPerformanceFrequency()/1000));
+  ***/
 }
 
 bool Sampler::init(int inChannels, int outChannels) {
