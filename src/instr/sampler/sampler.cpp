@@ -78,12 +78,14 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   tempc.g=48;
   tempc.b=48;
   tempc.a=255;
-  smode=drawButton(r,0,0,175,20,tempc,2);
+  smode=drawButton(r,0,0,175,20,tempc,4);
+  sfilt=drawButton(r,0,0,64,40,tempc,4);
   tempc.r=128;
   tempc.g=128;
   tempc.b=128;
   tempc.a=255;
   smodeactive=drawButton(r,0,0,175,20,tempc,4);
+  sfiltactive=drawButton(r,0,0,64,40,tempc,4);
   // knobs //
   // test knob
   testk=new OTrackKnob(r,32,0,255,0);

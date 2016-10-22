@@ -32,6 +32,7 @@ float* Sampler::getSample() {
   if (busy) {vResize(0); return sample;}
   float element;
   float val0, val1, timediff;
+  float elcalc;
   sample[0]=0;
   sample[1]=0;
   ev=(unsigned char*)getEvent();
@@ -157,30 +158,37 @@ float* Sampler::getSample() {
       }
     }
     if (object->sample->chan==1) {
-      float elcalc;
       element=intSinc(object->sample->data[0],object->periodN+8,object->periodD);
-      
-      elcalc=element*calc;
 
       if (object->sample->filter) {
         object->flow[0]=object->flow[0]+cutcalc*object->fband[0];
-        object->fhigh[0]=elcalc-object->flow[0]-rescalc*object->fband[0];
+        object->fhigh[0]=element-object->flow[0]-rescalc*object->fband[0];
         object->fband[0]=cutcalc*object->fhigh[0]+object->fband[0];
-      
-        sample[0]+=object->flow[0];
-        sample[1]+=object->flow[0];
+        
+        elcalc=(((object->sample->filter&1)?(object->flow[0]):(0))+
+                ((object->sample->filter&2)?(object->fhigh[0]):(0))+
+                ((object->sample->filter&4)?(object->fband[0]):(0)))*calc;
       } else {
-        sample[0]+=elcalc;
-        sample[1]+=elcalc;
+        elcalc=element*calc;
       }
+      sample[0]+=elcalc;
+      sample[1]+=elcalc;
     } else for (j=0; j<(size_t)object->sample->chan; j++) {
       element=intSinc(object->sample->data[j],object->periodN+8,object->periodD);
       
-      object->flow[j]=object->flow[j]+cutcalc*object->fband[j];
-      object->fhigh[j]=(element*calc)-object->flow[j]-rescalc*object->fband[j];
-      object->fband[j]=cutcalc*object->fhigh[j]+object->fband[j];
+      if (object->sample->filter) {
+        object->flow[j]=object->flow[j]+cutcalc*object->fband[j];
+        object->fhigh[j]=element-object->flow[j]-rescalc*object->fband[j];
+        object->fband[j]=cutcalc*object->fhigh[j]+object->fband[j];
+        
+        elcalc=(((object->sample->filter&1)?(object->flow[j]):(0))+
+                ((object->sample->filter&2)?(object->fhigh[j]):(0))+
+                ((object->sample->filter&4)?(object->fband[j]):(0)))*calc;
+      } else {
+        elcalc=element*calc;
+      }
       
-      sample[j]+=object->flow[j];
+      sample[j]+=elcalc;
     }
     object->periodD+=pitchcalc;
     object->periodN+=(int)object->periodD;

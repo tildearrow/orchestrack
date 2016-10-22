@@ -16,6 +16,10 @@ void Sampler::seMouseMove(int button) {
   hover(375,200,375+70,200+20,&secutS);
   hover(10,330,10+70,330+20,&seresS);
   
+  hover(446,372,446+64,372+40,&sfiltlS);
+  hover(520,372,520+64,372+40,&sfilthS);
+  hover(594,372,594+64,372+40,&sfiltbS);
+  
   kVolAmp->mouseMove(mouse.x,mouse.y);
   kVolCap->mouseMove(mouse.x,mouse.y);
   kPanAmp->mouseMove(mouse.x,mouse.y);
@@ -74,6 +78,16 @@ void Sampler::seMouseDown(int button) {
   }
   if (PointInRect(mouse.x,mouse.y,10,330,10+70,330+20)) {
     seresS=2;
+  }
+  
+  if (PointInRect(mouse.x,mouse.y,446,372,446+64,372+40)) {
+    sfiltlS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,520,372,520+64,372+40)) {
+    sfilthS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,594,372,594+64,372+40)) {
+    sfiltbS=2;
   }
   
   kVolAmp->mouseDown(mouse.x,mouse.y,button);
@@ -164,6 +178,25 @@ void Sampler::seMouseUp(int button) {
       showEnvSel=true;
       envSTarget=5;
       loadHIndex=s[curSample].envRes+1;
+    }
+  }
+  
+  if (sfiltlS!=1) {
+    sfiltlS=PointInRect(mouse.x,mouse.y,446,372,446+64,372+40);
+    if (sfiltlS) {
+      s[curSample].filter^=1;
+    }
+  }
+  if (sfilthS!=1) {
+    sfilthS=PointInRect(mouse.x,mouse.y,520,372,520+64,372+40);
+    if (sfilthS) {
+      s[curSample].filter^=2;
+    }
+  }
+  if (sfiltbS!=1) {
+    sfiltbS=PointInRect(mouse.x,mouse.y,594,372,594+64,372+40);
+    if (sfiltbS) {
+      s[curSample].filter^=4;
     }
   }
   
@@ -356,6 +389,55 @@ void Sampler::drawSampleEdit() {
   kResCap->setPos(84,360);
   kResCap->draw();
   f->draw(116,430,tempc,1,0,0,"Handicap");
+  
+  // not exactly envelope, but filter //
+  tempr.x=455;  tempr1.x=0;
+  tempr.y=330; tempr1.y=0;
+  tempr.w=275; tempr1.w=275;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,spathshort,&tempr1,&tempr);
+  switch (s[curSample].filter) {
+    case 0: f->draw((455+455+275)/2,330,tempc,1,0,0,"<-off->"); break;
+    case 1: f->draw((455+455+275)/2,330,tempc,1,0,0,"Low Pass"); break;
+    case 2: f->draw((455+455+275)/2,330,tempc,1,0,0,"High Pass"); break;
+    case 3: f->draw((455+455+275)/2,330,tempc,1,0,0,"Band Stop"); break;
+    case 4: f->draw((455+455+275)/2,330,tempc,1,0,0,"Band Pass"); break;
+    case 5: f->draw((455+455+275)/2,330,tempc,1,0,0,"Low+Band Pass"); break;
+    case 6: f->draw((455+455+275)/2,330,tempc,1,0,0,"High+Band Pass"); break;
+    case 7: f->draw((455+455+275)/2,330,tempc,1,0,0,"All Pass"); break;
+    default: f->draw((455+455+275)/2,330,tempc,1,0,0,""); break;
+  }
+  
+  // low
+  tempr.x=446;  tempr1.x=64*sfiltlS;
+  tempr.y=372; tempr1.y=0;
+  tempr.w=64; tempr1.w=64;
+  tempr.h=40;  tempr1.h=40;
+  SDL_RenderCopy(r,(s[curSample].filter&1)?(sfiltactive):(sfilt),&tempr1,&tempr);
+  f->draw(446+32,372+20,tempc,1,1,0,"Low");
+  
+  // high
+  tempr.x=520;  tempr1.x=64*sfilthS;
+  tempr.y=372; tempr1.y=0;
+  tempr.w=64; tempr1.w=64;
+  tempr.h=40;  tempr1.h=40;
+  SDL_RenderCopy(r,(s[curSample].filter&2)?(sfiltactive):(sfilt),&tempr1,&tempr);
+  f->draw(520+32,372+20,tempc,1,1,0,"High");
+  
+  // band
+  tempr.x=594;  tempr1.x=64*sfiltbS;
+  tempr.y=372; tempr1.y=0;
+  tempr.w=64; tempr1.w=64;
+  tempr.h=40;  tempr1.h=40;
+  SDL_RenderCopy(r,(s[curSample].filter&4)?(sfiltactive):(sfilt),&tempr1,&tempr);
+  f->draw(594+32,372+20,tempc,1,1,0,"Band");
+  
+  tempr.x=375; tempr1.x=70*seresS;
+  tempr.y=330; tempr1.y=0;
+  tempr.w=70;  tempr1.w=70;
+  tempr.h=20;  tempr1.h=20;
+  SDL_RenderCopy(r,senvsel,&tempr1,&tempr);
+  f->draw(410,330,tempc,1,0,0,"Filter");
   
   upDown();
 }
