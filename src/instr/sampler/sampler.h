@@ -81,6 +81,7 @@ class Sampler: public OTrackInstrument {
     int envVpi, envPpi, envPipi, envCpi, envRpi;
     int envVposN, envPposN, envPiposN, envCposN, envRposN;
     float envVposD, envPposD, envPiposD, envCposD, envRposD;
+    float flow[2], fhigh[2], fband[2];
     envl* envVol;
     envl* envPan;
     envl* envPitch;

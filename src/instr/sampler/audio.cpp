@@ -28,7 +28,7 @@ void Sampler::updateEnv(envl* envel, int* posN, float* posD, int* envpi, voice* 
 float* Sampler::getSample() {
   abusy=true;
   size_t i, j;
-  float calc, pitchcalc;
+  float calc, pitchcalc, cutcalc, rescalc;
   if (busy) {vResize(0); return sample;}
   float element;
   float val0, val1, timediff;
@@ -89,6 +89,11 @@ float* Sampler::getSample() {
         } else {
           v[thisv].envPitch=&e[v[thisv].sample->envPitch];
         }
+        if (v[thisv].sample->envCut==-1) {
+          v[thisv].envCut=NULL;
+        } else {
+          v[thisv].envCut=&e[v[thisv].sample->envCut];
+        }
       }
     }
     if ((ev[0]>>4)==0xe) {
@@ -137,17 +142,36 @@ float* Sampler::getSample() {
       timediff=object->envPitch->p[object->envPipi+1].time-object->envPitch->p[object->envPipi].time;
       pitchcalc=object->f*(1+object->sample->pitchAmt*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envPiposN)/timediff)))+object->sample->pitchCap);
     }
+    // cutoff
+    if (object->envCut==NULL) {
+      cutcalc=/*object->vol**/sin((pi*(object->sample->cutAmt+object->sample->cutCap))/2);
+      rescalc=1-object->sample->resAmt;
+    } else {
+      val0=object->envCut->p[object->envCpi].value;
+      val1=object->envCut->p[object->envCpi+1].value;
+      timediff=object->envCut->p[object->envCpi+1].time-object->envCut->p[object->envCpi].time;
+      cutcalc=/*object->vol**/sin(pi*(object->sample->cutAmt*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envCposN)/timediff)))+object->sample->cutCap)/2);
+      rescalc=1-object->sample->resAmt;
+    }
     if (object->sample->chan==1) {
       float elcalc;
       element=intSinc(object->sample->data[0],object->periodN+8,object->periodD);
       
       elcalc=element*calc;
-      sample[0]+=elcalc;
-      sample[1]+=elcalc;
+      object->flow[0]=object->flow[0]+cutcalc*object->fband[0];
+      object->fhigh[0]=elcalc-object->flow[0]-rescalc*object->fband[0];
+      object->fband[0]=cutcalc*object->fhigh[0]+object->fband[0];
+      
+      sample[0]+=object->flow[0]/*elcalc*/;
+      sample[1]+=object->flow[0]/*elcalc*/;
     } else for (j=0; j<(size_t)object->sample->chan; j++) {
       element=intSinc(object->sample->data[j],object->periodN+8,object->periodD);
       
-      sample[j]+=element*calc;
+      object->flow[j]=object->flow[j]+cutcalc*object->fband[j];
+      object->fhigh[j]=(element*calc)-object->flow[j]-rescalc*object->fband[j];
+      object->fband[j]=cutcalc*object->fhigh[j]+object->fband[j];
+      
+      sample[j]+=object->flow[j];
     }
     object->periodD+=pitchcalc;
     object->periodN+=(int)object->periodD;
@@ -164,6 +188,7 @@ float* Sampler::getSample() {
       }
     }
     updateEnv(object->envPitch,&object->envPiposN,&object->envPiposD,&object->envPipi,object);
+    updateEnv(object->envCut,&object->envCposN,&object->envCposD,&object->envCpi,object);
     
     if ((int)object->periodN>object->sample->len) {
       vErase(i); i--;
