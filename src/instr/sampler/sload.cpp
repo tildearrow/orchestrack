@@ -27,6 +27,7 @@ void Sampler::initSample(int which) {
   for (int i=8; i<128+8; i++) {
     s[which].data[0][i]=sin((((float)i-8)/128)*2*pi);
   }
+  s[which].filter=0;
   s[which].envVol=0;
   s[which].envPan=-1;
   s[which].envPitch=-1;

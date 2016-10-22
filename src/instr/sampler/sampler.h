@@ -48,6 +48,7 @@ class Sampler: public OTrackInstrument {
     int chan;
     char noteMin, noteMax;
     char velMin, velMax;
+    char filter;
     float rate;
     float** data;
     int loopStart;
