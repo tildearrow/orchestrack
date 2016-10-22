@@ -152,12 +152,15 @@ float* Sampler::getSample() {
     }
     object->periodD-=(int)object->periodD;
     
-    updateEnv(object->envVol,&object->envVposN,&object->envVposD,&object->envVpi,object);
-    updateEnv(object->envPitch,&object->envPiposN,&object->envPiposD,&object->envPipi,object);
-    if (object->envVpi==(object->envVol->pSize-1)) {
-      vErase(i); i--;
-      printf("end of envelope.\n");
+    if (object->envVol!=NULL) {
+      updateEnv(object->envVol,&object->envVposN,&object->envVposD,&object->envVpi,object);
+      if (object->envVpi==(object->envVol->pSize-1)) {
+        vErase(i); i--;
+        printf("end of envelope.\n");
+      }
     }
+    updateEnv(object->envPitch,&object->envPiposN,&object->envPiposD,&object->envPipi,object);
+    
     if ((int)object->periodN>object->sample->len) {
       vErase(i); i--;
     }
