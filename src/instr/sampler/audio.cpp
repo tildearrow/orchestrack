@@ -15,6 +15,10 @@ void Sampler::updateEnv(envl* envel, int* posN, float* posD, int* envpi, voice* 
         envpi[0]=envel->susStart;
       } else {
         envpi[0]++;
+        if (envpi[0]>=envel->pSize) {
+          envpi[0]=envel->pSize-1;
+          posN[0]=envel->p[envpi[0]].time-envel->p[envpi[0]-1].time;
+        }
       }
       posN[0]=0;
     }
@@ -126,12 +130,12 @@ float* Sampler::getSample() {
     }
     // pitch
     if (object->envPitch==NULL) {
-      pitchcalc=object->f*(object->sample->pitchAmt+object->sample->pitchCap);
+      pitchcalc=object->f*(1+object->sample->pitchCap);
     } else {
       val0=object->envPitch->p[object->envPipi].value;
       val1=object->envPitch->p[object->envPipi+1].value;
       timediff=object->envPitch->p[object->envPipi+1].time-object->envPitch->p[object->envPipi].time;
-      pitchcalc=object->vol*(object->sample->pitchAmt*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envPiposN)/timediff)))+object->sample->pitchCap);
+      pitchcalc=object->f*(1+object->sample->pitchAmt*(val0+((val1-val0)*(1.0f-(timediff-(float)object->envPiposN)/timediff)))+object->sample->pitchCap);
     }
     if (object->sample->chan==1) {
       float elcalc;
