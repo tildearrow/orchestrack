@@ -101,10 +101,10 @@ void Sampler::drawGrid() {
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_ADD);
   SDL_SetRenderDrawColor(r,255,255,255,32);
   for (size_t i=0; i<vSize; i++) {
-    tempr.x=v[i].note*5;
-    tempr.y=10;
+    tempr.x=52+v[i].note*5;
+    tempr.y=32;
     tempr.w=5;
-    tempr.h=340;
+    tempr.h=336;
     SDL_RenderFillRect(r,&tempr);
   }
   SDL_SetRenderDrawBlendMode(r,SDL_BLENDMODE_BLEND);
