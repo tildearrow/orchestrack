@@ -108,14 +108,14 @@ int Sampler::readDir(const char* path) {
     }
     clearList();
     for (int i=0; i<listings.size(); i++) {
-      int prefix=0;
+      int suffix=0;
       while (listings[i].size>=1024) {
         listings[i].size>>=10;
-	prefix++;
+	suffix++;
       }
       char* sizee;
       sizee=new char[21];
-      sprintf(sizee,"%d%c",listings[i].size,fPrefix[prefix]);
+      sprintf(sizee,"%d%c",listings[i].size,fSuffix[suffix]);
       switch (listings[i].type) {
         case 1: feedList(listings[i].name,"<fifo>",255,192,160,255); break; // fifo
         case 2: feedList(listings[i].name,"<char>",255,255,160,255); break; // character
