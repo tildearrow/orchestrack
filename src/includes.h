@@ -29,4 +29,5 @@
 typedef std::string string;
 const char sChromaNote[12]={'C','C','D','D','E','F','F','G','G','A','A','B'};
 const char sChromaSemitone[12]={'-','#','-','#','-','-','#','-','#','-','#','-'};
+const char fPrefix[9]={'\0','K','M','G','T','P','E','Z','Y'};
 #endif
