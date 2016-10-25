@@ -180,8 +180,49 @@ void Sampler::loadSample() {
   }
 }
 
+void Sampler::loadAction() {
+  if (showSampleSel) {
+    curSample=loadHIndex;
+    // volume knobs
+    kVolAmp->setOut(&s[curSample].volAmt);
+    kVolCap->setOut(&s[curSample].volCap);
+    // panning knobs
+    kPanAmp->setOut(&s[curSample].panAmt);
+    kPanCap->setOut(&s[curSample].panCap);
+    // pitch knobs
+    kPitchAmp->setOut(&s[curSample].pitchAmt);
+    kPitchCap->setOut(&s[curSample].pitchCap);
+    // cutoff knobs
+    kCutAmp->setOut(&s[curSample].cutAmt);
+    kCutCap->setOut(&s[curSample].cutCap);
+    // resonance knobs
+    kResAmp->setOut(&s[curSample].resAmt);
+    kResCap->setOut(&s[curSample].resCap);
+    // text fields
+    tSName->setOut(s[curSample].path);
+    showSampleSel=false;
+  } else if (showEnvSel) {
+    switch (envSTarget) {
+      case 0:
+        curEnv=loadHIndex;
+        tEName->setOut(e[curEnv].name);
+        break;
+      case 1: s[curSample].envVol=loadHIndex-1; break;
+      case 2: s[curSample].envPan=loadHIndex-1; break;
+      case 3: s[curSample].envPitch=loadHIndex-1; break;
+      case 4: s[curSample].envCut=loadHIndex-1; break;
+      case 5: s[curSample].envRes=loadHIndex-1; break;
+      default: printf("huh?\n");
+    }
+    showEnvSel=false;
+  } else {
+    loadSample();
+  }
+}
+
 void Sampler::loadMouseMove(int button) {
   hover(30,30,30+40,30+20,&supS);
+  hover(610,462,610+40,462+20,&slloadS);
   hover(660,462,660+50,462+20,&scancelS);
   listMouseMove(button);
 }
@@ -189,6 +230,9 @@ void Sampler::loadMouseMove(int button) {
 void Sampler::loadMouseDown(int button) {
   if (PointInRect(mouse.x,mouse.y,30,30,30+40,30+20)) {
     supS=2;
+  }
+  if (PointInRect(mouse.x,mouse.y,610,462,610+40,462+20)) {
+    slloadS=2;
   }
   if (PointInRect(mouse.x,mouse.y,660,462,660+50,462+20)) {
     scancelS=2;
@@ -232,7 +276,7 @@ void Sampler::drawLoadUI() {
   
   tempr.y=462; tempr1.y=0;
   
-  tempr.x=610; tempr1.x=0;
+  tempr.x=610; tempr1.x=40*slloadS;
   SDL_RenderCopy(r,sload,&tempr1,&tempr);
   
   tempr.x=660; tempr1.x=50*scancelS;

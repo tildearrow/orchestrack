@@ -78,6 +78,13 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
               showEnvSel=false;
             }
           }
+          if (slloadS!=1) {
+            slloadS=PointInRect(mouse.x,mouse.y,610,462,610+40,462+20);
+            if (slloadS) {
+              printf("load.\n");
+              loadAction();
+            }
+          }
         }
         break;
       }

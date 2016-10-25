@@ -144,7 +144,7 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* spathshort; int sevolS; int sepanS; int sepitchS; int secutS;
                            int seresS;
   SDL_Texture* senvsel;
-  SDL_Texture* sload; int sloadS; int supS; int seupS; int sedownS;
+  SDL_Texture* sload; int sloadS; int supS; int seupS; int sedownS; int slloadS;
   SDL_Texture* scancel; int scancelS;
   SDL_Texture* sloadform;
   SDL_Texture* slflist;
@@ -292,6 +292,7 @@ class Sampler: public OTrackInstrument {
   // loading functions //
   void initEnv(int which);
   void initSample(int which);
+  void loadAction();
   void loadSample();
   // list functions //
   void clearList();
