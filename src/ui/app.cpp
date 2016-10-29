@@ -46,7 +46,23 @@ int OTrackApp::loop() {
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
         case SDL_QUIT:
-        quit=true;
+          quit=true;
+        case SDL_MOUSEBUTTONUP:
+          testi->mouseEvent(1,e.button.button-1,e.button.x-bound.x,e.button.y-bound.y,0);
+          testi1->mouseEvent(1,e.button.button-1,e.button.x-bound1.x,e.button.y-bound1.y,0);
+          break;
+        case SDL_MOUSEBUTTONDOWN:
+          testi->mouseEvent(2,e.button.button-1,e.button.x-bound.x,e.button.y-bound.y,0);
+          testi1->mouseEvent(2,e.button.button-1,e.button.x-bound1.x,e.button.y-bound1.y,0);
+          break;
+        case SDL_MOUSEMOTION:
+          testi->mouseEvent(0,0,e.button.x-bound.x,e.button.y-bound.y,0);
+          testi1->mouseEvent(0,0,e.button.x-bound1.x,e.button.y-bound1.y,0);
+          break;
+        case SDL_MOUSEWHEEL:
+          testi->mouseEvent(3,0,e.wheel.x,e.wheel.y,0);
+          testi1->mouseEvent(3,0,e.wheel.x,e.wheel.y,0);
+          break;
       }
     }
     SDL_SetRenderDrawColor(r,0,0,0,255);
@@ -62,7 +78,7 @@ int OTrackApp::loop() {
     
     SDL_SetRenderTarget(r,NULL);
     SDL_RenderCopy(r,testt,NULL,&bound);
-    SDL_RenderCopy(r,testt,NULL,&bound1);
+    SDL_RenderCopy(r,testt1,NULL,&bound1);
     SDL_SetRenderDrawColor(r,255,255,255,255);
     SDL_RenderDrawPoint(r,count,20);
     count++;
