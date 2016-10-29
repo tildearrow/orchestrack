@@ -1,3 +1,6 @@
+#include "../includes.h"
+//#include "../instr/instr.h"
+
 struct OTrackEffect {
   int type, value;
 };
@@ -16,6 +19,11 @@ struct OTrackSong {
   std::vector<OTrackPat> pat;
 };
 
-class OTrackProject {
+struct OTrackPInstr {
+  //OTrackInstrument* i;
+};
 
+class OTrackProject {
+  std::vector<OTrackPInstr> ins;
+  std::vector<OTrackSong> song;
 };

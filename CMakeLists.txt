@@ -70,7 +70,7 @@ add_library(sampler STATIC
 add_executable(orchestrack src/ui/app.cpp src/ui/main.cpp)
 add_executable(sampler-sa src/instr/sampler/main.cpp)
 add_executable(sampler-bench src/instr/sampler/bench.cpp)
-target_link_libraries(orchestrack SDL2)
+target_link_libraries(orchestrack SDL2 sampler)
 target_link_libraries(gfx SDL2)
 target_link_libraries(sampler SDL2 SDL2_ttf gfx sndfile)
 if (HAVE_JACK)
