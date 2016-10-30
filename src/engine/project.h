@@ -20,10 +20,14 @@ struct OTrackSong {
 };
 
 struct OTrackPInstr {
-  //OTrackInstrument* i;
+  OTrackInstrument* i;
+  SDL_Texture* ui;
+  SDL_Rect bound;
+  bool inborder;
 };
 
 class OTrackProject {
-  std::vector<OTrackPInstr> ins;
-  std::vector<OTrackSong> song;
+  public:
+    std::vector<OTrackPInstr> ins;
+    std::vector<OTrackSong> song;
 };

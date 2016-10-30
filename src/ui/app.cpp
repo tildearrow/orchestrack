@@ -20,26 +20,73 @@ int OTrackApp::init() {
   
   // multi-instrument test!
   
-  testi=new Sampler;
-  if (!testi->init(0,2)) {
-    printf("no, sorry.\n"); return 1;
-  }
-  testt=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,740,512);
-  bound.x=0; bound.y=20; bound.w=740; bound.h=512;
-  SDL_SetTextureBlendMode(testt,SDL_BLENDMODE_BLEND);
-  testi->setRenderer(r);
+  p=new OTrackProject;
   
-  testi1=new Sampler;
-  if (!testi1->init(0,2)) {
+  p->ins.resize(1);
+  
+  p->ins[0].i=new Sampler;
+  if (!p->ins[0].i->init(0,2)) {
     printf("no, sorry.\n"); return 1;
   }
-  testt1=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,740,512);
-  bound1.x=500; bound1.y=40; bound1.w=740; bound1.h=512;
-  SDL_SetTextureBlendMode(testt1,SDL_BLENDMODE_BLEND);
-  testi1->setRenderer(r);
+  p->ins[0].ui=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,740,512);
+  p->ins[0].bound.x=30;
+  p->ins[0].bound.y=40;
+  p->ins[0].bound.w=740;
+  p->ins[0].bound.h=512;
+  SDL_SetTextureBlendMode(testt,SDL_BLENDMODE_BLEND);
+  p->ins[0].i->setRenderer(r);
   
   return 0;
 };
+
+void OTrackApp::drawUI() {
+  for (int i=0; i<p->ins.size(); i++) {
+    SDL_SetRenderTarget(r,p->ins[0].ui);
+    SDL_RenderClear(r);
+    p->ins[i].i->drawUI();
+  }
+    
+  SDL_SetRenderTarget(r,NULL);
+  for (int i=0; i<p->ins.size(); i++) {
+    SDL_SetRenderDrawColor(r,255,255,255,255);
+    bound=p->ins[0].bound;
+    bound.x--; bound.y--; bound.w+=2; bound.h+=2;
+    SDL_RenderDrawRect(r,&bound);
+    if (selWindow==i) {
+      SDL_SetRenderDrawColor(r,255,255,255,255);
+    } else {
+      SDL_SetRenderDrawColor(r,128,128,128,255);
+    }
+    bound.y-=24; bound.h=25;
+    SDL_RenderDrawRect(r,&bound);
+    SDL_RenderCopy(r,p->ins[0].ui,NULL,&p->ins[0].bound);
+  }
+    
+  SDL_RenderDrawPoint(r,count,20);
+  count++;
+}
+
+void OTrackApp::mouseUp(int button) {
+  for (int i=0; i<p->ins.size(); i++) {
+    p->ins[i].i->mouseEvent(1,button,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
+  }
+}
+
+void OTrackApp::mouseDown(int button) {
+  for (int i=0; i<p->ins.size(); i++) {
+    p->ins[i].i->mouseEvent(2,button,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
+  }
+}
+
+void OTrackApp::mouseMove() {
+  selWindow=-1;
+  for (int i=0; i<p->ins.size(); i++) {
+    if (PointInRect(mouse.x,mouse.y,p->ins[0].bound.x,p->ins[0].bound.y-24,p->ins[0].bound.x+p->ins[0].bound.w,p->ins[0].bound.y)) {
+      selWindow=i;
+    }
+    p->ins[i].i->mouseEvent(0,0,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
+  }
+}
 
 int OTrackApp::loop() {
   while (1) {
@@ -48,40 +95,30 @@ int OTrackApp::loop() {
         case SDL_QUIT:
           quit=true;
         case SDL_MOUSEBUTTONUP:
-          testi->mouseEvent(1,e.button.button-1,e.button.x-bound.x,e.button.y-bound.y,0);
-          testi1->mouseEvent(1,e.button.button-1,e.button.x-bound1.x,e.button.y-bound1.y,0);
+          mouse.x=e.button.x;
+          mouse.y=e.button.y;
+          mouse.b[e.button.button-1]=0;
+          mouseUp(e.button.button-1);
           break;
         case SDL_MOUSEBUTTONDOWN:
-          testi->mouseEvent(2,e.button.button-1,e.button.x-bound.x,e.button.y-bound.y,0);
-          testi1->mouseEvent(2,e.button.button-1,e.button.x-bound1.x,e.button.y-bound1.y,0);
+          mouse.x=e.button.x;
+          mouse.y=e.button.y;
+          mouse.b[e.button.button-1]=1;
+          mouseDown(e.button.button-1);
           break;
         case SDL_MOUSEMOTION:
-          testi->mouseEvent(0,0,e.button.x-bound.x,e.button.y-bound.y,0);
-          testi1->mouseEvent(0,0,e.button.x-bound1.x,e.button.y-bound1.y,0);
+          mouse.x=e.button.x;
+          mouse.y=e.button.y;
+          mouseMove();
           break;
         case SDL_MOUSEWHEEL:
-          testi->mouseEvent(3,0,e.wheel.x,e.wheel.y,0);
-          testi1->mouseEvent(3,0,e.wheel.x,e.wheel.y,0);
+          p->ins[0].i->mouseEvent(3,0,e.wheel.x,e.wheel.y,0);
           break;
       }
     }
     SDL_SetRenderDrawColor(r,0,0,0,255);
     SDL_RenderClear(r);
-    
-    SDL_SetRenderTarget(r,testt);
-    SDL_RenderClear(r);
-    testi->drawUI();
-    
-    SDL_SetRenderTarget(r,testt1);
-    SDL_RenderClear(r);
-    testi1->drawUI();
-    
-    SDL_SetRenderTarget(r,NULL);
-    SDL_RenderCopy(r,testt,NULL,&bound);
-    SDL_RenderCopy(r,testt1,NULL,&bound1);
-    SDL_SetRenderDrawColor(r,255,255,255,255);
-    SDL_RenderDrawPoint(r,count,20);
-    count++;
+    drawUI();
     SDL_RenderPresent(r);
     if (quit) {
       break;

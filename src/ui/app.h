@@ -8,12 +8,22 @@ class OTrackApp {
   SDL_Event e;
   bool quit;
   int count;
+  int selWindow;
   OTrackProject* p;
-  OTrackInstrument* testi;
-  OTrackInstrument* testi1;
   SDL_Texture* testt;
   SDL_Texture* testt1;
-  SDL_Rect bound, bound1;
+  SDL_Rect bound;
+  // mouse structure //
+  struct {
+    int x;
+    int y;
+    bool b[4];
+  } mouse;
+  // drawing functions //
+  void drawUI();
+  void mouseMove();
+  void mouseDown(int button);
+  void mouseUp(int button);
   public:
     int init();
     int loop();
