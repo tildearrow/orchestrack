@@ -6,9 +6,9 @@ class OTrackApp {
   SDL_Window* w;
   SDL_Renderer* r;
   SDL_Event e;
-  bool quit;
+  bool quit, windowDrag;
   int count;
-  int selWindow;
+  int selWindow, wDx, wDy;
   OTrackProject* p;
   SDL_Texture* testt;
   SDL_Texture* testt1;

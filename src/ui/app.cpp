@@ -67,22 +67,37 @@ void OTrackApp::drawUI() {
 }
 
 void OTrackApp::mouseUp(int button) {
+  if (windowDrag) {
+    windowDrag=false;
+  }
   for (int i=0; i<p->ins.size(); i++) {
     p->ins[i].i->mouseEvent(1,button,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
   }
 }
 
 void OTrackApp::mouseDown(int button) {
+  if (selWindow!=-1) {
+    windowDrag=true;
+    wDx=mouse.x-p->ins[selWindow].bound.x;
+    wDy=mouse.y-p->ins[selWindow].bound.y;
+  }
   for (int i=0; i<p->ins.size(); i++) {
     p->ins[i].i->mouseEvent(2,button,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
   }
 }
 
 void OTrackApp::mouseMove() {
-  selWindow=-1;
+  if (!windowDrag) {
+    selWindow=-1;
+  }
   for (int i=0; i<p->ins.size(); i++) {
-    if (PointInRect(mouse.x,mouse.y,p->ins[0].bound.x,p->ins[0].bound.y-24,p->ins[0].bound.x+p->ins[0].bound.w,p->ins[0].bound.y)) {
-      selWindow=i;
+    if (!windowDrag) {
+      if (PointInRect(mouse.x,mouse.y,p->ins[0].bound.x,p->ins[0].bound.y-24,p->ins[0].bound.x+p->ins[0].bound.w,p->ins[0].bound.y)) {
+        selWindow=i;
+      }
+    } else {
+      p->ins[selWindow].bound.x=mouse.x-wDx;
+      p->ins[selWindow].bound.y=mouse.y-wDy;
     }
     p->ins[i].i->mouseEvent(0,0,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
   }
