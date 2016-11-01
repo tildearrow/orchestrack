@@ -6,7 +6,8 @@ int OTrackApp::init() {
   SDL_Init(SDL_INIT_VIDEO);
   TTF_Init();
   
-  w=SDL_CreateWindow("orchestrack",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1280,800,0);
+  dw=1280; dh=800;
+  w=SDL_CreateWindow("orchestrack",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,dw,dh,SDL_WINDOW_RESIZABLE);
   if (w==NULL) {
     fprintf(stderr,"error: unable to create window: %s\n",SDL_GetError());
     return 1;
@@ -17,6 +18,19 @@ int OTrackApp::init() {
     fprintf(stderr,"error: unable to create renderer: %s\n",SDL_GetError());
     return 1;
   }
+  
+  // load font
+  f=new font;
+  f->setrenderer(r);
+  #ifdef __ANDROID__
+  f->load("/system/fonts/Roboto-Regular.ttf",16);
+  #elif __linux__
+  f->load("/usr/share/fonts/TTF/Ubuntu-R.ttf",16);
+  #elif __APPLE__
+  f->load("/System/Library/Fonts/Helvetica.dfont",16);
+  #elif _WIN32
+  f->load("C:\\Windows\\Fonts\\segoeui.ttf",16);
+  #endif
   
   // multi-instrument test!
   
@@ -39,9 +53,27 @@ int OTrackApp::init() {
   return 0;
 };
 
+void OTrackApp::drawTopBar() {
+  tempc.r=255; tempc.g=255; tempc.b=255; tempc.a=255;
+  // menu bar //
+  // 2x2 margin.
+  // first element is 32 pixels wide (for now)
+  // and top bar has a height of 20. with margin, 22.
+  // this currently looks ugly, but it'll be improved soon.
+  f->draw(16+2,2,tempc,1,0,0,"File");
+  SDL_SetRenderDrawColor(r,255,255,255,255);
+  SDL_RenderDrawLine(r,0,22,dw,22);
+  // main toolbar //
+  // toolbar is 40 pixels tall.
+  SDL_RenderDrawLine(r,0,62,dw,62);
+}
+
 void OTrackApp::drawUI() {
+  drawTopBar();
+  
   for (int i=0; i<p->ins.size(); i++) {
     SDL_SetRenderTarget(r,p->ins[0].ui);
+    SDL_SetRenderDrawColor(r,0,0,0,255);
     SDL_RenderClear(r);
     p->ins[i].i->drawUI();
   }
@@ -128,6 +160,14 @@ int OTrackApp::loop() {
           break;
         case SDL_MOUSEWHEEL:
           p->ins[0].i->mouseEvent(3,0,e.wheel.x,e.wheel.y,0);
+          break;
+        case SDL_WINDOWEVENT:
+          switch (e.window.event) {
+            case SDL_WINDOWEVENT_RESIZED:
+              dw=e.window.data1;
+              dh=e.window.data2;
+              break;
+          }
           break;
       }
     }
