@@ -34,21 +34,22 @@ int OTrackApp::init() {
   
   // multi-instrument test!
   
-  p=new OTrackProject;
+  p=new OTrackEngine;
+  p->init();
   
-  p->ins.resize(1);
+  p->p.ins.resize(1);
   
-  p->ins[0].i=new Sampler;
-  if (!p->ins[0].i->init(0,2)) {
+  p->p.ins[0].i=new Sampler;
+  if (!p->p.ins[0].i->init(0,2)) {
     printf("no, sorry.\n"); return 1;
   }
-  p->ins[0].ui=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,740,512);
-  p->ins[0].bound.x=30;
-  p->ins[0].bound.y=40;
-  p->ins[0].bound.w=740;
-  p->ins[0].bound.h=512;
+  p->p.ins[0].ui=SDL_CreateTexture(r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,740,512);
+  p->p.ins[0].bound.x=30;
+  p->p.ins[0].bound.y=40;
+  p->p.ins[0].bound.w=740;
+  p->p.ins[0].bound.h=512;
   SDL_SetTextureBlendMode(testt,SDL_BLENDMODE_BLEND);
-  p->ins[0].i->setRenderer(r);
+  p->p.ins[0].i->setRenderer(r);
   
   return 0;
 };
@@ -71,17 +72,17 @@ void OTrackApp::drawTopBar() {
 void OTrackApp::drawUI() {
   drawTopBar();
   
-  for (int i=0; i<p->ins.size(); i++) {
-    SDL_SetRenderTarget(r,p->ins[0].ui);
+  for (int i=0; i<p->p.ins.size(); i++) {
+    SDL_SetRenderTarget(r,p->p.ins[0].ui);
     SDL_SetRenderDrawColor(r,0,0,0,255);
     SDL_RenderClear(r);
-    p->ins[i].i->drawUI();
+    p->p.ins[i].i->drawUI();
   }
     
   SDL_SetRenderTarget(r,NULL);
-  for (int i=0; i<p->ins.size(); i++) {
+  for (int i=0; i<p->p.ins.size(); i++) {
     SDL_SetRenderDrawColor(r,255,255,255,255);
-    bound=p->ins[0].bound;
+    bound=p->p.ins[0].bound;
     bound.x--; bound.y--; bound.w+=2; bound.h+=2;
     SDL_RenderDrawRect(r,&bound);
     if (selWindow==i) {
@@ -91,7 +92,7 @@ void OTrackApp::drawUI() {
     }
     bound.y-=24; bound.h=25;
     SDL_RenderDrawRect(r,&bound);
-    SDL_RenderCopy(r,p->ins[0].ui,NULL,&p->ins[0].bound);
+    SDL_RenderCopy(r,p->p.ins[0].ui,NULL,&p->p.ins[0].bound);
   }
     
   SDL_RenderDrawPoint(r,count,20);
@@ -102,19 +103,19 @@ void OTrackApp::mouseUp(int button) {
   if (windowDrag) {
     windowDrag=false;
   }
-  for (int i=0; i<p->ins.size(); i++) {
-    p->ins[i].i->mouseEvent(1,button,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
+  for (int i=0; i<p->p.ins.size(); i++) {
+    p->p.ins[i].i->mouseEvent(1,button,mouse.x-p->p.ins[0].bound.x,mouse.y-p->p.ins[0].bound.y,0);
   }
 }
 
 void OTrackApp::mouseDown(int button) {
   if (selWindow!=-1) {
     windowDrag=true;
-    wDx=mouse.x-p->ins[selWindow].bound.x;
-    wDy=mouse.y-p->ins[selWindow].bound.y;
+    wDx=mouse.x-p->p.ins[selWindow].bound.x;
+    wDy=mouse.y-p->p.ins[selWindow].bound.y;
   }
-  for (int i=0; i<p->ins.size(); i++) {
-    p->ins[i].i->mouseEvent(2,button,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
+  for (int i=0; i<p->p.ins.size(); i++) {
+    p->p.ins[i].i->mouseEvent(2,button,mouse.x-p->p.ins[0].bound.x,mouse.y-p->p.ins[0].bound.y,0);
   }
 }
 
@@ -122,16 +123,16 @@ void OTrackApp::mouseMove() {
   if (!windowDrag) {
     selWindow=-1;
   }
-  for (int i=0; i<p->ins.size(); i++) {
+  for (int i=0; i<p->p.ins.size(); i++) {
     if (!windowDrag) {
-      if (PointInRect(mouse.x,mouse.y,p->ins[0].bound.x,p->ins[0].bound.y-24,p->ins[0].bound.x+p->ins[0].bound.w,p->ins[0].bound.y)) {
+      if (PointInRect(mouse.x,mouse.y,p->p.ins[0].bound.x,p->p.ins[0].bound.y-24,p->p.ins[0].bound.x+p->p.ins[0].bound.w,p->p.ins[0].bound.y)) {
         selWindow=i;
       }
     } else {
-      p->ins[selWindow].bound.x=mouse.x-wDx;
-      p->ins[selWindow].bound.y=mouse.y-wDy;
+      p->p.ins[selWindow].bound.x=mouse.x-wDx;
+      p->p.ins[selWindow].bound.y=mouse.y-wDy;
     }
-    p->ins[i].i->mouseEvent(0,0,mouse.x-p->ins[0].bound.x,mouse.y-p->ins[0].bound.y,0);
+    p->p.ins[i].i->mouseEvent(0,0,mouse.x-p->p.ins[0].bound.x,mouse.y-p->p.ins[0].bound.y,0);
   }
 }
 
@@ -159,7 +160,7 @@ int OTrackApp::loop() {
           mouseMove();
           break;
         case SDL_MOUSEWHEEL:
-          p->ins[0].i->mouseEvent(3,0,e.wheel.x,e.wheel.y,0);
+          p->p.ins[0].i->mouseEvent(3,0,e.wheel.x,e.wheel.y,0);
           break;
         case SDL_WINDOWEVENT:
           switch (e.window.event) {

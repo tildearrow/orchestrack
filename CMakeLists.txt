@@ -67,7 +67,7 @@ add_library(sampler STATIC
   src/instr/sampler/envsel.cpp
   src/instr/sampler/list.cpp
   src/instr/sampler/sampler.cpp)
-add_executable(orchestrack src/ui/app.cpp src/ui/main.cpp)
+add_executable(orchestrack src/engine/engine.cpp src/ui/app.cpp src/ui/main.cpp)
 add_executable(sampler-sa src/instr/sampler/main.cpp)
 add_executable(sampler-bench src/instr/sampler/bench.cpp)
 target_link_libraries(orchestrack SDL2 sampler)

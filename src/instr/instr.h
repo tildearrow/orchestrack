@@ -1,5 +1,6 @@
 #include "../includes.h"
-
+#ifndef _INSTR_H
+#define _INSTR_H
 // Instrument specification.
 struct OTrackInsSpec {
   const char* name;
@@ -32,3 +33,4 @@ class OTrackInstrument {
     virtual void textEvent(char* data);
     virtual bool init(int inChannels, int outChannels);
 };
+#endif

@@ -1,7 +1,7 @@
 #include "../includes.h"
 #include "../font/font.h"
 #include "../instr/sampler/sampler.h"
-#include "../engine/project.h"
+#include "../engine/engine.h"
 
 class OTrackApp {
   SDL_Window* w;
@@ -13,7 +13,7 @@ class OTrackApp {
   int count;
   int selWindow, wDx, wDy;
   int dw, dh;
-  OTrackProject* p;
+  OTrackEngine* p;
   SDL_Texture* testt;
   SDL_Texture* testt1;
   SDL_Rect bound;

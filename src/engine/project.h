@@ -1,5 +1,5 @@
 #include "../includes.h"
-//#include "../instr/instr.h"
+#include "../instr/instr.h"
 
 struct OTrackEffect {
   int type, value;
