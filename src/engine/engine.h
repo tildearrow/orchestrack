@@ -5,7 +5,12 @@
 // for an easier to use interface, see liborchestra.
 // (but not yet)
 class OTrackEngine {
-  std::queue<void*>* midi;
+  std::queue<void*>* mi;
+  std::queue<void*>* mo;
+  float* si;
+  float* so;
+  int sichans, sochans;
+  int michans, mochans;
   public:
     OTrackProject p;
     // Initialize the engine. Should be called
@@ -13,11 +18,12 @@ class OTrackEngine {
     int init();
     // Set the sample rate.
     int setRate(int rate);
-    // Add an input/output channel to the engine.
-    int addChannel(bool input, bool midi);
+    // Add an input/output audio channel to the engine.
+    int addChannel(bool input);
+    // Add an input/output MIDI channel to the engine.
+    int addMChannel(bool input);
     // Retrieve a pointer to next audio sample,
-    // ordered by channels. A MIDI channel will
-    // be represented with NaN.
+    // ordered by channels.
     float* getSample();
     // Upload a sample to the engine.
     // Returns whether operation was successful.
