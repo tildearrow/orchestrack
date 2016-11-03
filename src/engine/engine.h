@@ -22,6 +22,12 @@ class OTrackEngine {
     int addChannel(bool input);
     // Add an input/output MIDI channel to the engine.
     int addMChannel(bool input);
+
+    // NOTE ABOUT GET/PUT FUNCTIONS //
+    // Your program shall put MIDI events	 first (if any), followed by putting
+    // samples. Then you can do getSample. This is because all the main audio
+    // code happens in getSample.
+
     // Retrieve a pointer to next audio sample,
     // ordered by channels.
     float* getSample();
