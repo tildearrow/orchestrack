@@ -13,6 +13,7 @@ class OTrackApp {
   int count;
   int selWindow, wDx, wDy;
   int dw, dh;
+  int curView;
   OTrackEngine* p;
   SDL_Texture* testt;
   SDL_Texture* testt1;
@@ -25,6 +26,9 @@ class OTrackApp {
   } mouse;
   // drawing functions //
   void drawTopBar();
+  void drawWorkspace();
+  void drawPatchbay();
+  void drawPattern();
   void drawUI();
   void mouseMove();
   void mouseDown(int button);

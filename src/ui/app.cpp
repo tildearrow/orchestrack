@@ -2,6 +2,7 @@
 
 int OTrackApp::init() {
   quit=false;
+  curView=0;
   
   SDL_Init(SDL_INIT_VIDEO);
   TTF_Init();
@@ -69,9 +70,10 @@ void OTrackApp::drawTopBar() {
   SDL_RenderDrawLine(r,0,62,dw,62);
 }
 
-void OTrackApp::drawUI() {
-  drawTopBar();
-  
+void OTrackApp::drawPattern() {
+}
+
+void OTrackApp::drawWorkspace() {
   for (int i=0; i<p->p.ins.size(); i++) {
     SDL_SetRenderTarget(r,p->p.ins[0].ui);
     SDL_SetRenderDrawColor(r,0,0,0,255);
@@ -93,6 +95,19 @@ void OTrackApp::drawUI() {
     bound.y-=24; bound.h=25;
     SDL_RenderDrawRect(r,&bound);
     SDL_RenderCopy(r,p->p.ins[0].ui,NULL,&p->p.ins[0].bound);
+  }
+}
+
+void OTrackApp::drawPatchbay() {
+}
+
+void OTrackApp::drawUI() {
+  drawTopBar();
+  
+  switch (curView) {
+    case 0: drawPattern(); break;
+    case 1: drawWorkspace(); break;
+    case 2: drawPatchbay(); break;
   }
     
   SDL_RenderDrawPoint(r,count,20);
