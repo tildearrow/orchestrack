@@ -1,4 +1,13 @@
 #include "app.h"
+int OTrackApp::audio(jack_nframes_t len, void* arg) {
+  OTrackApp* a=(OTrackApp*)arg;
+  float* s[2];
+  for (int i=0; i<2; i++) {
+    s[i]=(float*)jack_port_get_buffer(a->ao[i],len);
+  }
+  s[0][0]=1;
+  return 0;
+}
 
 int OTrackApp::init() {
   quit=false;
@@ -33,10 +42,27 @@ int OTrackApp::init() {
   f->load("C:\\Windows\\Fonts\\segoeui.ttf",16);
   #endif
   
-  // multi-instrument test!
+  // audio init
+  ac=jack_client_open("otrack",JackNoStartServer,&as,NULL);
+  
+  if (ac==NULL) {
+    printf("failed to init audio!\n");
+    return 1;
+  }
+  
+  jack_set_process_callback(ac,audio,this);
   
   p=new OTrackEngine;
   p->init();
+  
+  // ports
+  ao=new jack_port_t*[2];
+  
+  // 2 for now.
+  ao[0]=jack_port_register(ac,"port0",JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);
+  p->addChannel(false);
+  ao[1]=jack_port_register(ac,"port1",JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);
+  p->addChannel(false);
   
   p->p.ins.resize(1);
   
@@ -52,8 +78,22 @@ int OTrackApp::init() {
   SDL_SetTextureBlendMode(testt,SDL_BLENDMODE_BLEND);
   p->p.ins[0].i->setRenderer(r);
   
+  jack_activate(ac);
+  
   return 0;
 };
+
+SDL_Rect OTrackApp::mR(int x, int y, int w, int h) {
+  SDL_Rect ret;
+  ret.x=x; ret.y=y; ret.w=w; ret.h=h;
+  return ret;
+}
+
+SDL_Color OTrackApp::mC(int r, int g, int b, int a) {
+  SDL_Color ret;
+  ret.r=r; ret.g=g; ret.b=b; ret.a=a;
+  return ret;
+}
 
 void OTrackApp::drawTopBar() {
   tempc.r=255; tempc.g=255; tempc.b=255; tempc.a=255;
@@ -68,6 +108,10 @@ void OTrackApp::drawTopBar() {
   // main toolbar //
   // toolbar is 40 pixels tall.
   SDL_RenderDrawLine(r,0,62,dw,62);
+  // view icons
+  SDL_RenderDrawLine(r,39,22,39,62);
+  SDL_RenderDrawLine(r,79,22,79,62);
+  SDL_RenderDrawLine(r,119,22,119,62);
 }
 
 void OTrackApp::drawPattern() {
