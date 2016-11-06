@@ -5,6 +5,7 @@
 // for an easier to use interface, see liborchestra.
 // (but not yet)
 class OTrackEngine {
+  int iii;
   std::queue<void*>* mi;
   std::queue<void*>* mo;
   float* si;

@@ -2,10 +2,15 @@
 int OTrackApp::audio(jack_nframes_t len, void* arg) {
   OTrackApp* a=(OTrackApp*)arg;
   float* s[2];
+  float* rs;
   for (int i=0; i<2; i++) {
     s[i]=(float*)jack_port_get_buffer(a->ao[i],len);
   }
-  s[0][0]=1;
+  for (int i=0; i<len; i++) {
+    rs=a->p->getSample();
+    s[0][i]=rs[0];
+    s[1][i]=rs[1];
+  }
   return 0;
 }
 
