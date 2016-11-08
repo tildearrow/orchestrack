@@ -154,5 +154,4 @@ unsigned char* Sampler::saveState(int* size) {
   }
   fclose(fi);
   return ret;
-  // TODO: sizes, and actually saving. good night.
 }
