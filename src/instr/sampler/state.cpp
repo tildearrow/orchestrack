@@ -11,6 +11,8 @@ bool Sampler::loadState(FILE* data) {
 
 unsigned char* Sampler::saveState(int* size) {
   FILE* fi;
+  int siz;
+  unsigned char* ret;
   if (!(fi=tmpfile())) {
     return NULL;
   }
@@ -19,6 +21,7 @@ unsigned char* Sampler::saveState(int* size) {
   fputc('e',fi);
   fputc('a',fi);
   fputc('d',fi);
+  fputi(20,fi); // size
   // see doc/instr/dev/format.md
   fputc(0,fi); // audio in
   fputc(2,fi); // audio out (for now)
@@ -128,5 +131,14 @@ unsigned char* Sampler::saveState(int* size) {
       fputf(0.0f,fi);
     }
   }
+  siz=ftell(fi);
+  ret=new unsigned char[siz];
+  fseek(fi,0,SEEK_SET);
+  fread(ret,1,siz,fi);
+  if (size!=NULL) {
+    *size=siz;
+  }
+  fclose(fi);
+  return ret;
   // TODO: sizes, and actually saving. good night.
 }
