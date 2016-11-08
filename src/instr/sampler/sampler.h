@@ -39,6 +39,7 @@ class Sampler: public OTrackInstrument {
     bool susLoop;
     char relMode;
     bool sync;
+    bool persistent;
     string* name;
   };
   // sample structure //

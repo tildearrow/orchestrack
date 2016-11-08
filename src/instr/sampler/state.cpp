@@ -99,7 +99,6 @@ unsigned char* Sampler::saveState(int* size) {
     fputi(s[i].len,fi);
     fputi(s[i].chan,fi);
     // TODO:
-    // - flags
     // - remote flag
     fputi(0,fi);
     // sample data
@@ -128,7 +127,7 @@ unsigned char* Sampler::saveState(int* size) {
     fputi(e[i].loopStart,fi);
     fputi(e[i].loopEnd,fi);
     fputi(65536,fi); // precision
-    fputi(e[i].start,fi); // TODO: flags
+    fputi((e[i].relMode<<2)|(e[i].persistent<<1)|(e[i].sync),fi);
     fputi(e[i].pSize,fi); // point count
     // points
     for (int j=0; j<e[i].pSize; j++) {
