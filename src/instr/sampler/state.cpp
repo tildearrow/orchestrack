@@ -11,7 +11,7 @@ bool Sampler::loadState(FILE* data) {
 
 unsigned char* Sampler::saveState(int* size) {
   FILE* fi;
-  int siz;
+  int siz, siztw;
   unsigned char* ret;
   if (!(fi=tmpfile())) {
     return NULL;
@@ -51,6 +51,7 @@ unsigned char* Sampler::saveState(int* size) {
     fputc('p',fi);
     fputc('s',fi);
     fputi(0,fi); // skip for now, size will be written later
+    siz=ftell(fi);
     fputi(i,fi); // number
     fputs(s[i].path->c_str(),fi); // name
     fputf(s[i].rate,fi); // rate
@@ -105,6 +106,11 @@ unsigned char* Sampler::saveState(int* size) {
     for (int j=0; j<(s[i].len*s[i].chan); j++) {
       fputf(s[i].data[j%s[i].chan][j/s[i].chan],fi);
     }
+    // write size
+    siztw=ftell(fi)-siz;
+    fseek(fi,siz-4,SEEK_SET);
+    fputi(siztw,fi);
+    fseek(fi,0,SEEK_END);
   }
   // envelopes //
   for (int i=0; i<eSize; i++) {
@@ -113,6 +119,7 @@ unsigned char* Sampler::saveState(int* size) {
     fputc('p',fi);
     fputc('e',fi);
     fputi(0,fi); // skip for now, size will be written later
+    siz=ftell(fi);
     fputi(i,fi); // number
     fputs(e[i].name->c_str(),fi); // name
     fputi(e[i].start,fi);
@@ -130,8 +137,15 @@ unsigned char* Sampler::saveState(int* size) {
       fputi(0,fi);
       fputf(0.0f,fi);
     }
+    // write size
+    siztw=ftell(fi)-siz;
+    fseek(fi,siz-4,SEEK_SET);
+    fputi(siztw,fi);
+    fseek(fi,0,SEEK_END);
   }
   siz=ftell(fi);
+  fseek(fi,4,SEEK_SET);
+  fputi(siz,fi);
   ret=new unsigned char[siz];
   fseek(fi,0,SEEK_SET);
   fread(ret,1,siz,fi);
