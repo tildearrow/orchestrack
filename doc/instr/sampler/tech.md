@@ -60,7 +60,7 @@ This document contains information about Sampler's state format, and its samplin
  int   | sample length
  int   | sample channels
  int   | flags, see below
- uchar | sample data, as unsigned char[length*channels], or sample path, as C
+ float | sample data, as float[length*channels], or sample path, as C
        | string, if remote flag is on
 
 ##### Sample flags
