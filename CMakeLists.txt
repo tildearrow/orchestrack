@@ -53,6 +53,7 @@ add_library(sampler STATIC
   src/instr/sampler/audio.cpp
   src/instr/sampler/interp.cpp
   src/instr/sampler/envedit.cpp
+  src/instr/sampler/summary.cpp
   src/instr/sampler/grid.cpp
   src/instr/sampler/smpedit.cpp
   src/instr/sampler/state.cpp

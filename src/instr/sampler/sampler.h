@@ -90,6 +90,10 @@ class Sampler: public OTrackInstrument {
     envl* envCut;
     envl* envRes;
   };
+  // global parameters //
+  float volume;
+  float panning;
+  float pitch;
   // mouse structure //
   struct {
     int x;

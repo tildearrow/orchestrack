@@ -144,10 +144,6 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   fc=0;
 }
 
-void Sampler::drawSummary() {
-  
-}
-
 void Sampler::drawUI() {
   int ftime;
   ftime=SDL_GetPerformanceCounter();
@@ -275,6 +271,8 @@ bool Sampler::init(int inChannels, int outChannels) {
     selRegion=-1;
     gridGrab=0;
     pMenuSel=-1;
+    volume=0.25;
+    panning=0;
     busy=false;
     return true;
   } else {

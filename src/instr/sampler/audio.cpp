@@ -216,8 +216,8 @@ float* Sampler::getSample() {
     }
   }
   
-  sample[0]=sample[0]/4;
-  sample[1]=sample[1]/4;
+  sample[0]=sample[0]*volume;
+  sample[1]=sample[1]*volume;
   abusy=false;
   return sample;
 }
