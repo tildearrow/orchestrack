@@ -164,6 +164,9 @@ class Sampler: public OTrackInstrument {
   SDL_Texture* sselect; int sselectS;
   // knobs //
   OTrackKnob* testk;
+  OTrackKnob* kVol;
+  OTrackKnob* kPan;
+  OTrackKnob* kPitch;
   OTrackKnob* kVolAmp;
   OTrackKnob* kVolCap;
   OTrackKnob* kPanAmp;

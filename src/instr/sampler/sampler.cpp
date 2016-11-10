@@ -91,6 +91,16 @@ void Sampler::setRenderer(SDL_Renderer* renderer) {
   testk=new OTrackKnob(r,32,0,255,0);
   testk->setOut(&s[0].volAmt);
   testk->setRange(0.0,1.0,1.0);
+  // global param knobs
+  kVol=new OTrackKnob(r,32,0,255,0);
+  kVol->setOut(&volume);
+  kVol->setRange(0.0,1.0,0.25);
+  kPan=new OTrackKnob(r,32,0,255,255);
+  kPan->setOut(&panning);
+  kPan->setRange(-1.0,1.0,0.0);
+  kPitch=new OTrackKnob(r,32,255,255,0);
+  kPitch->setOut(&pitch);
+  kPitch->setRange(0.25,4.0,1.0);
   // volume knobs
   kVolAmp=new OTrackKnob(r,32,0,255,0);
   kVolAmp->setOut(&s[0].volAmt);
