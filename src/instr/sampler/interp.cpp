@@ -1,15 +1,24 @@
 #include "sampler.h"
 
-float Sampler::intNone(float* b, int n, float d) {
+float Sampler::intNone(float* b, int n, float d, float delta) {
   return b[n];
 }
 
-float Sampler::intLinear(float* b, int n, float d) {
+// higher quality no-interpolation algorithm
+float Sampler::intINearest(float* b, int n, float d, float delta) {
+  if ((d-delta)<0 && (delta<1)) {
+    return b[n]+(b[n-1]-b[n])*(delta-d);
+  } else {
+    return b[n];
+  }
+}
+
+float Sampler::intLinear(float* b, int n, float d, float delta) {
   return b[n]+((b[n+1]-b[n])*d);
 }
 
 // slightly modified version of http://www.musicdsp.org/showone.php?id=49
-float Sampler::intCubic(float* b, int n, float d) {
+float Sampler::intCubic(float* b, int n, float d, float delta) {
   float a, bb, c;
   a=(3*(b[n]-b[n+1])-b[n-1]+b[n+2])/2;
   bb=2*b[n+1]+b[n-1]-(5*b[n]+b[n+2])/2;
@@ -17,7 +26,7 @@ float Sampler::intCubic(float* b, int n, float d) {
   return (((a*d)+bb)*d+c)*d+b[n];
 }
 
-float Sampler::intSinc(float* b, int n, float d) {
+float Sampler::intSinc(float* b, int n, float d, float delta) {
   int pl;
   float* where;
   pl=((int)(d*65536))&0xffff;

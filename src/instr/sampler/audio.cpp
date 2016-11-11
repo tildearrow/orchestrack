@@ -158,7 +158,7 @@ float* Sampler::getSample() {
       }
     }
     if (object->sample->chan==1) {
-      element=intSinc(object->sample->data[0],object->periodN+8,object->periodD);
+      element=intSinc(object->sample->data[0],object->periodN+8,object->periodD,object->f);
 
       if (object->sample->filter) {
         object->flow[0]=object->flow[0]+cutcalc*object->fband[0];
@@ -174,7 +174,7 @@ float* Sampler::getSample() {
       sample[0]+=elcalc;
       sample[1]+=elcalc;
     } else for (j=0; j<(size_t)object->sample->chan; j++) {
-      element=intSinc(object->sample->data[j],object->periodN+8,object->periodD);
+      element=intSinc(object->sample->data[j],object->periodN+8,object->periodD,object->f);
       
       if (object->sample->filter) {
         object->flow[j]=object->flow[j]+cutcalc*object->fband[j];
