@@ -4,6 +4,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
   switch (type) {
     case 0:
       mouse.x=x; mouse.y=y;
+      if (curView==0) {
+        sumMouseMove(button);
+      }
       if (curView==1) {
         grMouseMove(button);
       }
@@ -31,6 +34,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
       }
       if (PointInRect(mouse.x,mouse.y,557,482,557+175,482+20)) {
         curView=3;
+      }
+      if (curView==0) {
+        sumMouseDown(button);
       }
       if (curView==1) {
         grMouseDown(button);
@@ -87,6 +93,9 @@ void Sampler::mouseEvent(int type, int button, int x, int y, int finger) {
           }
         }
         break;
+      }
+      if (curView==0) {
+        sumMouseUp(button);
       }
       if (curView==1) {
         grMouseUp(button);

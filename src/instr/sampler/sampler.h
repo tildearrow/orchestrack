@@ -288,6 +288,9 @@ class Sampler: public OTrackInstrument {
   void loadMouseDown(int button);
   void loadMouseUp(int button);
   void loadMouseMove(int button);
+  void sumMouseDown(int button);
+  void sumMouseUp(int button);
+  void sumMouseMove(int button);
   void grMouseDown(int button);
   void grMouseUp(int button);
   void grMouseMove(int button);
