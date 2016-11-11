@@ -26,8 +26,8 @@
 #define pi 3.141592653589
 #define PointInRect(x, y, x1, y1, x2, y2)\
   (x>x1 && x<x2 && y>y1 && y<y2)?(1):(0)
-#define panl(x) (x>0)?(1-x):(1)
-#define panr(x) (x<0)?(1+x):(1)
+#define panl(x) ((x>0)?(1-x):(1))
+#define panr(x) ((x<0)?(1+x):(1))
 typedef std::string string;
 const char sChromaNote[12]={'C','C','D','D','E','F','F','G','G','A','A','B'};
 const char sChromaSemitone[12]={'-','#','-','#','-','-','#','-','#','-','#','-'};
