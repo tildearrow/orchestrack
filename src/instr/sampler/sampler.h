@@ -98,7 +98,7 @@ class Sampler: public OTrackInstrument {
   struct {
     int x;
     int y;
-    bool b[4];
+    bool b[32];
   } mouse;
   // directory entry structure //
   struct dentry {
