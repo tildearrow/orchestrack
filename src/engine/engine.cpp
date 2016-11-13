@@ -13,6 +13,7 @@ int OTrackEngine::init() {
   mo=new std::queue<void*>[256];
   michans=0;
   mochans=0;
+  iii=0;
 }
 
 int OTrackEngine::addChannel(bool input) {
