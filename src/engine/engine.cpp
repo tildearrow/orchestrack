@@ -14,6 +14,7 @@ int OTrackEngine::init() {
   michans=0;
   mochans=0;
   iii=0;
+  return 1;
 }
 
 int OTrackEngine::addChannel(bool input) {
