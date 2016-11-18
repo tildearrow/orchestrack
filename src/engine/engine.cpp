@@ -11,6 +11,10 @@ int OTrackEngine::init() {
   }
   mi=new std::queue<void*>[256];
   mo=new std::queue<void*>[256];
+  me=new unsigned char*[4096]; // should be enough
+  for (int i=0; i<4096; i++) {
+    me[i]=new unsigned char[16]; // should be enough
+  }
   michans=0;
   mochans=0;
   iii=0;

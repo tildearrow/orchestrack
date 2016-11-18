@@ -8,11 +8,23 @@ class OTrackEngine {
   int iii;
   std::queue<void*>* mi;
   std::queue<void*>* mo;
+  unsigned char** me;
   float* si;
   float* so;
   int sichans, sochans;
   int michans, mochans;
   public:
+    // syncmode:
+    // - 0: audio buffer
+    // - 1: vblank
+    // - 2: timer
+    int syncmode;
+    float tempo;
+    int speed;
+    int tick;
+    int subtick;
+    int subticks;
+    int play;
     OTrackProject p;
     // Initialize the engine. Should be called
     // before doing anything else.
