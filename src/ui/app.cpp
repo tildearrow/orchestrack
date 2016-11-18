@@ -85,6 +85,20 @@ int OTrackApp::init() {
   
   jack_activate(ac);
   
+  const char** p;
+  p=jack_get_ports(ac,NULL,NULL,JackPortIsInput|JackPortIsPhysical);
+  if (p) {
+    for (int i=0; i<2; i++) {
+      if (jack_connect(ac,jack_port_name(ao[i]),p[i])) {
+        fprintf(stderr,"can't connect to system output (i=%d). :(\n",i);
+        break;
+      }
+    }
+    delete[] p;
+  } else {
+    fprintf(stderr,"no physical outputs.\n");
+  }
+  
   return 0;
 };
 
