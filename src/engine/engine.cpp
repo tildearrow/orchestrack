@@ -18,6 +18,11 @@ int OTrackEngine::init() {
   michans=0;
   mochans=0;
   iii=0;
+  // for now //
+  tempo=125;
+  speed=4;
+  mult=1;
+  subtick=0;
   return 1;
 }
 

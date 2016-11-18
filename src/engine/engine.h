@@ -13,6 +13,7 @@ class OTrackEngine {
   float* so;
   int sichans, sochans;
   int michans, mochans;
+  void updatePos();
   public:
     // syncmode:
     // - 0: audio buffer
@@ -21,9 +22,11 @@ class OTrackEngine {
     int syncmode;
     float tempo;
     int speed;
+    int pat;
+    int row;
     int tick;
-    int subtick;
-    int subticks;
+    double subtick;
+    int mult;
     int play;
     OTrackProject p;
     // Initialize the engine. Should be called
