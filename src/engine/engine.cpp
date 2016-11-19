@@ -11,6 +11,7 @@ int OTrackEngine::init() {
   }
   mi=new std::queue<void*>[256];
   mo=new std::queue<void*>[256];
+  pmo=new std::queue<void*>[256];
   me=new unsigned char*[4096]; // should be enough
   for (int i=0; i<4096; i++) {
     me[i]=new unsigned char[16]; // should be enough
@@ -20,7 +21,7 @@ int OTrackEngine::init() {
   iii=0;
   // for now //
   tempo=125;
-  speed=4;
+  speed=12;
   mult=1;
   subtick=0;
   return 1;

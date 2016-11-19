@@ -11,6 +11,14 @@ void OTrackEngine::updatePos() {
         row=0;
       }
       printf("row %d\n",row);
+      me[0][0]=0x80;
+      me[0][1]=0x40;
+      me[0][2]=0x7f;
+      me[1][0]=0x90;
+      me[1][1]=0x40;
+      me[1][2]=0x7f;
+      pmo[0].push(me[0]);
+      pmo[0].push(me[1]);
     }
     subtick+=44100/(tempo/2.5);
     //printf("subtick: %g\n",subtick);
@@ -20,23 +28,20 @@ void OTrackEngine::updatePos() {
 float* OTrackEngine::getSample() {
   float* ts;
   unsigned char* me;
-  me=new unsigned char[3];
-  me[0]=0x90;
-  me[1]=0x60;
-  me[2]=0x7f;
   iii++;
   // for now
   so[0]=0;
   so[1]=0;
   updatePos();
   for (int i=0; i<p.ins.size(); i++) {
-    if (iii==200000) {
+    while (!pmo[0].empty()) {
+      me=(unsigned char*)pmo[0].front();
+      pmo[0].pop();
       p.ins[i].i->submitEvent(me);
     }
     ts=p.ins[i].i->getSample();
     so[0]+=ts[0];
     so[1]+=ts[1];
   }
-  delete[] me;
   return so;
 }

@@ -14,6 +14,7 @@ class OTrackEngine {
   int sichans, sochans;
   int michans, mochans;
   void updatePos();
+  std::queue<void*>* pmo;
   public:
     // syncmode:
     // - 0: audio buffer
