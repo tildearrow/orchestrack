@@ -1,8 +1,19 @@
 #include "../includes.h"
 #include "../instr/instr.h"
 
+union effval {
+  long long int sixtyfour;
+  double dbl;
+  float f[2];
+  int i[2];
+  short s[4];
+  char sb[8];
+  unsigned char ub[8];
+};
+
 struct OTrackEffect {
-  int type, value;
+  int type;
+  effval value;
 };
 
 struct OTrackEvent {
