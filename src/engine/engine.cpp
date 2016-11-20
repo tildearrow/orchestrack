@@ -21,9 +21,11 @@ int OTrackEngine::init() {
   iii=0;
   // for now //
   tempo=125;
-  speed=12;
+  speed=6;
   mult=1;
   subtick=0;
+  tick=0;
+  row=-1;
   return 1;
 }
 

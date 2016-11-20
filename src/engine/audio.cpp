@@ -11,14 +11,17 @@ void OTrackEngine::updatePos() {
         row=0;
       }
       printf("row %d\n",row);
-      me[0][0]=0x80;
-      me[0][1]=0x40;
-      me[0][2]=0x7f;
-      me[1][0]=0x90;
-      me[1][1]=0x40;
-      me[1][2]=0x7f;
-      pmo[0].push(me[0]);
-      pmo[0].push(me[1]);
+      if (testnote[row]) {
+        me[0][0]=0x80;
+        me[0][1]=cn;
+        me[0][2]=0x7f;
+        me[1][0]=0x90;
+        me[1][1]=testnote[row];
+        me[1][2]=0x7f;
+        cn=testnote[row];
+        pmo[0].push(me[0]);
+        pmo[0].push(me[1]);
+      }
     }
     subtick+=44100/(tempo/2.5);
     //printf("subtick: %g\n",subtick);
