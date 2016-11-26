@@ -17,17 +17,14 @@ struct OTrackEffect {
 };
 
 struct OTrackEvent {
-  int time, note, instr, vol;
+  int time, ticko, note, instr;
+  float vol;
   OTrackEffect effect[8];
 };
 
 struct OTrackPat {
   int len;
   std::vector<OTrackEvent> ev;
-};
-
-struct OTrackSong {
-  std::vector<OTrackPat> pat;
 };
 
 struct OTrackPInstr {
@@ -40,5 +37,6 @@ struct OTrackPInstr {
 class OTrackProject {
   public:
     std::vector<OTrackPInstr> ins;
-    std::vector<OTrackSong> song;
+    int chan;
+    std::vector<std::vector<OTrackPat> > pat;
 };
