@@ -35,7 +35,7 @@ class OTrackEngine {
     double subtick;
     int mult;
     int play;
-    OTrackProject p;
+    OTrackProject* p;
     // Initialize the engine. Should be called
     // before doing anything else.
     int init();

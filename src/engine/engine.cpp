@@ -26,6 +26,21 @@ int OTrackEngine::init() {
   subtick=0;
   tick=0;
   row=-1;
+  // init empty project //
+  p=new OTrackProject;
+  // for now too //
+  p->chan=8;
+  p->pat.resize(8);
+  for (int i=0; i<p->chan; i++) {
+    p->pat[i].resize(1);
+    p->pat[0][0].len=64;
+  }
+  p->pat[0][0].ev.resize(1);
+  p->pat[0][0].ev[0].time=0;
+  p->pat[0][0].ev[0].ticko=0;
+  p->pat[0][0].ev[0].note=0x3f;
+  p->pat[0][0].ev[0].instr=1;
+  p->pat[0][0].ev[0].vol=1.0;
   return 1;
 }
 

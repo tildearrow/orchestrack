@@ -34,6 +34,14 @@ struct OTrackPInstr {
   bool inborder;
 };
 
+class OTrackBlock {
+  int ai, ao, mi, mo;
+  float*(*aof)(void);
+  int(*aif)(float*);
+  unsigned char* getMEvent(int channel);
+  int putMEvent(int channel, void* data);
+};
+
 class OTrackProject {
   public:
     std::vector<OTrackPInstr> ins;

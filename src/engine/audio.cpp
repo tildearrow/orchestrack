@@ -36,13 +36,13 @@ float* OTrackEngine::getSample() {
   so[0]=0;
   so[1]=0;
   updatePos();
-  for (int i=0; i<p.ins.size(); i++) {
+  for (int i=0; i<p->ins.size(); i++) {
     while (!pmo[0].empty()) {
       me=(unsigned char*)pmo[0].front();
       pmo[0].pop();
-      p.ins[i].i->submitEvent(me);
+      p->ins[i].i->submitEvent(me);
     }
-    ts=p.ins[i].i->getSample();
+    ts=p->ins[i].i->getSample();
     so[0]+=ts[0];
     so[1]+=ts[1];
   }
