@@ -13,6 +13,7 @@ union effval {
 
 struct OTrackEffect {
   int type;
+  int time;
   effval value;
 };
 
@@ -25,6 +26,15 @@ struct OTrackEvent {
 struct OTrackPat {
   int len;
   std::vector<OTrackEvent> ev;
+};
+
+struct OTrackOrder {
+  int pat, trans;
+};
+
+struct OTrackChannel {
+  std::vector<OTrackPat> pat;
+  std::vector<OTrackOrder> ord;
 };
 
 struct OTrackPInstr {
@@ -46,5 +56,5 @@ class OTrackProject {
   public:
     std::vector<OTrackPInstr> ins;
     int chan;
-    std::vector<std::vector<OTrackPat> > pat;
+    std::vector<OTrackChannel> pat;
 };
